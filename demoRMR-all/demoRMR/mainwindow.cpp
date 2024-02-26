@@ -98,9 +98,9 @@ void MainWindow::paintEvent(QPaintEvent *event)
 /// prepojenie signal slot je vo funkcii  on_pushButton_9_clicked
 void  MainWindow::setUiValues(double robotX,double robotY,double robotFi)
 {
-     ui->lineEdit_2->setText(QString::number(robotX));
-     ui->lineEdit_3->setText(QString::number(robotY));
-     ui->lineEdit_4->setText(QString::number(robotFi));
+     // ui->lineEdit_2->setText(QString::number(robotX));
+     // ui->lineEdit_3->setText(QString::number(robotY));
+     // ui->lineEdit_4->setText(QString::number(robotFi));
 }
 
 double MainWindow::calculateEncoderDelta(int prev, int actual) {
