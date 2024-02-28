@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QPainter>
 #include <math.h>
+#include <QCommonStyle>
 
 #define WHEELBASE 0.23
 #define WHEELRADIUS 0.035
@@ -239,6 +240,8 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
 }
 void MainWindow::on_pushButton_9_clicked() //start button
 {
+    QCommonStyle style;
+    ui->pushButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
     //ziskanie joystickov
     instance = QJoysticks::getInstance();
     forwardspeed=0;
@@ -324,3 +327,6 @@ void MainWindow::getNewFrame()
 {
 
 }
+
+
+
