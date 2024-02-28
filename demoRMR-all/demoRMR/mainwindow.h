@@ -27,6 +27,8 @@
 #include "robot.h"
 
 #include <QJoysticks.h>
+#include <QPushButton>
+
 namespace Ui {
 class MainWindow;
 }
@@ -69,6 +71,8 @@ private slots:
     void on_pushButton_clicked();
     void getNewFrame();
 
+    void on_pushButton_9_objectNameChanged(const QString &objectName);
+
 private:
 
     double calculateEncoderDelta(int prev, int actual);
@@ -84,6 +88,7 @@ private:
      QTimer *timer;
 
      QJoysticks *instance;
+     QPushButton *arrowButton;
 
      double forwardspeed;//mm/s
      double rotationspeed;//omega/s
@@ -107,6 +112,8 @@ private:
     double robotY;
     double robotFi;
     double prev_fi;
+
+
 
 public slots:
      void setUiValues(double robotX,double robotY,double robotFi);

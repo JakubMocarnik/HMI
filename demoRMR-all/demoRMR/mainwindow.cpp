@@ -45,6 +45,29 @@ MainWindow::MainWindow(QWidget *parent) :
     datacounter=0;
 
 
+    // Instantiate the QPushButton object
+    arrowButton = new QPushButton("Arrow Button", this);
+
+    // Set the geometry (position and size) of the button
+    arrowButton->setGeometry(100, 100, 100, 50); // Example position and size
+
+    // Set the stylesheet for the arrowButton
+    arrowButton->setStyleSheet("QPushButton {"
+                               "    border: none;"
+                               "    background-color: transparent;" // Make the background transparent
+                               "}"
+                               "QPushButton::down-arrow {"
+                               "    width: 0;"
+                               "    height: 0;"
+                               "    border-style: solid;"
+                               "    border-width: 10px 10px 0 10px;"
+                               "    border-color: rgba(0, 0, 0, 0);"
+                               "    border-bottom-color: black;" // Color of the arrow
+                               "}");
+
+    // Set the icon for the arrowButton
+    arrowButton->setIcon(QIcon(":/arrow_icon")); // Set the icon for the arrow button
+    arrowButton->setIconSize(QSize(20, 20)); // Set the size of the icon
 }
 
 MainWindow::~MainWindow()
@@ -238,40 +261,20 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     updateLaserPicture=1;
     return 0;
 }
+
+
+
+
 void MainWindow::on_pushButton_9_clicked() //start button
 {
-    QCommonStyle style;
-    ui->pushButton->setIcon(style.standardIcon(QStyle::SP_ArrowBack));
-    //ziskanie joystickov
-    instance = QJoysticks::getInstance();
-    forwardspeed=0;
-    rotationspeed=0;
-    //tu sa nastartuju vlakna ktore citaju data z lidaru a robota
-    connect(this,SIGNAL(uiValuesChanged(double,double,double)),this,SLOT(setUiValues(double,double,double)));
 
-    ///setovanie veci na komunikaciu s robotom/lidarom/kamerou.. su tam adresa porty a callback.. laser ma ze sa da dat callback aj ako lambda.
-    /// lambdy su super, setria miesto a ak su rozumnej dlzky,tak aj prehladnost... ak ste o nich nic nepoculi poradte sa s vasim doktorom alebo lekarnikom...
-    robot.setLaserParameters(ipaddress,52999,5299,/*[](LaserMeasurement dat)->int{std::cout<<"som z lambdy callback"<<std::endl;return 0;}*/std::bind(&MainWindow::processThisLidar,this,std::placeholders::_1));
-    robot.setRobotParameters(ipaddress,53000,5300,std::bind(&MainWindow::processThisRobot,this,std::placeholders::_1));
-    //---simulator ma port 8889, realny robot 8000
-    robot.setCameraParameters("http://"+ipaddress+":8889/stream.mjpg",std::bind(&MainWindow::processThisCamera,this,std::placeholders::_1));
-
-    ///ked je vsetko nasetovane tak to tento prikaz spusti (ak nieco nieje setnute,tak to normalne nenastavi.cize ak napr nechcete kameru,vklude vsetky info o nej vymazte)
-    robot.robotStart();
-
-
-
-
-
-
-    /// prepojenie joysticku s jeho callbackom... zas cez lambdu. neviem ci som to niekde spominal,ale lambdy su super. okrem toho mam este rad ternarne operatory a spolocneske hry ale to tiez nikoho nezaujima
-    /// co vas vlastne zaujima? citanie komentov asi nie, inak by ste citali toto a ze tu je blbosti
-    connect(
-        instance, &QJoysticks::axisChanged,
-        [this]( const int js, const int axis, const qreal value) { if(/*js==0 &&*/ axis==1){forwardspeed=-value*300;}
-            if(/*js==0 &&*/ axis==0){rotationspeed=-value*(3.14159/2.0);}}
-    );
 }
+
+void MainWindow::on_pushButton_9_objectNameChanged(const QString &objectName) {
+    // Implement the slot logic here, if needed
+    Q_UNUSED(objectName); // Avoid unused parameter warning
+}
+
 
 void MainWindow::on_pushButton_2_clicked() //forward
 {
@@ -327,6 +330,8 @@ void MainWindow::getNewFrame()
 {
 
 }
+
+
 
 
 
