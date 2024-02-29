@@ -58,13 +58,14 @@ MainWindow::MainWindow(QWidget *parent) :
     purple_circle.load(":/resources/img/purple_circle.png");
     purple_circle_pressed.load(":/resources/img/purple_circle_pressed.png");
 
-    ui->pushButton->setIcon(estop_pixmap);
-    ui->pushButton_6->setIcon(purple_up);
-    ui->pushButton_8->setIcon(purple_right);
-    ui->pushButton_4->setIcon(purple_down);
-    ui->pushButton_9->setIcon(purple_left);
-    ui->pushButton_7->setIcon(purple_circle);
+    ui->pushButton_estop->setIcon(estop_pixmap);
+    ui->pushButton_up->setIcon(purple_up);
+    ui->pushButton_right->setIcon(purple_right);
+    ui->pushButton_down->setIcon(purple_down);
+    ui->pushButton_left->setIcon(purple_left);
+    ui->pushButton_circle->setIcon(purple_circle);
 
+    //button 3,2,5
 
     QSize estop_size;
     estop_size.setHeight(100);
@@ -81,31 +82,32 @@ MainWindow::MainWindow(QWidget *parent) :
     // ui->centralWidget->setStyleSheet("background-color:rgba(25,0,0,225)");
 
 
-    ui->pushButton->setIconSize(estop_size);
-    ui->pushButton->setFixedSize(estop_size);
-    ui->pushButton->setStyleSheet("background-color:transparent");
+    ui->pushButton_estop->setIconSize(estop_size);
+    ui->pushButton_estop->setFixedSize(estop_size);
+    ui->pushButton_estop->setStyleSheet("background-color:transparent");
 
-    ui->pushButton_6->setIconSize(arrow_size);
-    ui->pushButton_6->setFixedSize(arrow_size);
-    ui->pushButton_6->setStyleSheet("background-color:transparent");
+    ui->pushButton_up->setIconSize(arrow_size);
+    ui->pushButton_up->setFixedSize(arrow_size);
+    ui->pushButton_up->setStyleSheet("background-color:transparent");
 
-    ui->pushButton_8->setIconSize(arrow_size);
-    ui->pushButton_8->setFixedSize(arrow_size);
-    ui->pushButton_8->setStyleSheet("background-color:transparent");
+    ui->pushButton_right->setIconSize(arrow_size);
+    ui->pushButton_right->setFixedSize(arrow_size);
+    ui->pushButton_right->setStyleSheet("background-color:transparent");
 
-    ui->pushButton_4->setIconSize(arrow_size);
-    ui->pushButton_4->setFixedSize(arrow_size);
-    ui->pushButton_4->setStyleSheet("background-color:transparent");
+    ui->pushButton_down->setIconSize(arrow_size);
+    ui->pushButton_down->setFixedSize(arrow_size);
+    ui->pushButton_down->setStyleSheet("background-color:transparent");
 
-    ui->pushButton_9->setIconSize(arrow_size);
-    ui->pushButton_9->setFixedSize(arrow_size);
-    ui->pushButton_9->setStyleSheet("background-color:transparent");
+    ui->pushButton_left->setIconSize(arrow_size);
+    ui->pushButton_left->setFixedSize(arrow_size);
+    ui->pushButton_left->setStyleSheet("background-color:transparent");
 
-    ui->pushButton_7->setIconSize(circle_size);
-    ui->pushButton_7->setFixedSize(circle_size);
-    ui->pushButton_7->setStyleSheet("background-color:transparent");
-    ui->gridLayout_4->setAlignment(ui->pushButton_7,Qt::AlignCenter);
+    ui->pushButton_circle->setIconSize(circle_size);
+    ui->pushButton_circle->setFixedSize(circle_size);
+    ui->pushButton_circle->setStyleSheet("background-color:transparent");
+    ui->gridLayout_4->setAlignment(ui->pushButton_circle,Qt::AlignCenter);
 
+    //TODO: get rid of or set color to MainToolbar
     estop = false;
 }
 
@@ -158,7 +160,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 
 /// toto je slot. niekde v kode existuje signal, ktory je prepojeny. pouziva sa napriklad (v tomto pripade) ak chcete dostat data z jedneho vlakna (robot) do ineho (ui)
-/// prepojenie signal slot je vo funkcii  on_pushButton_9_clicked
+/// prepojenie signal slot je vo funkcii  on_pushButton_left_clicked
 void  MainWindow::setUiValues(double robotX,double robotY,double robotFi)
 {
      // ui->lineEdit_2->setText(QString::number(robotX));
@@ -181,7 +183,7 @@ double MainWindow::calculateEncoderDelta(int prev, int actual) {
 
 }
 
-///toto je calback na data z robota, ktory ste podhodili robotu vo funkcii on_pushButton_9_clicked
+///toto je calback na data z robota, ktory ste podhodili robotu vo funkcii on_pushButton_left_clicked
 /// vola sa vzdy ked dojdu nove data z robota. nemusite nic riesit, proste sa to stane
 int MainWindow::processThisRobot(TKobukiData robotdata)
 {
@@ -253,7 +255,7 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
                 /// okno pocuva vo svojom slote a vasu premennu nastavi tak ako chcete. prikaz emit to presne takto spravi
                 /// viac o signal slotoch tu: https://doc.qt.io/qt-5/signalsandslots.html
         ///posielame sem nezmysli.. pohrajte sa nech sem idu zmysluplne veci
-        emit uiValuesChanged(robotX,robotY,robotFi);
+        // emit uiValuesChanged(robotX,robotY,robotFi);
         prev_right=robotdata.EncoderRight;
         prev_left=robotdata.EncoderLeft;
         prev_fi = robotFi;
@@ -273,7 +275,7 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
 
 }
 
-///toto je calback na data z lidaru, ktory ste podhodili robotu vo funkcii on_pushButton_9_clicked
+///toto je calback na data z lidaru, ktory ste podhodili robotu vo funkcii on_pushButton_left_clicked
 /// vola sa ked dojdu nove data z lidaru
 int MainWindow::processThisLidar(LaserMeasurement laserData)
 {
@@ -290,7 +292,7 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 
 }
 
-///toto je calback na data z kamery, ktory ste podhodili robotu vo funkcii on_pushButton_9_clicked
+///toto je calback na data z kamery, ktory ste podhodili robotu vo funkcii on_pushButton_left_clicked
 /// vola sa ked dojdu nove data z kamery
 int MainWindow::processThisCamera(cv::Mat cameraData)
 {
@@ -300,7 +302,19 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     updateLaserPicture=1;
     return 0;
 }
-void MainWindow::on_pushButton_9_clicked() //sipka ehm ehm
+void MainWindow::on_pushButton_left_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_mode_clicked() //forward
+{
+    //pohyb dopredu
+    // robot.setTranslationSpeed(500);
+
+}
+
+void MainWindow::on_pushButton_connect_clicked()
 {
     //ziskanie joystickov
     instance = QJoysticks::getInstance();
@@ -330,51 +344,38 @@ void MainWindow::on_pushButton_9_clicked() //sipka ehm ehm
         instance, &QJoysticks::axisChanged,
         [this]( const int js, const int axis, const qreal value) { if(/*js==0 &&*/ axis==1){forwardspeed=-value*300;}
             if(/*js==0 &&*/ axis==0){rotationspeed=-value*(3.14159/2.0);}}
-    );
-}
-
-void MainWindow::on_pushButton_2_clicked() //forward
-{
-    //pohyb dopredu
-    robot.setTranslationSpeed(500);
+        );
 
 }
 
-void MainWindow::on_pushButton_3_clicked() //back
+void MainWindow::on_pushButton_up_clicked() //left
 {
-    robot.setTranslationSpeed(-250);
-
-}
-
-void MainWindow::on_pushButton_6_clicked() //left
-{
-robot.setRotationSpeed(3.14159/2);
+// robot.setRotationSpeed(3.14159/2);
 
 }
 
 void MainWindow::on_pushButton_5_clicked()//right
 {
-robot.setRotationSpeed(-3.14159/2);
+// robot.setRotationSpeed(-3.14159/2);
 
 }
 
-void MainWindow::on_pushButton_4_clicked() //stop
+void MainWindow::on_pushButton_down_clicked() //stop
 {
-    robot.setTranslationSpeed(0);
-
+    // robot.setTranslationSpeed(0);
 }
 
 
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pushButton_estop_clicked()
 {
     estop = !estop;
     if (estop) {
-        ui->pushButton->setIcon(estop_pixmap_clicked);
+        ui->pushButton_estop->setIcon(estop_pixmap_clicked);
     }
     else {
-        ui->pushButton->setIcon(estop_pixmap);
+        ui->pushButton_estop->setIcon(estop_pixmap);
     }
     //TODO: logic
 }
@@ -384,79 +385,84 @@ void MainWindow::getNewFrame()
 
 }
 
-void MainWindow::on_pushButton_pressed()
+void MainWindow::on_pushButton_estop_pressed()
 {
-    ui->pushButton->setIcon(estop_pixmap_pressed);
+    ui->pushButton_estop->setIcon(estop_pixmap_pressed);
 }
 
-void MainWindow::on_pushButton_released() {
+void MainWindow::on_pushButton_estop_released() {
     if (estop) {
-        ui->pushButton->setIcon(estop_pixmap_clicked);
+        ui->pushButton_estop->setIcon(estop_pixmap_clicked);
     }
     else {
-        ui->pushButton->setIcon(estop_pixmap);
+        ui->pushButton_estop->setIcon(estop_pixmap);
     }
     //TODO: this is ugly (redrawing twice)
 }
 
-void MainWindow::on_pushButton_6_pressed()
+void MainWindow::on_pushButton_up_pressed()
 {
-    ui->pushButton_6->setIcon(purple_up_pressed);
+    ui->pushButton_up->setIcon(purple_up_pressed);
+    robot.setTranslationSpeed(500);
 }
 
 
 
 
-void MainWindow::on_pushButton_6_released()
+void MainWindow::on_pushButton_up_released()
 {
-    ui->pushButton_6->setIcon(purple_up);
+    ui->pushButton_up->setIcon(purple_up);
 }
 
 
-void MainWindow::on_pushButton_8_pressed()
+void MainWindow::on_pushButton_right_pressed()
 {
-    ui->pushButton_8->setIcon(purple_right_pressed);
+    ui->pushButton_right->setIcon(purple_right_pressed);
+    robot.setRotationSpeed(-3.14159/2);
 }
 
 
-void MainWindow::on_pushButton_8_released()
+void MainWindow::on_pushButton_right_released()
 {
-    ui->pushButton_8->setIcon(purple_right);
+    ui->pushButton_right->setIcon(purple_right);
 }
 
 
-void MainWindow::on_pushButton_9_pressed()
+void MainWindow::on_pushButton_left_pressed()
 {
-    ui->pushButton_9->setIcon(purple_left_pressed);
+    ui->pushButton_left->setIcon(purple_left_pressed);
+    robot.setRotationSpeed(3.14159/2);
 }
 
 
-void MainWindow::on_pushButton_9_released()
+void MainWindow::on_pushButton_left_released()
 {
-    ui->pushButton_9->setIcon(purple_left);
+    ui->pushButton_left->setIcon(purple_left);
 }
 
 
-void MainWindow::on_pushButton_4_pressed()
+void MainWindow::on_pushButton_down_pressed()
 {
-    ui->pushButton_4->setIcon(purple_down_pressed);
+    ui->pushButton_down->setIcon(purple_down_pressed);
+    robot.setTranslationSpeed(-250);
 }
 
 
-void MainWindow::on_pushButton_4_released()
+void MainWindow::on_pushButton_down_released()
 {
-    ui->pushButton_4->setIcon(purple_down);
+    ui->pushButton_down->setIcon(purple_down);
 }
 
 
-void MainWindow::on_pushButton_7_pressed()
+void MainWindow::on_pushButton_circle_pressed()
 {
-    ui->pushButton_7->setIcon(purple_circle_pressed);
+    ui->pushButton_circle->setIcon(purple_circle_pressed);
+    robot.setTranslationSpeed(0);     //TODO: when clicked?
 }
 
 
-void MainWindow::on_pushButton_7_released()
+void MainWindow::on_pushButton_circle_released()
 {
-    ui->pushButton_7->setIcon(purple_circle);
+    ui->pushButton_circle->setIcon(purple_circle);
 }
 

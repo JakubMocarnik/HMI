@@ -55,45 +55,45 @@ public:
 int processThisCamera(cv::Mat cameraData);
 
 private slots:
-    void on_pushButton_9_clicked();
+    void on_pushButton_left_clicked();
 
-    void on_pushButton_2_clicked();
+    void on_pushButton_mode_clicked();
 
-    void on_pushButton_3_clicked();
+    void on_pushButton_connect_clicked();
 
-    void on_pushButton_6_clicked();
+    void on_pushButton_up_clicked();
 
     void on_pushButton_5_clicked();
 
-    void on_pushButton_4_clicked();
+    void on_pushButton_down_clicked();
 
-    void on_pushButton_clicked();
+    void on_pushButton_estop_clicked();
     void getNewFrame();
 
-    void on_pushButton_pressed();
+    void on_pushButton_estop_pressed();
 
 
-    void on_pushButton_released();
+    void on_pushButton_estop_released();
 
-    void on_pushButton_6_pressed();
+    void on_pushButton_up_pressed();
 
-    void on_pushButton_6_released();
+    void on_pushButton_up_released();
 
-    void on_pushButton_8_pressed();
+    void on_pushButton_right_pressed();
 
-    void on_pushButton_8_released();
+    void on_pushButton_right_released();
 
-    void on_pushButton_9_pressed();
+    void on_pushButton_left_pressed();
 
-    void on_pushButton_9_released();
+    void on_pushButton_left_released();
 
-    void on_pushButton_4_pressed();
+    void on_pushButton_down_pressed();
 
-    void on_pushButton_4_released();
+    void on_pushButton_down_released();
 
-    void on_pushButton_7_pressed();
+    void on_pushButton_circle_pressed();
 
-    void on_pushButton_7_released();
+    void on_pushButton_circle_released();
 
 private:
 
