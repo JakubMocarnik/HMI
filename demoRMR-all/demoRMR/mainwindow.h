@@ -95,6 +95,10 @@ private slots:
 
     void on_pushButton_circle_released();
 
+    void on_actionHello_Kitty_triggered();
+
+    void on_actionDark_Souls_triggered();
+
 private:
 
     double calculateEncoderDelta(int prev, int actual);

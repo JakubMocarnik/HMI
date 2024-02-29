@@ -301,38 +301,20 @@
     <property name="title">
      <string>Style</string>
     </property>
-    <addaction name="actionDark_Souls_2"/>
-    <addaction name="actionHello_Kitty_2"/>
+    <addaction name="actionHello_Kitty"/>
+    <addaction name="actionDark_Souls"/>
    </widget>
    <addaction name="menuStyle"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <action name="actionDark_Souls">
-   <property name="text">
-    <string>Dark Souls</string>
-   </property>
-  </action>
   <action name="actionHello_Kitty">
    <property name="text">
     <string>Hello Kitty</string>
    </property>
   </action>
-  <action name="actionDark_Souls_2">
+  <action name="actionDark_Souls">
    <property name="text">
     <string>Dark Souls</string>
-   </property>
-  </action>
-  <action name="actionHello_Kitty_2">
-   <property name="text">
-    <string>Hello Kitty</string>
    </property>
   </action>
  </widget>

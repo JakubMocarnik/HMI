@@ -65,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_left->setIcon(purple_left);
     ui->pushButton_circle->setIcon(purple_circle);
 
+    ui->centralWidget->setStyleSheet("background-color:rgba(255,0,0,25)");
     //button 3,2,5
 
     QSize estop_size;
@@ -79,7 +80,6 @@ MainWindow::MainWindow(QWidget *parent) :
     circle_size.setHeight(50);
     circle_size.setWidth(50);
 
-    // ui->centralWidget->setStyleSheet("background-color:rgba(25,0,0,225)");
 
 
     ui->pushButton_estop->setIconSize(estop_size);
@@ -464,5 +464,17 @@ void MainWindow::on_pushButton_circle_pressed()
 void MainWindow::on_pushButton_circle_released()
 {
     ui->pushButton_circle->setIcon(purple_circle);
+}
+
+
+void MainWindow::on_actionHello_Kitty_triggered()
+{
+    ui->centralWidget->setStyleSheet("background-color:rgba(255,0,0,25)"); //pink colour
+}
+
+
+void MainWindow::on_actionDark_Souls_triggered()
+{
+    ui->centralWidget->setStyleSheet("background-color:rgba(25,0,0,100)"); //dark colour
 }
 
