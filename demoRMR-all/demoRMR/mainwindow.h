@@ -91,6 +91,10 @@ private slots:
 
     void on_pushButton_4_released();
 
+    void on_pushButton_7_pressed();
+
+    void on_pushButton_7_released();
+
 private:
 
     double calculateEncoderDelta(int prev, int actual);
@@ -118,6 +122,9 @@ private:
      QPixmap purple_left_pressed;
      QPixmap purple_up_pressed;
      QPixmap purple_down_pressed;
+     QPixmap purple_circle;
+     QPixmap purple_circle_pressed;
+
 
 
 

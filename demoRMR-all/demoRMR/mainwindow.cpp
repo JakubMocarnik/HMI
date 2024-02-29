@@ -55,12 +55,17 @@ MainWindow::MainWindow(QWidget *parent) :
     purple_left_pressed.load(":/resources/img/purple_left_pressed.png");
     purple_up_pressed.load(":/resources/img/purple_up_pressed.png");
     purple_down_pressed.load(":/resources/img/purple_down_pressed.png");
+    purple_circle.load(":/resources/img/purple_circle.png");
+    purple_circle_pressed.load(":/resources/img/purple_circle_pressed.png");
 
     ui->pushButton->setIcon(estop_pixmap);
     ui->pushButton_6->setIcon(purple_up);
     ui->pushButton_8->setIcon(purple_right);
     ui->pushButton_4->setIcon(purple_down);
     ui->pushButton_9->setIcon(purple_left);
+    ui->pushButton_7->setIcon(purple_circle);
+
+
     QSize estop_size;
     estop_size.setHeight(100);
     estop_size.setWidth(100);
@@ -69,7 +74,11 @@ MainWindow::MainWindow(QWidget *parent) :
     arrow_size.setWidth(100);
     arrow_size.setHeight(100);
 
-    ui->centralWidget->setStyleSheet("background-color:rgba(255,0,0,25)");
+    QSize circle_size;
+    circle_size.setHeight(50);
+    circle_size.setWidth(50);
+
+    // ui->centralWidget->setStyleSheet("background-color:rgba(25,0,0,225)");
 
 
     ui->pushButton->setIconSize(estop_size);
@@ -92,6 +101,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_9->setFixedSize(arrow_size);
     ui->pushButton_9->setStyleSheet("background-color:transparent");
 
+    ui->pushButton_7->setIconSize(circle_size);
+    ui->pushButton_7->setFixedSize(circle_size);
+    ui->pushButton_7->setStyleSheet("background-color:transparent");
+    ui->gridLayout_4->setAlignment(ui->pushButton_7,Qt::AlignCenter);
 
     estop = false;
 }
@@ -433,5 +446,17 @@ void MainWindow::on_pushButton_4_pressed()
 void MainWindow::on_pushButton_4_released()
 {
     ui->pushButton_4->setIcon(purple_down);
+}
+
+
+void MainWindow::on_pushButton_7_pressed()
+{
+    ui->pushButton_7->setIcon(purple_circle_pressed);
+}
+
+
+void MainWindow::on_pushButton_7_released()
+{
+    ui->pushButton_7->setIcon(purple_circle);
 }
 

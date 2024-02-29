@@ -1,2 +1,2 @@
 #E40000 - devil red
-#D1007A - purple
+#770000 - purple
