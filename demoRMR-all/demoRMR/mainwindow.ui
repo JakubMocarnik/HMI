@@ -130,21 +130,21 @@
           <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_6">
             <property name="text">
-             <string>UP</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="pushButton_9">
             <property name="text">
-             <string>LEFT</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
            <widget class="QPushButton" name="pushButton_4">
             <property name="text">
-             <string>DOWN</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -171,14 +171,14 @@
           <item row="1" column="2">
            <widget class="QPushButton" name="pushButton_8">
             <property name="text">
-             <string>RIGHT</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="1" column="4">
            <widget class="QPushButton" name="pushButton">
             <property name="text">
-             <string>STOP</string>
+             <string/>
             </property>
            </widget>
           </item>

@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <math.h>
 
+
 #define WHEELBASE 0.23
 #define WHEELRADIUS 0.035
 #define TICKTOMETER 0.000085292090497737556558
@@ -42,8 +43,55 @@ MainWindow::MainWindow(QWidget *parent) :
     prev_left = 0;
     prev_right = 0;
     datacounter=0;
+    estop_pixmap.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/estop.png");
+    estop_pixmap_clicked.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/estop_clicked.png");
+    estop_pixmap_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/estop_pressed.png");
+
+    purple_right.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_right.png");
+    purple_left.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_left.png");
+    purple_up.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_up.png");
+    purple_down.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_down.png");
+    purple_right_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_right_pressed.png");
+    purple_left_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_left_pressed.png");
+    purple_up_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_up_pressed.png");
+    purple_down_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_down_pressed.png");
+
+    ui->pushButton->setIcon(estop_pixmap);
+    ui->pushButton_6->setIcon(purple_up);
+    ui->pushButton_8->setIcon(purple_right);
+    ui->pushButton_4->setIcon(purple_down);
+    ui->pushButton_9->setIcon(purple_left);
+    QSize estop_size;
+    estop_size.setHeight(100);
+    estop_size.setWidth(100);
+
+    QSize arrow_size;
+    arrow_size.setWidth(100);
+    arrow_size.setHeight(100);
 
 
+    ui->pushButton->setIconSize(estop_size);
+    ui->pushButton->setFixedSize(estop_size);
+    ui->pushButton->setStyleSheet("background-color:transparent");
+
+    ui->pushButton_6->setIconSize(arrow_size);
+    ui->pushButton_6->setFixedSize(arrow_size);
+    ui->pushButton_6->setStyleSheet("background-color:transparent");
+
+    ui->pushButton_8->setIconSize(arrow_size);
+    ui->pushButton_8->setFixedSize(arrow_size);
+    ui->pushButton_8->setStyleSheet("background-color:transparent");
+
+    ui->pushButton_4->setIconSize(arrow_size);
+    ui->pushButton_4->setFixedSize(arrow_size);
+    ui->pushButton_4->setStyleSheet("background-color:transparent");
+
+    ui->pushButton_9->setIconSize(arrow_size);
+    ui->pushButton_9->setFixedSize(arrow_size);
+    ui->pushButton_9->setStyleSheet("background-color:transparent");
+
+
+    estop = false;
 }
 
 MainWindow::~MainWindow()
@@ -306,21 +354,82 @@ void MainWindow::on_pushButton_4_clicked() //stop
 
 void MainWindow::on_pushButton_clicked()
 {
-    if(useCamera1==true)
-    {
-        useCamera1=false;
-
-        ui->pushButton->setText("use camera");
+    estop = !estop;
+    if (estop) {
+        ui->pushButton->setIcon(estop_pixmap_clicked);
     }
-    else
-    {
-        useCamera1=true;
-
-        ui->pushButton->setText("use laser");
+    else {
+        ui->pushButton->setIcon(estop_pixmap);
     }
+    //TODO: logic
 }
 
 void MainWindow::getNewFrame()
 {
 
 }
+
+void MainWindow::on_pushButton_pressed()
+{
+    ui->pushButton->setIcon(estop_pixmap_pressed);
+}
+
+void MainWindow::on_pushButton_released() {
+    if (estop) {
+        ui->pushButton->setIcon(estop_pixmap_clicked);
+    }
+    else {
+        ui->pushButton->setIcon(estop_pixmap);
+    }
+    //TODO: this is ugly (redrawing twice)
+}
+
+void MainWindow::on_pushButton_6_pressed()
+{
+    ui->pushButton_6->setIcon(purple_up_pressed);
+}
+
+
+
+
+void MainWindow::on_pushButton_6_released()
+{
+    ui->pushButton_6->setIcon(purple_up);
+}
+
+
+void MainWindow::on_pushButton_8_pressed()
+{
+    ui->pushButton_8->setIcon(purple_right_pressed);
+}
+
+
+void MainWindow::on_pushButton_8_released()
+{
+    ui->pushButton_8->setIcon(purple_right);
+}
+
+
+void MainWindow::on_pushButton_9_pressed()
+{
+    ui->pushButton_9->setIcon(purple_left_pressed);
+}
+
+
+void MainWindow::on_pushButton_9_released()
+{
+    ui->pushButton_9->setIcon(purple_left);
+}
+
+
+void MainWindow::on_pushButton_4_pressed()
+{
+    ui->pushButton_4->setIcon(purple_down_pressed);
+}
+
+
+void MainWindow::on_pushButton_4_released()
+{
+    ui->pushButton_4->setIcon(purple_down);
+}
+

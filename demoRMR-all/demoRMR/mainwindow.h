@@ -25,6 +25,7 @@
 #include "opencv2/videoio.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "robot.h"
+#include <QPixmap>
 
 #include <QJoysticks.h>
 namespace Ui {
@@ -69,6 +70,27 @@ private slots:
     void on_pushButton_clicked();
     void getNewFrame();
 
+    void on_pushButton_pressed();
+
+
+    void on_pushButton_released();
+
+    void on_pushButton_6_pressed();
+
+    void on_pushButton_6_released();
+
+    void on_pushButton_8_pressed();
+
+    void on_pushButton_8_released();
+
+    void on_pushButton_9_pressed();
+
+    void on_pushButton_9_released();
+
+    void on_pushButton_4_pressed();
+
+    void on_pushButton_4_released();
+
 private:
 
     double calculateEncoderDelta(int prev, int actual);
@@ -84,6 +106,20 @@ private:
      QTimer *timer;
 
      QJoysticks *instance;
+
+     QPixmap estop_pixmap;
+     QPixmap estop_pixmap_pressed;
+     QPixmap estop_pixmap_clicked;
+     QPixmap purple_right;
+     QPixmap purple_left;
+     QPixmap purple_up;
+     QPixmap purple_down;
+     QPixmap purple_right_pressed;
+     QPixmap purple_left_pressed;
+     QPixmap purple_up_pressed;
+     QPixmap purple_down_pressed;
+
+
 
      double forwardspeed;//mm/s
      double rotationspeed;//omega/s
@@ -107,6 +143,9 @@ private:
     double robotY;
     double robotFi;
     double prev_fi;
+
+    bool estop;
+    bool clicked;
 
 public slots:
      void setUiValues(double robotX,double robotY,double robotFi);
