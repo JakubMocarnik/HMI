@@ -69,6 +69,8 @@ MainWindow::MainWindow(QWidget *parent) :
     arrow_size.setWidth(100);
     arrow_size.setHeight(100);
 
+    ui->centralWidget->setStyleSheet("background-color:rgba(255,0,0,25)");
+
 
     ui->pushButton->setIconSize(estop_size);
     ui->pushButton->setFixedSize(estop_size);
