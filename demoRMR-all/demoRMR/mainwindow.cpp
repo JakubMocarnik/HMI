@@ -43,18 +43,18 @@ MainWindow::MainWindow(QWidget *parent) :
     prev_left = 0;
     prev_right = 0;
     datacounter=0;
-    estop_pixmap.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/estop.png");
-    estop_pixmap_clicked.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/estop_clicked.png");
-    estop_pixmap_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/estop_pressed.png");
+    estop_pixmap.load(":/resources/img/estop.png");
+    estop_pixmap_clicked.load(":/resources/img/estop_clicked.png");
+    estop_pixmap_pressed.load(":/resources/img/estop_pressed.png");
 
-    purple_right.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_right.png");
-    purple_left.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_left.png");
-    purple_up.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_up.png");
-    purple_down.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_down.png");
-    purple_right_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_right_pressed.png");
-    purple_left_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_left_pressed.png");
-    purple_up_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_up_pressed.png");
-    purple_down_pressed.load("C:/Users/HP Pavilion/Desktop/OSMY SEMESTER/HMI/CVICENIA/HMI/purple_down_pressed.png");
+    purple_right.load(":/resources/img/purple_right.png");
+    purple_left.load(":/resources/img/purple_left.png");
+    purple_up.load(":/resources/img/purple_up.png");
+    purple_down.load(":/resources/img/purple_down.png");
+    purple_right_pressed.load(":/resources/img/purple_right_pressed.png");
+    purple_left_pressed.load(":/resources/img/purple_left_pressed.png");
+    purple_up_pressed.load(":/resources/img/purple_up_pressed.png");
+    purple_down_pressed.load(":/resources/img/purple_down_pressed.png");
 
     ui->pushButton->setIcon(estop_pixmap);
     ui->pushButton_6->setIcon(purple_up);
@@ -287,7 +287,7 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     updateLaserPicture=1;
     return 0;
 }
-void MainWindow::on_pushButton_9_clicked() //start button
+void MainWindow::on_pushButton_9_clicked() //sipka ehm ehm
 {
     //ziskanie joystickov
     instance = QJoysticks::getInstance();

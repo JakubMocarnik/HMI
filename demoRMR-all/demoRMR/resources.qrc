@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>img/cervena_sipka.png</file>
+        <file>img/circle.png</file>
+        <file>img/estop.png</file>
+        <file>img/estop_clicked.png</file>
+        <file>img/estop_pressed.png</file>
+        <file>img/purple_down.png</file>
+        <file>img/purple_down_pressed.png</file>
+        <file>img/purple_left.png</file>
+        <file>img/purple_left_pressed.png</file>
+        <file>img/purple_right.png</file>
+        <file>img/purple_right_pressed.png</file>
+        <file>img/purple_up.png</file>
+        <file>img/purple_up_pressed.png</file>
+    </qresource>
+</RCC>
