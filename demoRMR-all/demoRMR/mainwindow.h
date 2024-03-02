@@ -26,6 +26,8 @@
 #include "opencv2/imgcodecs.hpp"
 #include "robot.h"
 #include <QPixmap>
+#include "myframe.h"
+
 
 #include <QJoysticks.h>
 namespace Ui {
@@ -51,6 +53,7 @@ public:
     int processThisLidar(LaserMeasurement laserData);
 
     int processThisRobot(TKobukiData robotdata);
+    friend class MyFrame;
 
 int processThisCamera(cv::Mat cameraData);
 
@@ -112,6 +115,7 @@ private:
      TKobukiData robotdata;
      int datacounter;
      QTimer *timer;
+     void setTheme(std::string theme);
 
      QJoysticks *instance;
 
@@ -129,6 +133,16 @@ private:
      QPixmap purple_circle;
      QPixmap purple_circle_pressed;
 
+     QPixmap red_right;
+     QPixmap red_left;
+     QPixmap red_up;
+     QPixmap red_down;
+     QPixmap red_right_pressed;
+     QPixmap red_left_pressed;
+     QPixmap red_up_pressed;
+     QPixmap red_down_pressed;
+     QPixmap red_circle;
+     QPixmap red_circle_pressed;
 
 
 
@@ -156,7 +170,8 @@ private:
     double prev_fi;
 
     bool estop;
-    bool clicked;
+
+    std::string theme;
 
 public slots:
      void setUiValues(double robotX,double robotY,double robotFi);

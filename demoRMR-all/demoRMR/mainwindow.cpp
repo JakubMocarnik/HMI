@@ -58,6 +58,20 @@ MainWindow::MainWindow(QWidget *parent) :
     purple_circle.load(":/resources/img/purple_circle.png");
     purple_circle_pressed.load(":/resources/img/purple_circle_pressed.png");
 
+    red_right.load(":/resources/img/red_right.png");
+    red_left.load(":/resources/img/red_left.png");
+    red_up.load(":/resources/img/red_up.png");
+    red_down.load(":/resources/img/red_down.png");
+    red_right_pressed.load(":/resources/img/red_right_pressed.png");
+    red_left_pressed.load(":/resources/img/red_left_pressed.png");
+    red_up_pressed.load(":/resources/img/red_up_pressed.png");
+    red_down_pressed.load(":/resources/img/red_down_pressed.png");
+    red_circle.load(":/resources/img/red_circle.png");
+    red_circle_pressed.load(":/resources/img/red_circle_pressed.png");
+
+
+
+
     ui->pushButton_estop->setIcon(estop_pixmap);
     ui->pushButton_up->setIcon(purple_up);
     ui->pushButton_right->setIcon(purple_right);
@@ -65,7 +79,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_left->setIcon(purple_left);
     ui->pushButton_circle->setIcon(purple_circle);
 
-    ui->centralWidget->setStyleSheet("background-color:rgba(255,0,0,25)");
+    ui->centralWidget->setStyleSheet("background-color:rgba(245, 168, 213,255)"); //pink colour
+
+    ui->frame->setMainWindow(this);
+
+    theme = "Hello Kitty";
     //button 3,2,5
 
     QSize estop_size;
@@ -107,6 +125,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_circle->setStyleSheet("background-color:transparent");
     ui->gridLayout_4->setAlignment(ui->pushButton_circle,Qt::AlignCenter);
 
+
+
     //TODO: get rid of or set color to MainToolbar
     estop = false;
 }
@@ -118,44 +138,47 @@ MainWindow::~MainWindow()
 
 void MainWindow::paintEvent(QPaintEvent *event)
 {
-    QPainter painter(this);
-    ///prekreslujem obrazovku len vtedy, ked viem ze mam nove data. paintevent sa
-    /// moze pochopitelne zavolat aj z inych dovodov, napriklad zmena velkosti okna
-    painter.setBrush(Qt::black);//cierna farba pozadia(pouziva sa ako fill pre napriklad funkciu drawRect)
-    QPen pero;
-    pero.setStyle(Qt::SolidLine);//styl pera - plna ciara
-    pero.setWidth(3);//hrubka pera -3pixely
-    pero.setColor(Qt::green);//farba je zelena
-    QRect rect;
-    rect= ui->frame->geometry();//ziskate porametre stvorca,do ktoreho chcete kreslit
-    rect.translate(0,15);
-    painter.drawRect(rect);
+    // QPainter painter(this);
 
-    if(useCamera1==true && actIndex>-1)/// ak zobrazujem data z kamery a aspon niektory frame vo vectore je naplneny
-    {
-        std::cout<<actIndex<<std::endl;
-        QImage image = QImage((uchar*)frame[actIndex].data, frame[actIndex].cols, frame[actIndex].rows, frame[actIndex].step, QImage::Format_RGB888  );//kopirovanie cvmat do qimage
-        painter.drawImage(rect,image.rgbSwapped());
-    }
-    else
-    {
-        if(updateLaserPicture==1) ///ak mam nove data z lidaru
-        {
-            updateLaserPicture=0;
+    // ///prekreslujem obrazovku len vtedy, ked viem ze mam nove data. paintevent sa
+    // /// moze pochopitelne zavolat aj z inych dovodov, napriklad zmena velkosti okna
+    // painter.setBrush(Qt::black);//cierna farba pozadia(pouziva sa ako fill pre napriklad funkciu drawRect)
+    // QPen pero;
+    // pero.setStyle(Qt::SolidLine);//styl pera - plna ciara
+    // pero.setWidth(3);//hrubka pera -3pixely
+    // pero.setColor(Qt::green);//farba je zelena
+    // QRect rect;
+    // rect= ui->frame->geometry();//ziskate porametre stvorca,do ktoreho chcete kreslit
+    // rect.translate(0,15);
+    // painter.drawRect(rect);
 
-            painter.setPen(pero);
-            //teraz tu kreslime random udaje... vykreslite to co treba... t.j. data z lidaru
-         //   std::cout<<copyOfLaserData.numberOfScans<<std::endl;
-            for(int k=0;k<copyOfLaserData.numberOfScans/*360*/;k++)
-            {
-                int dist=copyOfLaserData.Data[k].scanDistance/20; ///vzdialenost nahodne predelena 20 aby to nejako vyzeralo v okne.. zmen podla uvazenia
-                int xp=rect.width()-(rect.width()/2+dist*2*sin((360.0-copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().x(); //prepocet do obrazovky
-                int yp=rect.height()-(rect.height()/2+dist*2*cos((360.0-copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().y();//prepocet do obrazovky
-                if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
-                    painter.drawEllipse(QPoint(xp, yp),2,2);
-            }
-        }
-    }
+    // ui->frame->printStuff();
+
+    // if(useCamera1==true && actIndex>-1)/// ak zobrazujem data z kamery a aspon niektory frame vo vectore je naplneny
+    // {
+    //     std::cout<<actIndex<<std::endl;
+    //     QImage image = QImage((uchar*)frame[actIndex].data, frame[actIndex].cols, frame[actIndex].rows, frame[actIndex].step, QImage::Format_RGB888  );//kopirovanie cvmat do qimage
+    //     painter.drawImage(rect,image.rgbSwapped());
+    // }
+    // else
+    // {
+    //     if(updateLaserPicture==1) ///ak mam nove data z lidaru
+    //     {
+    //         updateLaserPicture=0;
+
+    //         painter.setPen(pero);
+    //         //teraz tu kreslime random udaje... vykreslite to co treba... t.j. data z lidaru
+    //      //   std::cout<<copyOfLaserData.numberOfScans<<std::endl;
+    //         for(int k=0;k<copyOfLaserData.numberOfScans/*360*/;k++)
+    //         {
+    //             int dist=copyOfLaserData.Data[k].scanDistance/20; ///vzdialenost nahodne predelena 20 aby to nejako vyzeralo v okne.. zmen podla uvazenia
+    //             int xp=rect.width()-(rect.width()/2+dist*2*sin((360.0-copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().x(); //prepocet do obrazovky
+    //             int yp=rect.height()-(rect.height()/2+dist*2*cos((360.0-copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().y();//prepocet do obrazovky
+    //             if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
+    //                 painter.drawEllipse(QPoint(xp, yp),2,2);
+    //         }
+    //     }
+    // }
 }
 
 
@@ -402,7 +425,12 @@ void MainWindow::on_pushButton_estop_released() {
 
 void MainWindow::on_pushButton_up_pressed()
 {
-    ui->pushButton_up->setIcon(purple_up_pressed);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_up->setIcon(purple_up_pressed);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_up->setIcon(red_up_pressed);
+    }
     robot.setTranslationSpeed(500);
 }
 
@@ -411,70 +439,141 @@ void MainWindow::on_pushButton_up_pressed()
 
 void MainWindow::on_pushButton_up_released()
 {
-    ui->pushButton_up->setIcon(purple_up);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_up->setIcon(purple_up);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_up->setIcon(red_up);
+    }
 }
 
 
 void MainWindow::on_pushButton_right_pressed()
 {
-    ui->pushButton_right->setIcon(purple_right_pressed);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_right->setIcon(purple_right_pressed);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_right->setIcon(red_right_pressed);
+    }
     robot.setRotationSpeed(-3.14159/2);
 }
 
 
 void MainWindow::on_pushButton_right_released()
 {
-    ui->pushButton_right->setIcon(purple_right);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_right->setIcon(purple_right);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_right->setIcon(red_right);
+    }
 }
 
 
 void MainWindow::on_pushButton_left_pressed()
 {
-    ui->pushButton_left->setIcon(purple_left_pressed);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_left->setIcon(purple_left_pressed);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_left->setIcon(red_left_pressed);
+    }
     robot.setRotationSpeed(3.14159/2);
 }
 
 
 void MainWindow::on_pushButton_left_released()
 {
-    ui->pushButton_left->setIcon(purple_left);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_left->setIcon(purple_left);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_left->setIcon(red_left);
+    }
 }
 
 
 void MainWindow::on_pushButton_down_pressed()
 {
-    ui->pushButton_down->setIcon(purple_down_pressed);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_down->setIcon(purple_down_pressed);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_down->setIcon(red_down_pressed);
+    }
     robot.setTranslationSpeed(-250);
 }
 
 
 void MainWindow::on_pushButton_down_released()
 {
-    ui->pushButton_down->setIcon(purple_down);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_down->setIcon(purple_down);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_down->setIcon(red_down);
+    }
 }
 
 
 void MainWindow::on_pushButton_circle_pressed()
 {
-    ui->pushButton_circle->setIcon(purple_circle_pressed);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_circle->setIcon(purple_circle_pressed);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_circle->setIcon(red_circle_pressed);
+    }
     robot.setTranslationSpeed(0);     //TODO: when clicked?
 }
 
 
 void MainWindow::on_pushButton_circle_released()
 {
-    ui->pushButton_circle->setIcon(purple_circle);
+    if (theme == "Hello Kitty"){
+        ui->pushButton_circle->setIcon(purple_circle);
+    }
+    else if (theme == "Dark Souls") {
+        ui->pushButton_circle->setIcon(red_circle);
+    }
 }
 
 
 void MainWindow::on_actionHello_Kitty_triggered()
 {
-    ui->centralWidget->setStyleSheet("background-color:rgba(255,0,0,25)"); //pink colour
+    if (theme != "Hello Kitty") {
+        setTheme("Hello Kitty");
+        theme = "Hello Kitty";
+    }
 }
 
 
 void MainWindow::on_actionDark_Souls_triggered()
 {
-    ui->centralWidget->setStyleSheet("background-color:rgba(25,0,0,100)"); //dark colour
+    if (theme != "Dark Souls") {
+        setTheme("Dark Souls");
+        theme = "Dark Souls";
+    }
 }
+
+void MainWindow::setTheme(std::string theme) {
+    if (theme == "Hello Kitty") {
+        ui->centralWidget->setStyleSheet("background-color:rgba(245, 168, 213,255)"); //hello kitty
+        ui->pushButton_up->setIcon(purple_up);
+        ui->pushButton_right->setIcon(purple_right);
+        ui->pushButton_down->setIcon(purple_down);
+        ui->pushButton_left->setIcon(purple_left);
+        ui->pushButton_circle->setIcon(purple_circle);
+    }
+    else if (theme == "Dark Souls") {
+        ui->centralWidget->setStyleSheet("background-color:rgba(20, 0, 3,255)"); //dark souls
+        ui->pushButton_up->setIcon(red_up);
+        ui->pushButton_right->setIcon(red_right);
+        ui->pushButton_down->setIcon(red_down);
+        ui->pushButton_left->setIcon(red_left);
+        ui->pushButton_circle->setIcon(red_circle);
+    }
+}
+
 
