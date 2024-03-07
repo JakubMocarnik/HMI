@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
   //  timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(getNewFrame()));
     actIndex=-1;
-    useCamera1=false;
+    useCamera1=true;
     first_run = true;
     robotX = 0;
     robotY = 0;
@@ -43,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent) :
     prev_left = 0;
     prev_right = 0;
     datacounter=0;
+
+    connected=false;
+
     estop_pixmap.load(":/resources/img/estop.png");
     estop_pixmap_clicked.load(":/resources/img/estop_clicked.png");
     estop_pixmap_pressed.load(":/resources/img/estop_pressed.png");
@@ -69,7 +72,8 @@ MainWindow::MainWindow(QWidget *parent) :
     red_circle.load(":/resources/img/red_circle.png");
     red_circle_pressed.load(":/resources/img/red_circle_pressed.png");
 
-
+    red_square.load(":/resources/img/red_square.png");
+    green_circle.load(":/resources/img/green_circle.png");
 
 
     ui->pushButton_estop->setIcon(estop_pixmap);
@@ -79,7 +83,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_left->setIcon(purple_left);
     ui->pushButton_circle->setIcon(purple_circle);
 
+    ui->label_led->setPixmap(red_square);
+
     ui->centralWidget->setStyleSheet("background-color:rgba(245, 168, 213,255)"); //pink colour
+
+    ui->menuBar->setStyleSheet("QMenuBar{background-color:rgba(245, 168, 213,255); font-weight: bold; color:#d1007a ;};"
+                               "QMenuBar::item{background-color:transparent;};"
+                               "QMenuBar::item:selected{background-color:transparent;};"
+                               "QMenuBar::item:pressed{background-color:transparent;};");
+
+    ui->menuStyle->setStyleSheet("QMenu{background-color:#d1007a};"
+                                 "QMenu::item{background-color:#d1007a};"
+                                 "QMenu::item:selected{background-color:#d1007a}"); //TODO: find out how to change color with hover.... literally spent hours ....
+
+    ui->statusBar->setStyleSheet("background-color:rgba(245, 168, 213,255)");
 
     ui->frame->setMainWindow(this);
 
@@ -98,7 +115,16 @@ MainWindow::MainWindow(QWidget *parent) :
     circle_size.setHeight(50);
     circle_size.setWidth(50);
 
+    QSize led_size;
+    led_size.setHeight(22);
+    led_size.setWidth(22);
 
+    ui->label_led->setStyleSheet("background-color:transparent");
+
+    red_square = red_square.scaled(led_size,Qt::KeepAspectRatio);
+    green_circle = green_circle.scaled(led_size,Qt::KeepAspectRatio);
+
+    ui->label_led->setPixmap(red_square);
 
     ui->pushButton_estop->setIconSize(estop_size);
     ui->pushButton_estop->setFixedSize(estop_size);
@@ -125,7 +151,28 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_circle->setStyleSheet("background-color:transparent");
     ui->gridLayout_4->setAlignment(ui->pushButton_circle,Qt::AlignCenter);
 
+    ui->lineEdit_ip->setText(QString::fromStdString(ipaddress));
+    ui->lineEdit_ip->setStyleSheet("QLineEdit {"
+                           "    qproperty-alignment: AlignCenter;"
+                           "    background-color: white;"
+                           "}");
 
+    ui->pushButton_mode->setStyleSheet("background-color: #d1007a;"
+                                       "font-weight: bold;"
+                                       "color: white");
+    ui->pushButton_connect->setStyleSheet("background-color: #d1007a;"
+                                          "font-weight: bold;"
+                                          "color: white");
+
+    ui->label_ip->setStyleSheet("font-weight: bold;"
+                                "color: #d1007a");
+
+
+    ui->label_warning->setStyleSheet("font-weight: bold;"
+                                     "font-size:20px;"
+                                "color: red");
+
+    //TODO: ZVACSI FONT / DAJ HO NAD to
 
     //TODO: get rid of or set color to MainToolbar
     estop = false;
@@ -339,56 +386,49 @@ void MainWindow::on_pushButton_mode_clicked() //forward
 
 void MainWindow::on_pushButton_connect_clicked()
 {
-    //ziskanie joystickov
-    instance = QJoysticks::getInstance();
-    forwardspeed=0;
-    rotationspeed=0;
-    //tu sa nastartuju vlakna ktore citaju data z lidaru a robota
-    connect(this,SIGNAL(uiValuesChanged(double,double,double)),this,SLOT(setUiValues(double,double,double)));
 
-    ///setovanie veci na komunikaciu s robotom/lidarom/kamerou.. su tam adresa porty a callback.. laser ma ze sa da dat callback aj ako lambda.
-    /// lambdy su super, setria miesto a ak su rozumnej dlzky,tak aj prehladnost... ak ste o nich nic nepoculi poradte sa s vasim doktorom alebo lekarnikom...
-    robot.setLaserParameters(ipaddress,52999,5299,/*[](LaserMeasurement dat)->int{std::cout<<"som z lambdy callback"<<std::endl;return 0;}*/std::bind(&MainWindow::processThisLidar,this,std::placeholders::_1));
-    robot.setRobotParameters(ipaddress,53000,5300,std::bind(&MainWindow::processThisRobot,this,std::placeholders::_1));
-    //---simulator ma port 8889, realny robot 8000
-    robot.setCameraParameters("http://"+ipaddress+":8889/stream.mjpg",std::bind(&MainWindow::processThisCamera,this,std::placeholders::_1));
+    if (!connected){
+        //ziskanie joystickov
+        instance = QJoysticks::getInstance();
+        forwardspeed=0;
+        rotationspeed=0;
+        //tu sa nastartuju vlakna ktore citaju data z lidaru a robota
+        // connect(this,SIGNAL(uiValuesChanged(double,double,double)),this,SLOT(setUiValues(double,double,double)));
 
-    ///ked je vsetko nasetovane tak to tento prikaz spusti (ak nieco nieje setnute,tak to normalne nenastavi.cize ak napr nechcete kameru,vklude vsetky info o nej vymazte)
-    robot.robotStart();
+        ///setovanie veci na komunikaciu s robotom/lidarom/kamerou.. su tam adresa porty a callback.. laser ma ze sa da dat callback aj ako lambda.
+        /// lambdy su super, setria miesto a ak su rozumnej dlzky,tak aj prehladnost... ak ste o nich nic nepoculi poradte sa s vasim doktorom alebo lekarnikom...
+        robot.setLaserParameters(ipaddress,52999,5299,/*[](LaserMeasurement dat)->int{std::cout<<"som z lambdy callback"<<std::endl;return 0;}*/std::bind(&MainWindow::processThisLidar,this,std::placeholders::_1));
+        robot.setRobotParameters(ipaddress,53000,5300,std::bind(&MainWindow::processThisRobot,this,std::placeholders::_1));
+        //---simulator ma port 8889, realny robot 8000 //TODO: ak to neni localhost dat port 8000
+        robot.setCameraParameters("http://"+ipaddress+":8889/stream.mjpg",std::bind(&MainWindow::processThisCamera,this,std::placeholders::_1));
 
-
-
-
+        ///ked je vsetko nasetovane tak to tento prikaz spusti (ak nieco nieje setnute,tak to normalne nenastavi.cize ak napr nechcete kameru,vklude vsetky info o nej vymazte)
+        robot.robotStart();
 
 
-    /// prepojenie joysticku s jeho callbackom... zas cez lambdu. neviem ci som to niekde spominal,ale lambdy su super. okrem toho mam este rad ternarne operatory a spolocneske hry ale to tiez nikoho nezaujima
-    /// co vas vlastne zaujima? citanie komentov asi nie, inak by ste citali toto a ze tu je blbosti
-    connect(
-        instance, &QJoysticks::axisChanged,
-        [this]( const int js, const int axis, const qreal value) { if(/*js==0 &&*/ axis==1){forwardspeed=-value*300;}
-            if(/*js==0 &&*/ axis==0){rotationspeed=-value*(3.14159/2.0);}}
-        );
 
+
+
+
+        /// prepojenie joysticku s jeho callbackom... zas cez lambdu. neviem ci som to niekde spominal,ale lambdy su super. okrem toho mam este rad ternarne operatory a spolocneske hry ale to tiez nikoho nezaujima
+        /// co vas vlastne zaujima? citanie komentov asi nie, inak by ste citali toto a ze tu je blbosti
+        // connect(
+        //     instance, &QJoysticks::axisChanged,
+        //     [this]( const int js, const int axis, const qreal value) { if(/*js==0 &&*/ axis==1){forwardspeed=-value*300;}
+        //         if(/*js==0 &&*/ axis==0){rotationspeed=-value*(3.14159/2.0);}}
+        //     );
+        connected = true;
+        ui->label_led->setPixmap(green_circle);
+        ui->pushButton_connect->setText("DISCONNECT");
+    }
+    else {
+        robot.robotStop();
+        connected = false;
+        ui->label_led->setPixmap(red_square);
+        ui->pushButton_connect->setText("CONNECT");
+        update();
+    }
 }
-
-void MainWindow::on_pushButton_up_clicked() //left
-{
-// robot.setRotationSpeed(3.14159/2);
-
-}
-
-void MainWindow::on_pushButton_5_clicked()//right
-{
-// robot.setRotationSpeed(-3.14159/2);
-
-}
-
-void MainWindow::on_pushButton_down_clicked() //stop
-{
-    // robot.setTranslationSpeed(0);
-}
-
-
 
 
 void MainWindow::on_pushButton_estop_clicked()
@@ -396,9 +436,12 @@ void MainWindow::on_pushButton_estop_clicked()
     estop = !estop;
     if (estop) {
         ui->pushButton_estop->setIcon(estop_pixmap_clicked);
+        robot.setTranslationSpeed(0);
+        ui->label_warning->setText("ESTOP ACTIVATED");
     }
     else {
         ui->pushButton_estop->setIcon(estop_pixmap);
+        ui->label_warning->setText("");
     }
     //TODO: logic
 }
@@ -420,7 +463,6 @@ void MainWindow::on_pushButton_estop_released() {
     else {
         ui->pushButton_estop->setIcon(estop_pixmap);
     }
-    //TODO: this is ugly (redrawing twice)
 }
 
 void MainWindow::on_pushButton_up_pressed()
@@ -431,7 +473,9 @@ void MainWindow::on_pushButton_up_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_up->setIcon(red_up_pressed);
     }
-    robot.setTranslationSpeed(500);
+    if(!estop){
+        robot.setTranslationSpeed(500);
+    }
 }
 
 
@@ -456,7 +500,9 @@ void MainWindow::on_pushButton_right_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_right->setIcon(red_right_pressed);
     }
-    robot.setRotationSpeed(-3.14159/2);
+    if(!estop){
+        robot.setRotationSpeed(-3.14159/2);
+    }
 }
 
 
@@ -479,7 +525,9 @@ void MainWindow::on_pushButton_left_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_left->setIcon(red_left_pressed);
     }
-    robot.setRotationSpeed(3.14159/2);
+    if(!estop){
+        robot.setRotationSpeed(3.14159/2);
+    }
 }
 
 
@@ -502,7 +550,9 @@ void MainWindow::on_pushButton_down_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_down->setIcon(red_down_pressed);
     }
-    robot.setTranslationSpeed(-250);
+    if(!estop){
+        robot.setTranslationSpeed(-250);
+    }
 }
 
 
@@ -525,7 +575,9 @@ void MainWindow::on_pushButton_circle_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_circle->setIcon(red_circle_pressed);
     }
-    robot.setTranslationSpeed(0);     //TODO: when clicked?
+    if (!estop){
+        robot.setTranslationSpeed(0);     //TODO: when clicked?
+    }
 }
 
 
@@ -560,6 +612,27 @@ void MainWindow::on_actionDark_Souls_triggered()
 void MainWindow::setTheme(std::string theme) {
     if (theme == "Hello Kitty") {
         ui->centralWidget->setStyleSheet("background-color:rgba(245, 168, 213,255)"); //hello kitty
+        ui->menuBar->setStyleSheet("QMenuBar{background-color:rgba(245, 168, 213,255) ;font-weight: bold; color:#d1007a ;};"
+                                   "QMenuBar::item{background-color:transparent};"
+                                   "QMenuBar::item:selected{background-color:transparent;};"
+                                   "QMenuBar::item:pressed{background-color:transparent;}");
+
+        ui->menuStyle->setStyleSheet("QMenu{background-color:#d1007a};"
+                                     "QMenu::item{background-color:#d1007a};"
+                                     "QMenu::item:selected{background-color:#d1007a}");
+
+        ui->statusBar->setStyleSheet("background-color:rgba(245, 168, 213,255)");
+
+        ui->pushButton_mode->setStyleSheet("background-color: #d1007a;"
+                                           "font-weight: bold;"
+                                           "color: white");
+        ui->pushButton_connect->setStyleSheet("background-color: #d1007a;"
+                                              "font-weight: bold;"
+                                              "color: white");
+
+        ui->label_ip->setStyleSheet("font-weight: bold;"
+                                    "color: #d1007a");
+
         ui->pushButton_up->setIcon(purple_up);
         ui->pushButton_right->setIcon(purple_right);
         ui->pushButton_down->setIcon(purple_down);
@@ -568,6 +641,27 @@ void MainWindow::setTheme(std::string theme) {
     }
     else if (theme == "Dark Souls") {
         ui->centralWidget->setStyleSheet("background-color:rgba(20, 0, 3,255)"); //dark souls
+        ui->menuBar->setStyleSheet("QMenuBar{background-color:rgba(20, 0, 3,255); font-weight: bold; color:#770000};"
+                                   "QMenuBar::item{background-color:transparent;};"
+                                   "QMenuBar::item:selected{background-color:transparent;};"
+                                   "QMenuBar::item:pressed{background-color:transparent;}");
+
+        ui->menuStyle->setStyleSheet("QMenu{background-color:#770000};"
+                                     "QMenu::item{background-color:#770000};"
+                                     "QMenu::item:selected{background-color:#770000}");
+
+        ui->statusBar->setStyleSheet("background-color:rgba(20, 0, 3,255)");
+
+        ui->pushButton_mode->setStyleSheet("background-color: #770000;"
+                                           "font-weight: bold;"
+                                           "color: white");
+        ui->pushButton_connect->setStyleSheet("background-color: #770000;"
+                                              "font-weight: bold;"
+                                              "color: white");
+
+        ui->label_ip->setStyleSheet("font-weight: bold;"
+                                    "color: #770000");
+
         ui->pushButton_up->setIcon(red_up);
         ui->pushButton_right->setIcon(red_right);
         ui->pushButton_down->setIcon(red_down);
@@ -576,4 +670,10 @@ void MainWindow::setTheme(std::string theme) {
     }
 }
 
+
+
+void MainWindow::on_lineEdit_ip_textEdited(const QString &arg1)
+{
+    ipaddress = arg1.toStdString();
+}
 

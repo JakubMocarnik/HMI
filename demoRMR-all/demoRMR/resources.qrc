@@ -23,5 +23,7 @@
         <file>img/red_right_pressed.png</file>
         <file>img/red_up.png</file>
         <file>img/red_up_pressed.png</file>
+        <file>img/green_circle.png</file>
+        <file>img/red_square.png</file>
     </qresource>
 </RCC>

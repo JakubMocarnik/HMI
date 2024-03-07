@@ -41,6 +41,7 @@ public:
 
 
     void robotStart();
+    void robotStop();
     void setLaserParameters(std::string ipaddress,int laserportRobot, int laserportMe,std::function<int(LaserMeasurement)> callback )
     {
         laser_ip_portOut=laserportRobot;
@@ -87,6 +88,7 @@ private:
     int laser_ip_portIn;
     std::thread laserthreadHandle;
     std::function<int(LaserMeasurement)> laser_callback=nullptr;
+    bool stopThreads=false;
 
     //veci pre podvozok
     CKobuki robot;

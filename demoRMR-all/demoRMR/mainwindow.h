@@ -64,12 +64,6 @@ private slots:
 
     void on_pushButton_connect_clicked();
 
-    void on_pushButton_up_clicked();
-
-    void on_pushButton_5_clicked();
-
-    void on_pushButton_down_clicked();
-
     void on_pushButton_estop_clicked();
     void getNewFrame();
 
@@ -101,6 +95,8 @@ private slots:
     void on_actionHello_Kitty_triggered();
 
     void on_actionDark_Souls_triggered();
+
+    void on_lineEdit_ip_textEdited(const QString &arg1);
 
 private:
 
@@ -144,6 +140,9 @@ private:
      QPixmap red_circle;
      QPixmap red_circle_pressed;
 
+     QPixmap red_square;
+     QPixmap green_circle;
+
 
 
      double forwardspeed;//mm/s
@@ -170,6 +169,7 @@ private:
     double prev_fi;
 
     bool estop;
+    bool connected;
 
     std::string theme;
 

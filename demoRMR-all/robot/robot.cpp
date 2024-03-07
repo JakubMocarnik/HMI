@@ -88,7 +88,7 @@ void Robot::robotprocess()
 
     }
     unsigned char buff[50000];
-    while(1)
+    while(!stopThreads)
     {
 
         if(readyFuture.wait_for(std::chrono::seconds(0))==std::future_status::ready)
@@ -203,7 +203,7 @@ void Robot::laserprocess()
 
     }
     LaserMeasurement measure;
-    while(1)
+    while(!stopThreads)
     {
 
         if(readyFuture.wait_for(std::chrono::seconds(0))==std::future_status::ready)
@@ -244,13 +244,23 @@ void Robot::robotStart()
 
 }
 
+void Robot::robotStop(){
+    stopThreads = true;
+
+    robotthreadHandle.join();
+    camerathreadhandle.join();
+    laserthreadHandle.join();
+
+    stopThreads = false;
+}
+
 
 void Robot::imageViewer()
 {
     cv::VideoCapture cap;
     cap.open(camera_link);
     cv::Mat frameBuf;
-    while(1)
+    while(!stopThreads)
     {
 
         if(readyFuture.wait_for(std::chrono::seconds(0))==std::future_status::ready)
