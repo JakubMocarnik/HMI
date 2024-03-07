@@ -30,7 +30,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     pero.setColor(Qt::green);//farba je zelena
     QRect rect;
     rect= this->geometry();//ziskate porametre stvorca,do ktoreho chcete kreslit
-    rect.translate(-10,-10);
+    rect.translate(5,10);
     painter.drawRect(rect);
 
     if (main_window->connected){
