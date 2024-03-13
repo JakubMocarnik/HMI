@@ -45,6 +45,8 @@ public:
     int actIndex;
     //    cv::Mat frame[3];
 
+    bool backupAssistant;
+
     cv::Mat frame[3];
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
