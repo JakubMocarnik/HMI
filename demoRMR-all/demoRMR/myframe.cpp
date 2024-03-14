@@ -122,100 +122,80 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
                     {
                         if(dist <= 40){
-                            //painter.setPen(warning);
                             QPainter painter(this);
                             painter.setBrush(Qt::red);
                             painter.drawRect(topRect);
-
-
                         }
                         else if(dist >40 && dist < 60){
-                            // painter.setPen(sharpie);
-                            // QRect rectWarning(x, y, 20, 20);
-                            // painter.drawRect(rectWarning);
-                            //painter.drawImage(QRect(x,y,35,35),warning);
                             QPainter painter(this);
                             painter.setBrush(Qt::yellow);
-                            painter.drawRect(leftRect);
+                            painter.drawRect(topRect);
+                        }
+                        else if(dist > 60){
+                            QPainter painter(this);
+                            painter.setBrush(Qt::green);
+                            painter.drawRect(topRect);
                         }
 
                     }
-
-                    if(uhol < 135 || uhol > 45){
-
-                        if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
-                        {
-                            if(dist <= 40){
-                                //painter.setPen(warning);
-                                QPainter painter(this);
-                                painter.setBrush(Qt::red);
-                                painter.drawRect(leftRect);
-
-
-                            }
-                            else if(dist >40 && dist < 60){
-                                // painter.setPen(sharpie);
-                                // QRect rectWarning(x, y, 20, 20);
-                                // painter.drawRect(rectWarning);
-                                //painter.drawImage(QRect(x,y,35,35),warning);
-                                QPainter painter(this);
-                                painter.setBrush(Qt::yellow);
-                                painter.drawRect(leftRect);
-                            }
-
-                        }
-                        if(uhol < 225 || uhol > 135){
-
-                            if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
-                            {
-                                if(dist <= 40){
-                                    //painter.setPen(warning);
-                                    QPainter painter(this);
-                                    painter.setBrush(Qt::red);
-                                    painter.drawRect(bottomRect);
-
-
-                                }
-                                else if(dist >40 && dist < 60){
-                                    // painter.setPen(sharpie);
-                                    // QRect rectWarning(x, y, 20, 20);
-                                    // painter.drawRect(rectWarning);
-                                    //painter.drawImage(QRect(x,y,35,35),warning);,
-                                    QPainter painter(this);
-                                    painter.setBrush(Qt::yellow);
-                                    painter.drawRect(bottomRect);
-                                }
-
-                            }
-                        }
-
-                        if(uhol < 315 || uhol > 225){
-
-                            if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
-                            {
-                                if(dist <= 40){
-                                    //painter.setPen(warning);
-                                    QPainter painter(this);
-                                    painter.setBrush(Qt::red);
-                                    painter.drawRect(rightRect);
-
-
-                                }
-                                else if(dist >40 && dist < 60){
-                                    // painter.setPen(sharpie);
-                                    // QRect rectWarning(x, y, 20, 20);
-                                    // painter.drawRect(rectWarning);
-                                    //painter.drawImage(QRect(x,y,35,35),warning);
-                                    QPainter painter(this);
-                                    painter.setBrush(Qt::yellow);
-                                    painter.drawRect(rightRect);
-                                }
-
-                            }
-                        }
-
-
                 }
+
+                if(uhol < 135 && uhol > 45){
+
+                    if(dist <= 40){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::red);
+                        painter.drawRect(leftRect);
+                    }
+                    else if(dist >40 && dist < 60){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::yellow);
+                        painter.drawRect(leftRect);
+                    }
+                    else if(dist > 60){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::green);
+                        painter.drawRect(leftRect);
+                    }
+                }
+
+                if(uhol < 225 && uhol > 135){
+                    if(dist <= 40){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::red);
+                        painter.drawRect(bottomRect);
+                    }
+                    else if(dist >40 && dist < 60){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::yellow);
+                        painter.drawRect(bottomRect);
+                    }
+                    else if(dist > 60){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::green);
+                        painter.drawRect(bottomRect);
+                    }
+                }
+
+
+                if(uhol < 315 && uhol > 225){
+                    if(dist <= 40){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::red);
+                        painter.drawRect(rightRect);
+                    }
+                    else if(dist >40 && dist < 60){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::yellow);
+                        painter.drawRect(rightRect);
+                    }
+                    else if(dist > 60){
+                        QPainter painter(this);
+                        painter.setBrush(Qt::green);
+                        painter.drawRect(rightRect);
+                    }
+                }
+
                 else if(uhol >45 && uhol < 145){
                     if(dist < 20){
                         //main_window->pushButton_12->setStyleSheet("background-color:red");
@@ -309,7 +289,5 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
 
             }
-        }
-
 
 }
