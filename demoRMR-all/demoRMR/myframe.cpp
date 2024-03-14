@@ -24,22 +24,45 @@ void MyFrame::printStuff() {
 void MyFrame::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setBrush(Qt::black);//cierna farba pozadia(pouziva sa ako fill pre napriklad funkciu drawRect)
+
+    //pen pre Lidar pohlad
     QPen pero;
     pero.setStyle(Qt::SolidLine);//styl pera - plna ciara
     pero.setWidth(3);//hrubka pera -3pixely
     pero.setColor(Qt::green);//farba je zelena
+    //pen pre warningy
+    QPen warning;
+    pero.setStyle(Qt::SolidLine);//styl pera - plna ciara
+    //pero.setWidth(3);//hrubka pera -3pixely
+    pero.setColor(Qt::red);//farba je zelena
+
+    //rectangle pre frame vykreslovania v MainWindow
     QRect rect;
     rect= this->geometry();//ziskate porametre stvorca,do ktoreho chcete kreslit
     rect.translate(5,10);
     painter.drawRect(rect);
-    QRect upRect;
-    QRect downRect;
+
+    //rectangles pre jednotlive varovania
+    QRect topRect;
+    topRect.setX(rect.x());
+    topRect.setY(rect.y());
+    topRect.setWidth(rect.width());
+    topRect.setHeight(rect.height()/20);
+    QRect bottomRect;
+    bottomRect.setX(rect.x());
+    bottomRect.setY(rect.y());
+    bottomRect.setWidth(rect.width());
+    bottomRect.setHeight(rect.height()/20);
     QRect leftRect;
+    leftRect.setX(rect.x());
+    leftRect.setY(rect.y());
+    leftRect.setWidth(rect.width()/20);
+    leftRect.setHeight(rect.height());
     QRect rightRect;
-    upRect.setX(rect.x());
-    upRect.setY(rect.y());
-    upRect.setWidth(rect.width());
-    upRect.setHeight(rect.height()/20);
+    rightRect.setX(rect.x());
+    rightRect.setY(rect.y());
+    rightRect.setWidth(rect.width()/20);
+    rightRect.setHeight(rect.height());
 
 
     if (main_window->connected){
@@ -89,10 +112,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
                     {
                         if(dist <= 40){
-                            // painter.setPen(pencil);
-                            // QRect rectDanger(x, y, 20, 20);
-                            // painter.drawRect(rectDanger);
-                            painter.drawImage(QRect(x,y,62,62),danger);
+                            painter.setPen(pencil);
 
                         }
                         else if(dist >40 && dist < 60){
