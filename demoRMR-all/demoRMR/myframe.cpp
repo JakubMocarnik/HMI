@@ -31,10 +31,11 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     pero.setWidth(3);//hrubka pera -3pixely
     pero.setColor(Qt::green);//farba je zelena
     //pen pre warningy
-    QPen warning;
-    pero.setStyle(Qt::SolidLine);//styl pera - plna ciara
+    // QPainter warning;
+    // warning.setBrush(Qt::red);//cierna farba pozadia(pouziva sa ako fill pre napriklad funkciu drawRect)
+    //pero.setStyle(Qt::SolidLine);//styl pera - plna ciara
     //pero.setWidth(3);//hrubka pera -3pixely
-    pero.setColor(Qt::red);//farba je zelena
+    //pero.setColor(Qt::red);//farba je zelena
 
     //rectangle pre frame vykreslovania v MainWindow
     QRect rect;
@@ -42,27 +43,36 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     rect.translate(5,10);
     painter.drawRect(rect);
 
+
     //rectangles pre jednotlive varovania
+    int rectThickness = rect.height()/20;
     QRect topRect;
     topRect.setX(rect.x());
     topRect.setY(rect.y());
     topRect.setWidth(rect.width());
-    topRect.setHeight(rect.height()/20);
+    topRect.setHeight(rectThickness);
     QRect bottomRect;
     bottomRect.setX(rect.x());
-    bottomRect.setY(rect.y());
+    bottomRect.setY(rect.height() - rectThickness);
     bottomRect.setWidth(rect.width());
-    bottomRect.setHeight(rect.height()/20);
+    bottomRect.setHeight(rectThickness);
     QRect leftRect;
     leftRect.setX(rect.x());
-    leftRect.setY(rect.y());
-    leftRect.setWidth(rect.width()/20);
-    leftRect.setHeight(rect.height());
+    leftRect.setY(rectThickness);
+    leftRect.setWidth(rectThickness);
+    leftRect.setHeight(rect.height() - 2*rectThickness);
     QRect rightRect;
-    rightRect.setX(rect.x());
-    rightRect.setY(rect.y());
-    rightRect.setWidth(rect.width()/20);
-    rightRect.setHeight(rect.height());
+    rightRect.setX(rect.width() - rectThickness);
+    rightRect.setY(rectThickness);
+    rightRect.setWidth(rectThickness);
+    rightRect.setHeight(rect.height() - 2*rectThickness);
+
+    // QRect topRect(0, 0, frameWidth, stripeThickness); // Top side
+    // QRect bottomRect(0, frameHeight - stripeThickness, frameWidth, stripeThickness); // Bottom side
+    // QRect leftRect(0, stripeThickness, stripeThickness, frameHeight - 2 * stripeThickness); // Left side
+    // QRect rightRect(frameWidth - stripeThickness, stripeThickness, stripeThickness, frameHeight - 2 * stripeThickness); // Right side
+
+
 
 
     if (main_window->connected){
@@ -77,17 +87,17 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 {
                     main_window->updateLaserPicture=0;
 
-                    painter.setPen(pero);
+                    //painter.setPen(pero);
                     //teraz tu kreslime random udaje... vykreslite to co treba... t.j. data z lidaru
                     //   std::cout<<copyOfLaserData.numberOfScans<<std::endl;
-                    for(int k=0;k<main_window->copyOfLaserData.numberOfScans/*360*/;k++)
-                    {
-                        int dist=main_window->copyOfLaserData.Data[k].scanDistance/20; ///vzdialenost nahodne predelena 20 aby to nejako vyzeralo v okne.. zmen podla uvazenia
-                        int xp=rect.width()-(rect.width()/2+dist*2*sin((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().x(); //prepocet do obrazovky
-                        int yp=rect.height()-(rect.height()/2+dist*2*cos((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().y();//prepocet do obrazovky
-                        if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
-                            painter.drawEllipse(QPoint(xp, yp),2,2);
-                    }
+                    // for(int k=0;k<main_window->copyOfLaserData.numberOfScans/*360*/;k++)
+                    // {
+                    //     int dist=main_window->copyOfLaserData.Data[k].scanDistance/20; ///vzdialenost nahodne predelena 20 aby to nejako vyzeralo v okne.. zmen podla uvazenia
+                    //     int xp=rect.width()-(rect.width()/2+dist*2*sin((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().x(); //prepocet do obrazovky
+                    //     int yp=rect.height()-(rect.height()/2+dist*2*cos((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().y();//prepocet do obrazovky
+                    //     if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
+                    //         painter.drawEllipse(QPoint(xp, yp),2,2);
+                    // }
                 }
             }
 
@@ -112,29 +122,109 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
                     {
                         if(dist <= 40){
-                            painter.setPen(pencil);
+                            //painter.setPen(warning);
+                            QPainter painter(this);
+                            painter.setBrush(Qt::red);
+                            painter.drawRect(topRect);
+
 
                         }
                         else if(dist >40 && dist < 60){
                             // painter.setPen(sharpie);
                             // QRect rectWarning(x, y, 20, 20);
                             // painter.drawRect(rectWarning);
-                            painter.drawImage(QRect(x,y,35,35),warning);
+                            //painter.drawImage(QRect(x,y,35,35),warning);
+                            QPainter painter(this);
+                            painter.setBrush(Qt::yellow);
+                            painter.drawRect(leftRect);
                         }
 
                     }
 
-                    //lavy
+                    if(uhol < 135 || uhol > 45){
+
+                        if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
+                        {
+                            if(dist <= 40){
+                                //painter.setPen(warning);
+                                QPainter painter(this);
+                                painter.setBrush(Qt::red);
+                                painter.drawRect(leftRect);
+
+
+                            }
+                            else if(dist >40 && dist < 60){
+                                // painter.setPen(sharpie);
+                                // QRect rectWarning(x, y, 20, 20);
+                                // painter.drawRect(rectWarning);
+                                //painter.drawImage(QRect(x,y,35,35),warning);
+                                QPainter painter(this);
+                                painter.setBrush(Qt::yellow);
+                                painter.drawRect(leftRect);
+                            }
+
+                        }
+                        if(uhol < 225 || uhol > 135){
+
+                            if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
+                            {
+                                if(dist <= 40){
+                                    //painter.setPen(warning);
+                                    QPainter painter(this);
+                                    painter.setBrush(Qt::red);
+                                    painter.drawRect(bottomRect);
+
+
+                                }
+                                else if(dist >40 && dist < 60){
+                                    // painter.setPen(sharpie);
+                                    // QRect rectWarning(x, y, 20, 20);
+                                    // painter.drawRect(rectWarning);
+                                    //painter.drawImage(QRect(x,y,35,35),warning);,
+                                    QPainter painter(this);
+                                    painter.setBrush(Qt::yellow);
+                                    painter.drawRect(bottomRect);
+                                }
+
+                            }
+                        }
+
+                        if(uhol < 315 || uhol > 225){
+
+                            if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
+                            {
+                                if(dist <= 40){
+                                    //painter.setPen(warning);
+                                    QPainter painter(this);
+                                    painter.setBrush(Qt::red);
+                                    painter.drawRect(rightRect);
+
+
+                                }
+                                else if(dist >40 && dist < 60){
+                                    // painter.setPen(sharpie);
+                                    // QRect rectWarning(x, y, 20, 20);
+                                    // painter.drawRect(rectWarning);
+                                    //painter.drawImage(QRect(x,y,35,35),warning);
+                                    QPainter painter(this);
+                                    painter.setBrush(Qt::yellow);
+                                    painter.drawRect(rightRect);
+                                }
+
+                            }
+                        }
+
+
                 }
                 else if(uhol >45 && uhol < 145){
                     if(dist < 20){
-                        main_window->pushButton_12->setStyleSheet("background-color:red");
+                        //main_window->pushButton_12->setStyleSheet("background-color:red");
                     }
                     else if(dist >20 && dist < 40){
-                        main_window->pushButton_12->setStyleSheet("background-color:orange");
+                       // main_window->pushButton_12->setStyleSheet("background-color:orange");
                     }
                     else{
-                        main_window->pushButton_12->setStyleSheet("background-color:white");
+                        //main_window->pushButton_12->setStyleSheet("background-color:white");
 
                     }
 
@@ -142,13 +232,13 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 //stred
                 else if(uhol >145 && uhol < 215){
                     if(dist < 20){
-                        main_window->->pushButton_7->setStyleSheet("background-color:red");
+                        //main_window->->pushButton_7->setStyleSheet("background-color:red");
                     }
                     else if(dist >20 && dist < 40){
-                        main_window->pushButton_7->setStyleSheet("background-color:orange");
+                       //main_window->pushButton_7->setStyleSheet("background-color:orange");
                     }
                     else{
-                        main_window->pushButton_7->setStyleSheet("background-color:white");
+                        //main_window->pushButton_7->setStyleSheet("background-color:white");
 
                     }
 
@@ -156,13 +246,13 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 //pravy
                 else if(uhol >215 && uhol < 315){
                     if(dist < 20){
-                        main_window->pushButton_11->setStyleSheet("background-color:red");
+                        //main_window->pushButton_11->setStyleSheet("background-color:red");
                     }
                     else if(dist >20 && dist < 40){
-                        main_window->pushButton_11->setStyleSheet("background-color:orange");
+                        //main_window->pushButton_11->setStyleSheet("background-color:orange");
                     }
                     else{
-                        main_window->pushButton_11->setStyleSheet("background-color:white");
+                        //main_window->pushButton_11->setStyleSheet("background-color:white");
 
                     }
 
@@ -172,6 +262,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             }
 
+            }
         }
         else
         {
@@ -190,7 +281,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     int yp=rect.height()-(rect.height()/2+dist*2*cos((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().y();//prepocet do obrazovky
                     double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
 
-                    if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
+                   /* if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
                     {
 
                         if(dist > 60){
@@ -208,7 +299,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                         else{
                             painter.setPen(pencil);
                             painter.drawEllipse(QPoint(xp, yp),2,2);
-                        }
+                        }*/
 
 
                     }
@@ -220,5 +311,5 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             }
         }
 
-    }
+
 }
