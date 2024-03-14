@@ -43,6 +43,8 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     rect.translate(5,10);
     painter.drawRect(rect);
 
+    QImage firstWarning(":/resources/img/black_warning.png");
+
 
     //rectangles pre jednotlive varovania
     // int rectThickness = rect.height()/20;
@@ -161,6 +163,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                             painter.drawPolygon(topPolygon);
                         }
                         else if(dist > 60){
+                            painter.drawImage(QRect(x,y,50,50),firstWarning);
                             QPainter painter(this);
                             painter.setBrush(Qt::green);
                             //painter.drawRect(topRect);
