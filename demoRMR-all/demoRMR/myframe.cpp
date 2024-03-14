@@ -45,33 +45,60 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
 
     //rectangles pre jednotlive varovania
+    // int rectThickness = rect.height()/20;
+    // QRect topRect;
+    // topRect.setX(rect.x());
+    // topRect.setY(rect.y());
+    // topRect.setWidth(rect.width());
+    // topRect.setHeight(rectThickness);
+    // QRect bottomRect;
+    // bottomRect.setX(rect.x());
+    // bottomRect.setY(rect.height() - rectThickness);
+    // bottomRect.setWidth(rect.width());
+    // bottomRect.setHeight(rectThickness);
+    // QRect leftRect;
+    // leftRect.setX(rect.x());
+    // leftRect.setY(rectThickness);
+    // leftRect.setWidth(rectThickness);
+    // leftRect.setHeight(rect.height() - 2*rectThickness);
+    // QRect rightRect;
+    // rightRect.setX(rect.width() - rectThickness);
+    // rightRect.setY(rectThickness);
+    // rightRect.setWidth(rectThickness);
+    // rightRect.setHeight(rect.height() - 2*rectThickness);
+
+    // Define rectangles for each side
     int rectThickness = rect.height()/20;
-    QRect topRect;
-    topRect.setX(rect.x());
-    topRect.setY(rect.y());
-    topRect.setWidth(rect.width());
-    topRect.setHeight(rectThickness);
-    QRect bottomRect;
-    bottomRect.setX(rect.x());
-    bottomRect.setY(rect.height() - rectThickness);
-    bottomRect.setWidth(rect.width());
-    bottomRect.setHeight(rectThickness);
-    QRect leftRect;
-    leftRect.setX(rect.x());
-    leftRect.setY(rectThickness);
-    leftRect.setWidth(rectThickness);
-    leftRect.setHeight(rect.height() - 2*rectThickness);
-    QRect rightRect;
-    rightRect.setX(rect.width() - rectThickness);
-    rightRect.setY(rectThickness);
-    rightRect.setWidth(rectThickness);
-    rightRect.setHeight(rect.height() - 2*rectThickness);
 
-    // QRect topRect(0, 0, frameWidth, stripeThickness); // Top side
-    // QRect bottomRect(0, frameHeight - stripeThickness, frameWidth, stripeThickness); // Bottom side
-    // QRect leftRect(0, stripeThickness, stripeThickness, frameHeight - 2 * stripeThickness); // Left side
-    // QRect rightRect(frameWidth - stripeThickness, stripeThickness, stripeThickness, frameHeight - 2 * stripeThickness); // Right side
+    QRect topRect(rect.x(), rect.y(), rect.width(), rectThickness);
+    QRect bottomRect(rect.x(), rect.height() - rectThickness, rect.width(), rectThickness);
+    QRect leftRect(rect.x(), rectThickness, rectThickness, rect.height() - 2 * rectThickness);
+    QRect rightRect(rect.width() - rectThickness, rectThickness, rectThickness, rect.height() - 2 * rectThickness);
 
+    // Define polygons for each side
+    QPolygon topPolygon;
+    topPolygon << rect.topLeft()
+               << rect.topRight()
+               << QPoint(rect.right() - rectThickness, rect.top() + rectThickness)
+               << QPoint(rect.left() + rectThickness, rect.top() + rectThickness);
+
+    QPolygon bottomPolygon;
+    bottomPolygon << QPoint(rect.left() + rectThickness, rect.bottom() - rectThickness)
+                  << QPoint(rect.right() - rectThickness, rect.bottom() - rectThickness)
+                  << rect.bottomRight()
+                  << rect.bottomLeft();
+
+    QPolygon leftPolygon;
+    leftPolygon << QPoint(rect.left() + rectThickness, rect.top() + rectThickness)
+                << rect.topLeft()
+                << rect.bottomLeft()
+                << QPoint(rect.left() + rectThickness, rect.bottom() - rectThickness);
+
+    QPolygon rightPolygon;
+    rightPolygon << QPoint(rect.right() - rectThickness, rect.top() + rectThickness)
+                 << rect.topRight()
+                 << rect.bottomRight()
+                 << QPoint(rect.right() - rectThickness, rect.bottom() - rectThickness);
 
 
 
@@ -124,17 +151,20 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                         if(dist <= 40){
                             QPainter painter(this);
                             painter.setBrush(Qt::red);
-                            painter.drawRect(topRect);
+                            //painter.drawRect(topRect);
+                            painter.drawPolygon(topPolygon);
                         }
                         else if(dist >40 && dist < 60){
                             QPainter painter(this);
                             painter.setBrush(Qt::yellow);
-                            painter.drawRect(topRect);
+                            //painter.drawRect(topRect);
+                            painter.drawPolygon(topPolygon);
                         }
                         else if(dist > 60){
                             QPainter painter(this);
                             painter.setBrush(Qt::green);
-                            painter.drawRect(topRect);
+                            //painter.drawRect(topRect);
+                            painter.drawPolygon(topPolygon);
                         }
 
                     }
@@ -145,17 +175,23 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     if(dist <= 40){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
-                        painter.drawRect(leftRect);
+                        //painter.drawRect(leftRect);
+                        painter.drawPolygon(leftPolygon);
+
                     }
                     else if(dist >40 && dist < 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
-                        painter.drawRect(leftRect);
+                        //painter.drawRect(leftRect);
+                        painter.drawPolygon(leftPolygon);
+
                     }
                     else if(dist > 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::green);
-                        painter.drawRect(leftRect);
+                        //painter.drawRect(leftRect);
+                        painter.drawPolygon(leftPolygon);
+
                     }
                 }
 
@@ -163,17 +199,21 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     if(dist <= 40){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
-                        painter.drawRect(bottomRect);
+                        //painter.drawRect(bottomRect);
+                        painter.drawPolygon(bottomPolygon);
+
                     }
                     else if(dist >40 && dist < 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
-                        painter.drawRect(bottomRect);
+                        //painter.drawRect(bottomRect);
+                        painter.drawPolygon(bottomPolygon);
                     }
                     else if(dist > 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::green);
-                        painter.drawRect(bottomRect);
+                        //painter.drawRect(bottomRect);
+                        painter.drawPolygon(bottomPolygon);
                     }
                 }
 
@@ -182,17 +222,20 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     if(dist <= 40){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
-                        painter.drawRect(rightRect);
+                        //painter.drawRect(rightRect);
+                        painter.drawPolygon(rightPolygon);
                     }
                     else if(dist >40 && dist < 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
-                        painter.drawRect(rightRect);
+                        //painter.drawRect(rightRect);
+                        painter.drawPolygon(rightPolygon);
                     }
                     else if(dist > 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::green);
-                        painter.drawRect(rightRect);
+                        //painter.drawRect(rightRect);
+                        painter.drawPolygon(rightPolygon);
                     }
                 }
 
