@@ -56,6 +56,8 @@ public:
     friend class MyFrame;
 
 int processThisCamera(cv::Mat cameraData);
+int processThisSkeleton(skeleton skeledata);
+
 
 private slots:
     void on_pushButton_left_clicked();
@@ -101,6 +103,7 @@ private slots:
 private:
 
     double calculateEncoderDelta(int prev, int actual);
+    bool MainWindow::isFingerUp(float down, float mid_down, float mid_up, float up);
     //--skuste tu nic nevymazat... pridavajte co chcete, ale pri odoberani by sa mohol stat nejaky drobny problem, co bude vyhadzovat chyby
     Ui::MainWindow *ui;
      void paintEvent(QPaintEvent *event);// Q_DECL_OVERRIDE;
@@ -109,9 +112,12 @@ private:
      std::string ipaddress;
      Robot robot;
      TKobukiData robotdata;
+     int updateSkeletonPicture;
+     skeleton skeleJoints;
      int datacounter;
      QTimer *timer;
      void setTheme(std::string theme);
+     bool backupAssistant = false;
 
      QJoysticks *instance;
 
@@ -170,6 +176,9 @@ private:
 
     bool estop;
     bool connected;
+    bool gestures;
+
+    bool skeleton_rotation;
 
     std::string theme;
 

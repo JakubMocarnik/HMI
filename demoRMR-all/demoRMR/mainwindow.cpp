@@ -45,6 +45,9 @@ MainWindow::MainWindow(QWidget *parent) :
     datacounter=0;
 
     connected=false;
+    gestures=false;
+
+    skeleton_rotation = false;
 
     estop_pixmap.load(":/resources/img/estop.png");
     estop_pixmap_clicked.load(":/resources/img/estop_clicked.png");
@@ -184,49 +187,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
-{
-    // QPainter painter(this);
-
-    // ///prekreslujem obrazovku len vtedy, ked viem ze mam nove data. paintevent sa
-    // /// moze pochopitelne zavolat aj z inych dovodov, napriklad zmena velkosti okna
-    // painter.setBrush(Qt::black);//cierna farba pozadia(pouziva sa ako fill pre napriklad funkciu drawRect)
-    // QPen pero;
-    // pero.setStyle(Qt::SolidLine);//styl pera - plna ciara
-    // pero.setWidth(3);//hrubka pera -3pixely
-    // pero.setColor(Qt::green);//farba je zelena
-    // QRect rect;
-    // rect= ui->frame->geometry();//ziskate porametre stvorca,do ktoreho chcete kreslit
-    // rect.translate(0,15);
-    // painter.drawRect(rect);
-
-    // ui->frame->printStuff();
-
-    // if(useCamera1==true && actIndex>-1)/// ak zobrazujem data z kamery a aspon niektory frame vo vectore je naplneny
-    // {
-    //     std::cout<<actIndex<<std::endl;
-    //     QImage image = QImage((uchar*)frame[actIndex].data, frame[actIndex].cols, frame[actIndex].rows, frame[actIndex].step, QImage::Format_RGB888  );//kopirovanie cvmat do qimage
-    //     painter.drawImage(rect,image.rgbSwapped());
-    // }
-    // else
-    // {
-    //     if(updateLaserPicture==1) ///ak mam nove data z lidaru
-    //     {
-    //         updateLaserPicture=0;
-
-    //         painter.setPen(pero);
-    //         //teraz tu kreslime random udaje... vykreslite to co treba... t.j. data z lidaru
-    //      //   std::cout<<copyOfLaserData.numberOfScans<<std::endl;
-    //         for(int k=0;k<copyOfLaserData.numberOfScans/*360*/;k++)
-    //         {
-    //             int dist=copyOfLaserData.Data[k].scanDistance/20; ///vzdialenost nahodne predelena 20 aby to nejako vyzeralo v okne.. zmen podla uvazenia
-    //             int xp=rect.width()-(rect.width()/2+dist*2*sin((360.0-copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().x(); //prepocet do obrazovky
-    //             int yp=rect.height()-(rect.height()/2+dist*2*cos((360.0-copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().y();//prepocet do obrazovky
-    //             if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
-    //                 painter.drawEllipse(QPoint(xp, yp),2,2);
-    //         }
-    //     }
-    // }
-}
+{}
 
 
 /// toto je slot. niekde v kode existuje signal, ktory je prepojeny. pouziva sa napriklad (v tomto pripade) ak chcete dostat data z jedneho vlakna (robot) do ineho (ui)
@@ -366,22 +327,92 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 /// vola sa ked dojdu nove data z kamery
 int MainWindow::processThisCamera(cv::Mat cameraData)
 {
-
     cameraData.copyTo(frame[(actIndex+1)%3]);//kopirujem do nasej strukury
     actIndex=(actIndex+1)%3;//aktualizujem kde je nova fotka
     updateLaserPicture=1;
+    update();
     return 0;
 }
+
+bool MainWindow::isFingerUp(float down, float mid_down, float mid_up, float up){
+    return (down > mid_down && mid_down > mid_up && mid_up > up);
+}
+
+///toto je calback na data zo skeleton trackera, ktory ste podhodili robotu vo funkcii on_pushButton_9_clicked
+/// vola sa ked dojdu nove data z trackera
+int MainWindow::processThisSkeleton(skeleton skeledata)
+{
+
+    memcpy(&skeleJoints,&skeledata,sizeof(skeleton));
+    updateSkeletonPicture=1;
+    if (gestures && !estop ){
+        bool left_index_finger = isFingerUp(skeleJoints.joints[left_index_cmc].y,skeleJoints.joints[left_index_mcp].y,skeleJoints.joints[left_index_ip].y,skeleJoints.joints[left_index_tip].y);
+        bool left_middle_finger = isFingerUp(skeleJoints.joints[left_middle_cmc].y,skeleJoints.joints[left_middle_mcp].y,skeleJoints.joints[left_middle_ip].y,skeleJoints.joints[left_middle_tip].y);
+        bool left_ring_finger = isFingerUp(skeleJoints.joints[left_ring_cmc].y,skeleJoints.joints[left_ring_mcp].y,skeleJoints.joints[left_ring_ip].y,skeleJoints.joints[left_ringy_tip].y);
+        bool left_pinky_finger = isFingerUp(skeleJoints.joints[left_pinky_cmc].y,skeleJoints.joints[left_pink_mcp].y,skeleJoints.joints[left_pink_ip].y,skeleJoints.joints[left_pink_tip].y);
+        bool left_thumb_finger = isFingerUp(skeleJoints.joints[left_thumb_cmc].x,skeleJoints.joints[left_thumb_mcp].x,skeleJoints.joints[left_thumb_ip].x,skeleJoints.joints[left_thumb_tip].x);
+        bool left_hand = left_index_finger && left_middle_finger && left_ring_finger && left_pinky_finger && left_thumb_finger;
+
+        float right_hand_y = skeleJoints.joints[right_wrist].y;
+
+        if (left_hand) {
+            if (right_hand_y!=0.0){
+                if (skeleton_rotation){
+                    robot.setRotationSpeed((0.5-right_hand_y) * PI/2);
+                }
+                else {
+                    robot.setTranslationSpeed((0.5-right_hand_y)*200*2);
+                }
+            }
+        }
+        else if(left_thumb_finger && !left_pinky_finger && !left_index_finger && !left_middle_finger && !left_ring_finger) {
+            robot.setRotationSpeed(-PI/4);
+            skeleton_rotation = true;
+        }
+        else if(left_pinky_finger && !left_thumb_finger && !left_index_finger && !left_middle_finger && !left_ring_finger) {
+            robot.setRotationSpeed(PI/4);
+            skeleton_rotation = true;
+        }
+        else if(left_index_finger && left_middle_finger && !left_ring_finger && !left_pinky_finger && !left_thumb_finger) {
+            robot.setTranslationSpeed(-200);
+            skeleton_rotation = false;
+        }
+        else if(left_index_finger && !left_middle_finger && !left_ring_finger && !left_pinky_finger && !left_thumb_finger) {
+            robot.setTranslationSpeed(200);
+            skeleton_rotation = false;
+        }
+        else if (!left_index_finger && !left_middle_finger && !left_ring_finger && !left_pinky_finger && !left_thumb_finger) {
+            if (skeleton_rotation){
+                robot.setRotationSpeed(0);
+            }
+            else {
+                robot.setTranslationSpeed(0);
+            }
+        }
+    }
+
+    return 0;
+}
+
 void MainWindow::on_pushButton_left_clicked()
 {
 
 }
 
-void MainWindow::on_pushButton_mode_clicked() //forward
+void MainWindow::on_pushButton_mode_clicked() //gestures and normal mode
 {
-    //pohyb dopredu
-    // robot.setTranslationSpeed(500);
+    //TODO: zapnut/vypnut thread tu?
 
+    if(!gestures){
+        ui->pushButton_mode->setText("NORMAL");
+        gestures = true;
+        skeleton_rotation = false;
+    }
+    else {
+        ui->pushButton_mode->setText("GESTURES");
+        robot.setTranslationSpeed(0); //TODO ??
+        gestures = false;
+    }
 }
 
 void MainWindow::on_pushButton_connect_clicked()
@@ -399,9 +430,18 @@ void MainWindow::on_pushButton_connect_clicked()
         /// lambdy su super, setria miesto a ak su rozumnej dlzky,tak aj prehladnost... ak ste o nich nic nepoculi poradte sa s vasim doktorom alebo lekarnikom...
         robot.setLaserParameters(ipaddress,52999,5299,/*[](LaserMeasurement dat)->int{std::cout<<"som z lambdy callback"<<std::endl;return 0;}*/std::bind(&MainWindow::processThisLidar,this,std::placeholders::_1));
         robot.setRobotParameters(ipaddress,53000,5300,std::bind(&MainWindow::processThisRobot,this,std::placeholders::_1));
+        int port;
+        if (ipaddress=="127.0.0.1"){
+            port = 8889;
+        }
+        else {
+            port = 8000;
+        }
+        std::cout<< "ipadd " << ipaddress << std::endl;
+        std::cout<< "port " << port << std::endl;
         //---simulator ma port 8889, realny robot 8000 //TODO: ak to neni localhost dat port 8000
-        robot.setCameraParameters("http://"+ipaddress+":8889/stream.mjpg",std::bind(&MainWindow::processThisCamera,this,std::placeholders::_1));
-
+        robot.setCameraParameters("http://"+ipaddress+":"+std::to_string(port)+"/stream.mjpg",std::bind(&MainWindow::processThisCamera,this,std::placeholders::_1));
+        robot.setSkeletonParameters("127.0.0.1",23432,23432,std::bind(&MainWindow::processThisSkeleton,this,std::placeholders::_1));
         ///ked je vsetko nasetovane tak to tento prikaz spusti (ak nieco nieje setnute,tak to normalne nenastavi.cize ak napr nechcete kameru,vklude vsetky info o nej vymazte)
         robot.robotStart();
 
@@ -473,8 +513,8 @@ void MainWindow::on_pushButton_up_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_up->setIcon(red_up_pressed);
     }
-    if(!estop){
-        robot.setTranslationSpeed(500);
+    if(!estop && !gestures && connected){
+        robot.setTranslationSpeed(250);
     }
 }
 
@@ -500,7 +540,7 @@ void MainWindow::on_pushButton_right_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_right->setIcon(red_right_pressed);
     }
-    if(!estop){
+    if(!estop && !gestures && connected){
         robot.setRotationSpeed(-3.14159/2);
     }
 }
@@ -525,7 +565,7 @@ void MainWindow::on_pushButton_left_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_left->setIcon(red_left_pressed);
     }
-    if(!estop){
+    if(!estop && !gestures && connected){
         robot.setRotationSpeed(3.14159/2);
     }
 }
@@ -550,7 +590,7 @@ void MainWindow::on_pushButton_down_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_down->setIcon(red_down_pressed);
     }
-    if(!estop){
+    if(!estop && !gestures && connected){
         robot.setTranslationSpeed(-250);
     }
 }
@@ -575,7 +615,7 @@ void MainWindow::on_pushButton_circle_pressed()
     else if (theme == "Dark Souls") {
         ui->pushButton_circle->setIcon(red_circle_pressed);
     }
-    if (!estop){
+    if (!estop && !gestures && connected){
         robot.setTranslationSpeed(0);     //TODO: when clicked?
     }
 }
