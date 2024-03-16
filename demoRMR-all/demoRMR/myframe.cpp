@@ -2,6 +2,7 @@
 #include "myframe.h"
 #include <QPainter>
 #include "mainwindow.h"
+#include <QtMath>
 
 MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     // Additional setup if needed
@@ -43,8 +44,9 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     rect.translate(5,10);
     painter.drawRect(rect);
 
-    QImage firstWarning(":/resources/img/black_warning.png");
-
+    first_warning.load(":/resources/img/transparent_warning");
+    second_warning.load(":/resources/img/yellow_warning");
+    third_warning.load(":/resources/img/red_warning");
 
     //rectangles pre jednotlive varovania
     // int rectThickness = rect.height()/20;
@@ -138,36 +140,54 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 int dist=main_window->copyOfLaserData.Data[k].scanDistance/20;
                 double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
 
+                // Convert the angle to radians
+                double angleRad = qDegreesToRadians(uhol);
+
+                // Calculate the x and y coordinates based on distance and angle
+                int xp = static_cast<int>(dist * qCos(angleRad)); // x coordinate
+                int yp = static_cast<int>(dist * qSin(angleRad)); // y coordinate
+
+                // Calculate the position of the image based on the LIDAR data coordinates and frame dimensions
+                int x = rect.center().x() + xp; // x position relative to the frame center
+                int y = rect.center().y() + yp; // y position relative to the frame center
+
+                // Ensure that the image stays within the bounds of the frame
+                x = qBound(rect.left(), x, rect.right() - 240);
+                y = qBound(rect.top(), y, rect.bottom() - 240);
                 // 25 305
                 if(uhol < 45 || uhol >315 ){
 
                     double bx = dist*cos(uhol*3.14159/180.0);
                     double by = dist*sin(uhol*3.14159/180.0);
 
-                    int x = rect.width()/2  - ( (681.743*by) / (bx-14.5) );
-                    int y = rect.height()/2 + ( (681.743*(-21+11.5)) / (bx-14.5)  )/10;
+                    //int x = rect.width()/2  - ( (681.743*by) / (bx-14.5) );
+                    //int y = rect.height()/2 + ( (681.743*(-21+11.5)) / (bx-14.5)  )/10;
                     //painter.drawEllipse(QPoint(x, y),2,2);
+
 
                     if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
                     {
-                        if(dist <= 40){
+                        if(dist < 30){
                             QPainter painter(this);
                             painter.setBrush(Qt::red);
                             //painter.drawRect(topRect);
                             painter.drawPolygon(topPolygon);
+                            painter.drawPixmap(QRect(x,y,240,240),third_warning);
                         }
-                        else if(dist >40 && dist < 60){
+                        else if(dist >30 && dist < 60){
                             QPainter painter(this);
                             painter.setBrush(Qt::yellow);
                             //painter.drawRect(topRect);
                             painter.drawPolygon(topPolygon);
+                            painter.drawPixmap(QRect(x,y,240,240),second_warning);
                         }
                         else if(dist > 60){
-                            painter.drawImage(QRect(x,y,50,50),firstWarning);
+                            //painter.drawImage(QRect(x,y,50,50),first_warning);
                             QPainter painter(this);
                             painter.setBrush(Qt::green);
                             //painter.drawRect(topRect);
                             painter.drawPolygon(topPolygon);
+                            //painter.drawPixmap(QRect(x,y,240,240),first_warning);
                         }
 
                     }
@@ -175,14 +195,14 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
                 if(uhol < 135 && uhol > 45){
 
-                    if(dist <= 40){
+                    if(dist < 30){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
                         //painter.drawRect(leftRect);
                         painter.drawPolygon(leftPolygon);
 
                     }
-                    else if(dist >40 && dist < 60){
+                    else if(dist >30 && dist < 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
                         //painter.drawRect(leftRect);
@@ -199,14 +219,14 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 }
 
                 if(uhol < 225 && uhol > 135){
-                    if(dist <= 40){
+                    if(dist < 30){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
                         //painter.drawRect(bottomRect);
                         painter.drawPolygon(bottomPolygon);
 
                     }
-                    else if(dist >40 && dist < 60){
+                    else if(dist >30 && dist < 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
                         //painter.drawRect(bottomRect);
@@ -222,13 +242,13 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
 
                 if(uhol < 315 && uhol > 225){
-                    if(dist <= 40){
+                    if(dist < 30){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
                         //painter.drawRect(rightRect);
                         painter.drawPolygon(rightPolygon);
                     }
-                    else if(dist >40 && dist < 60){
+                    else if(dist >30 && dist < 60){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
                         //painter.drawRect(rightRect);

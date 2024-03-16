@@ -25,5 +25,9 @@
         <file>img/red_up_pressed.png</file>
         <file>img/green_circle.png</file>
         <file>img/red_square.png</file>
+        <file>img/black_warning.png</file>
+        <file>img/red_warning.png</file>
+        <file>img/transparent_warning.png</file>
+        <file>img/yellow_warning.png</file>
     </qresource>
 </RCC>

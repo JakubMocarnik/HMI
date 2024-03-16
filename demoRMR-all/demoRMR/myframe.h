@@ -22,6 +22,9 @@ public:
 private:
     MainWindow *main_window;
 
+    QPixmap first_warning;
+    QPixmap second_warning;
+    QPixmap third_warning;
 protected:
     void paintEvent(QPaintEvent *event) override;
 };

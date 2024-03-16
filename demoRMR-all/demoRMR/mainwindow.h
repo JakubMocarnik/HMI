@@ -144,7 +144,6 @@ private:
      QPixmap green_circle;
 
 
-
      double forwardspeed;//mm/s
      double rotationspeed;//omega/s
 
