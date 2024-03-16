@@ -467,6 +467,7 @@ void MainWindow::on_pushButton_estop_released() {
 
 void MainWindow::on_pushButton_up_pressed()
 {
+    backup_assistant = false;
     if (theme == "Hello Kitty"){
         ui->pushButton_up->setIcon(purple_up_pressed);
     }
@@ -544,7 +545,7 @@ void MainWindow::on_pushButton_left_released()
 
 void MainWindow::on_pushButton_down_pressed()
 {
-    backupAssistant = true;
+    backup_assistant = true;
     if (theme == "Hello Kitty"){
         ui->pushButton_down->setIcon(purple_down_pressed);
     }
