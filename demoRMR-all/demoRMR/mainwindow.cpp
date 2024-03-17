@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
   //  timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(getNewFrame()));
     actIndex=-1;
-    useCamera1=true;
+    useCamera1= true;
     first_run = true;
     robotX = 0;
     robotY = 0;
@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     datacounter=0;
 
     connected=false;
-
+    backup_assistant = false;
     estop_pixmap.load(":/resources/img/estop.png");
     estop_pixmap_clicked.load(":/resources/img/estop_clicked.png");
     estop_pixmap_pressed.load(":/resources/img/estop_pressed.png");
