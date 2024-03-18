@@ -236,19 +236,40 @@ void Robot::skeletonprocess()
 #else
 #endif
     ske_slen = sizeof(ske_si_other);
+
+    if (ske_s != -1) {
+        ::closesocket(ske_s);
+    }
+
     if ((ske_s=::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
-
+        std::cerr << "Failed to create socket" << std::endl;
+        return;
     }
 
     char ske_broadcastene=1;
 #ifdef _WIN32
     DWORD timeout=100;
 
-    std::cout<<::setsockopt(ske_s, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof timeout)<<std::endl;
-    std::cout<<::setsockopt(ske_s,SOL_SOCKET,SO_BROADCAST,&ske_broadcastene,sizeof(ske_broadcastene))<<std::endl;
+    if (::setsockopt(ske_s, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof timeout) == -1) {
+        // Handle error in setting socket options
+        std::cerr << "Failed to set socket options" << std::endl;
+        ::closesocket(ske_s);
+        return;
+    }
+    if (::setsockopt(ske_s, SOL_SOCKET, SO_BROADCAST, &ske_broadcastene, sizeof(ske_broadcastene)) == -1) {
+        // Handle error in setting socket options
+        std::cerr << "Failed to set socket options" << std::endl;
+        ::closesocket(ske_s);
+        return;
+    }
 #else
-    ::setsockopt(ske_s,SOL_SOCKET,SO_BROADCAST,&ske_broadcastene,sizeof(ske_broadcastene));
+    if (::setsockopt(ske_s, SOL_SOCKET, SO_BROADCAST, &ske_broadcastene, sizeof(ske_broadcastene)) == -1) {
+        // Handle error in setting socket options
+        std::cerr << "Failed to set socket options" << std::endl;
+        ::close(ske_s);
+        return;
+    }
 #endif
     // zero out the structure
     memset((char *) &ske_si_me, 0, sizeof(ske_si_me));
@@ -260,8 +281,12 @@ void Robot::skeletonprocess()
     ske_si_posli.sin_family = AF_INET;
     ske_si_posli.sin_port = htons(skeleton_ip_portIn);
     ske_si_posli.sin_addr.s_addr = inet_addr(skeleton_ipaddress.data());;//htonl(INADDR_BROADCAST);
-    std::cout<<::bind(ske_s , (struct sockaddr*)&ske_si_me, sizeof(ske_si_me) )<<std::endl;;
-    char command=0x00;
+    if (::bind(ske_s, (struct sockaddr*)&ske_si_me, sizeof(ske_si_me)) == -1) {
+        // Handle error in binding socket
+        std::cerr << "Failed to bind socket" << std::endl;
+        ::closesocket(ske_s);
+        return;
+    }    char command=0x00;
 
     skeleton bbbk;
     double measure[225];
@@ -279,7 +304,7 @@ void Robot::skeletonprocess()
 
         std::async(std::launch::async, [this](skeleton skele) { skeleton_callback(skele); },bbbk);
     }
-    std::cout<<"koniec thread"<<std::endl;
+    std::cout<<"koniec skeleton"<<std::endl;
 }
 
 
