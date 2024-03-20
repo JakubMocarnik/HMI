@@ -109,6 +109,12 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
 
 
+
+
+
+
+
+
     if (main_window->connected){
         if(main_window->useCamera1==true && main_window->actIndex>-1)/// ak zobrazujem data z kamery a aspon niektory frame vo vectore je naplneny
         {
@@ -180,14 +186,14 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                             painter.setBrush(Qt::red);
                             //painter.drawRect(topRect);
                             painter.drawPolygon(topPolygon);
-                            painter.drawPixmap(QRect(x,y,240,240),third_warning);
+                            //painter.drawPixmap(QRect(x,y,240,240),third_warning);
                         }
                         else if(dist >30 && dist < 60){
                             QPainter painter(this);
                             painter.setBrush(Qt::yellow);
                             //painter.drawRect(topRect);
                             painter.drawPolygon(topPolygon);
-                            painter.drawPixmap(QRect(x,y,240,240),second_warning);
+                            //painter.drawPixmap(QRect(x,y,240,240),second_warning);
                         }
                         else if(dist > 60){
                             //painter.drawImage(QRect(x,y,50,50),first_warning);
@@ -388,16 +394,16 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             // painter.drawRect(rect);
 
             // Calculate the size of the backup assistant rectangle (one-third of the width and height of the frame)
-            int assistantWidth = rect.width() / 2;
-            int assistantHeight = rect.height() / 2;
+            int assistantWidth = rect.width() / 3;
+            int assistantHeight = rect.height() / 3;
 
             // Calculate the position of the backup assistant rectangle at the top in the middle of the frame
             int assistantX = rect.center().x() - assistantWidth / 2;
-            int assistantY = rect.top()+50 - assistantHeight /2;
+            int assistantY = rect.top()+50 - assistantHeight / 2;
 
             // Define the backup assistant rectangle
             QRect assistantRect(assistantX, assistantY, assistantWidth, assistantHeight);
-
+            assistantRect.translate(0, rect.top()+50);
             // Draw the backup assistant rectangle
             QPainter painter(this);
             painter.fillRect(assistantRect, Qt::black); // Fill the rectangle with blue color
