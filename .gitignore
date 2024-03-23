@@ -1,2 +1,11 @@
 *.idx
 *Debug
+*release
+*Makefile
+*qmake
+
+demoRMR-all/bin/
+demoRMR-all/.qmake.stash
+demoRMR-all/.qtc_clangd/
+demoRMR-all/demoRMR.pro.user.9efe1cf
+demoRMR-all/demoRMR/ui_mainwindow.h
