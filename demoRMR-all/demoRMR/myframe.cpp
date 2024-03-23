@@ -120,7 +120,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
         {
             QImage image = QImage((uchar*)main_window->frame[main_window->actIndex].data, main_window->frame[main_window->actIndex].cols, main_window->frame[main_window->actIndex].rows, main_window->frame[main_window->actIndex].step, QImage::Format_RGB888  );//kopirovanie cvmat do qimage
             painter.drawImage(rect,image.rgbSwapped());
-<<<<<<< HEAD
+
 
             if(main_window->useCamera1==true && main_window->actIndex>-1)
             {
@@ -358,8 +358,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 painter.drawEllipse(QPoint(xs, ys-12),4,4);
 
             }
-=======
->>>>>>> 3da8aeb166d5e8a219487372762fb185e67d8322
+
         }
 
 }
