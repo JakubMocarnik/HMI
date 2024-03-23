@@ -45,14 +45,11 @@ MainWindow::MainWindow(QWidget *parent) :
     datacounter=0;
 
     connected=false;
-<<<<<<< HEAD
     backup_assistant = false;
-=======
     gestures=false;
 
     skeleton_rotation = false;
 
->>>>>>> 3da8aeb166d5e8a219487372762fb185e67d8322
     estop_pixmap.load(":/resources/img/estop.png");
     estop_pixmap_clicked.load(":/resources/img/estop_clicked.png");
     estop_pixmap_pressed.load(":/resources/img/estop_pressed.png");

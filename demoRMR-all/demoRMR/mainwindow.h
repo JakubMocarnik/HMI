@@ -174,14 +174,13 @@ private:
 
     bool estop;
     bool connected;
-<<<<<<< HEAD
+
     bool backup_assistant;
-=======
+
     bool gestures;
 
     bool skeleton_rotation;
 
->>>>>>> 3da8aeb166d5e8a219487372762fb185e67d8322
     std::string theme;
 
 public slots:
