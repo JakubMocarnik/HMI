@@ -43,7 +43,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     //rectangle pre frame vykreslovania v MainWindow
     QRect rect;
     rect= this->geometry();//ziskate porametre stvorca,do ktoreho chcete kreslit
-    rect.translate(5,10);
+    rect.translate(0,0);
     painter.drawRect(rect);
 
 
@@ -82,29 +82,29 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     // QRect leftRect(rect.x(), rectThickness, rectThickness, rect.height() - 2 * rectThickness);
     // QRect rightRect(rect.width() - rectThickness, rectThickness, rectThickness, rect.height() - 2 * rectThickness);
 
-    // Define polygons for each side
+    //Define polygons for each side
     QPolygon topPolygon;
-    topPolygon << rect.topLeft()
-               << rect.topRight()
+    topPolygon << QPoint(rect.topLeft().x(), rect.topLeft().y())
+               << QPoint(rect.topRight().x(), rect.topRight().y())
                << QPoint(rect.right() - rectThickness, rect.top() + rectThickness)
                << QPoint(rect.left() + rectThickness, rect.top() + rectThickness);
 
     QPolygon bottomPolygon;
     bottomPolygon << QPoint(rect.left() + rectThickness, rect.bottom() - rectThickness)
                   << QPoint(rect.right() - rectThickness, rect.bottom() - rectThickness)
-                  << rect.bottomRight()
-                  << rect.bottomLeft();
+                  << QPoint(rect.bottomRight().x(), rect.bottomRight().y())
+                  << QPoint(rect.bottomLeft().x(), rect.bottomLeft().y());
 
     QPolygon leftPolygon;
     leftPolygon << QPoint(rect.left() + rectThickness, rect.top() + rectThickness)
-                << rect.topLeft()
-                << rect.bottomLeft()
+                << QPoint(rect.topLeft().x(), rect.topLeft().y())
+                << QPoint(rect.bottomLeft().x(), rect.bottomLeft().y())
                 << QPoint(rect.left() + rectThickness, rect.bottom() - rectThickness);
 
     QPolygon rightPolygon;
     rightPolygon << QPoint(rect.right() - rectThickness, rect.top() + rectThickness)
-                 << rect.topRight()
-                 << rect.bottomRight()
+                 << QPoint(rect.topRight().x(), rect.topRight().y())
+                 << QPoint(rect.bottomRight().x(), rect.bottomRight().y())
                  << QPoint(rect.right() - rectThickness, rect.bottom() - rectThickness);
 
 
