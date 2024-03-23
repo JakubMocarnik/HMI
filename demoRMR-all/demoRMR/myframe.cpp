@@ -75,12 +75,12 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     // rightRect.setHeight(rect.height() - 2*rectThickness);
 
     // Define rectangles for each side
-    int rectThickness = rect.height()/20;
+    int rectThickness = (rect.height())/20;
 
-    QRect topRect(rect.x(), rect.y(), rect.width(), rectThickness);
-    QRect bottomRect(rect.x(), rect.height() - rectThickness, rect.width(), rectThickness);
-    QRect leftRect(rect.x(), rectThickness, rectThickness, rect.height() - 2 * rectThickness);
-    QRect rightRect(rect.width() - rectThickness, rectThickness, rectThickness, rect.height() - 2 * rectThickness);
+    // QRect topRect(rect.x(), rect.y(), rect.width(), rectThickness);
+    // QRect bottomRect(rect.x(), rect.height() - rectThickness, rect.width(), rectThickness);
+    // QRect leftRect(rect.x(), rectThickness, rectThickness, rect.height() - 2 * rectThickness);
+    // QRect rightRect(rect.width() - rectThickness, rectThickness, rectThickness, rect.height() - 2 * rectThickness);
 
     // Define polygons for each side
     QPolygon topPolygon;
@@ -283,107 +283,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             }
         }
-            //   // this->setStyleSheet("background-color: rgb(105, 105, 105)");
-            // if(main_window->useCamera1==true && main_window->backup_assistant==true) ///ak mam nove data z lidaru
-            // {
-            //     main_window->updateLaserPicture=0;
 
-            //     //painter.setPen(pero);
-            //     //teraz tu kreslime random udaje... vykreslite to co treba... t.j. data z lidaru
-            //     //   std::cout<<copyOfLaserData.numberOfScans<<std::endl;
-            //     for(int k=0;k<main_window->copyOfLaserData.numberOfScans/*360*/;k++)
-            //     {
-            //         // Calculate the position of the backup assistant rectangle
-            //         int rectX = rect.center().x() - rect.width() / 2; // X coordinate to place the rectangle in the middle
-            //         int rectY = rect.top() + 10; // Y coordinate to place the rectangle at the top
-            //         QPainter painter(this);
-            //         painter.setBrush(Qt::black); // Set the brush color
-            //         // Define the backup assistant rectangle
-            //         QRect backupAssistantRect(rectX, rectY, rect.width(), rect.height());
-
-            //         int dist=main_window->copyOfLaserData.Data[k].scanDistance/20; ///vzdialenost nahodne predelena 20 aby to nejako vyzeralo v okne.. zmen podla uvazenia
-            //         int xp=rect.width()-(rect.width()/2+dist*2*sin((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().x(); //prepocet do obrazovky
-            //         int yp=rect.height()-(rect.height()/2+dist*2*cos((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().y();//prepocet do obrazovky
-            //         double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
-
-            //        if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
-            //         {
-
-            //             if(dist > 60){
-            //                 painter.setPen(pero);
-            //                 painter.drawEllipse(QPoint(xp, yp),2,2);
-            //             }
-            //             else if(dist > 40){
-            //                 painter.setPen(yellow_pen);
-            //                 painter.drawEllipse(QPoint(xp, yp),2,2);
-            //             }
-            //             else if(dist > 20){
-            //                 painter.setPen(red_pen);
-            //                 painter.drawEllipse(QPoint(xp, yp),2,2);
-            //             }
-            //             else{
-            //                 painter.setPen(red_pen);
-            //                 painter.drawEllipse(QPoint(xp, yp),2,2);
-            //             }
-
-
-            //         }
-
-
-            //     }
-
-
-            // }
-
-        // else
-        // {
-        //     // this->setStyleSheet("background-color: rgb(105, 105, 105)");
-        //     if(main_window->updateLaserPicture==1) ///ak mam nove data z lidaru
-        //     {
-        //         main_window->updateLaserPicture=0;
-
-        //         //painter.setPen(pero);
-        //         //teraz tu kreslime random udaje... vykreslite to co treba... t.j. data z lidaru
-        //         //   std::cout<<copyOfLaserData.numberOfScans<<std::endl;
-        //         for(int k=0;k<main_window->copyOfLaserData.numberOfScans/*360*/;k++)
-        //         {
-        //             int dist=main_window->copyOfLaserData.Data[k].scanDistance/20; ///vzdialenost nahodne predelena 20 aby to nejako vyzeralo v okne.. zmen podla uvazenia
-        //             int xp=rect.width()-(rect.width()/2+dist*2*sin((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().x(); //prepocet do obrazovky
-        //             int yp=rect.height()-(rect.height()/2+dist*2*cos((360.0-main_window->copyOfLaserData.Data[k].scanAngle)*3.14159/180.0))+rect.topLeft().y();//prepocet do obrazovky
-        //             double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
-
-        //             if(rect.contains(xp,yp))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
-        //             {
-        //                 if(dist > 60){
-        //                     painter.setPen(pero);
-        //                     painter.drawEllipse(QPoint(xp, yp),2,2);
-        //                 }
-        //                 else if(dist > 40){
-        //                     painter.setPen(yellow_pen);
-        //                     painter.drawEllipse(QPoint(xp, yp),2,2);
-        //                 }
-        //                 else if(dist > 20){
-        //                     painter.setPen(red_pen);
-        //                     painter.drawEllipse(QPoint(xp, yp),2,2);
-        //                 }
-        //                 else{
-        //                     painter.setPen(red_pen);
-        //                     painter.drawEllipse(QPoint(xp, yp),2,2);
-        //                 }
-
-
-        //             }
-        //             int xs=rect.width()-(rect.width()/2+2*sin((360.0)*3.14159/180.0))+rect.topLeft().x();
-        //             int ys=rect.height()-(rect.height()/2+2*cos((360.0)*3.14159/180.0))+rect.topLeft().y();
-        //             painter.drawEllipse(QPoint(xs, ys),20,20);
-        //             painter.drawEllipse(QPoint(xs, ys-12),4,4);
-
-
-        //         }
-
-
-        //     }
-        // }
         if(main_window->backup_assistant==true){
             //main_window->updateLaserPicture=0;
             // QPainter painter(this);
@@ -410,10 +310,11 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Loop through the laser data and draw backup assistant points within the rectangle
             for (int k = 0; k < main_window->copyOfLaserData.numberOfScans; k++) {
-                int dist = main_window->copyOfLaserData.Data[k].scanDistance / 20; // Distance divided by 20 (adjust as needed)
+                int dist = main_window->copyOfLaserData.Data[k].scanDistance / 5; // Distance divided by 20 (adjust as needed)
                 double angle = 360.0 - main_window->copyOfLaserData.Data[k].scanAngle;
                 int xp = rect.width() - (rect.width() / 2 + dist * 2 * sin(angle * M_PI / 180.0)) + rect.topLeft().x();
                 int yp = rect.height() - (rect.height() / 2 + dist * 2 * cos(angle * M_PI / 180.0)) + rect.topLeft().y();
+
 
                 // // Rescale the coordinates to fit within the backup assistant rectangle
                 // int assistantXp = assistantRect.x() + (xp - rect.x()) * assistantRect.width() / rect.width();
@@ -433,15 +334,15 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
                 // Draw the rescaled backup assistant point
                 if (assistantRect.contains(assistantXp, assistantYp)) {
-                    if(dist > 60){
+                    if(dist > 80){
                         painter.setPen(pero);
                         painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
                     }
-                    else if(dist > 40){
+                    else if(dist > 60){
                         painter.setPen(yellow_pen);
                         painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
                     }
-                    else if(dist > 20){
+                    else if(dist > 40){
                         painter.setPen(red_pen);
                         painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
                     }
@@ -452,8 +353,8 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 }
                 int xs=assistantRect.width()-(assistantRect.width()/2+2*sin((360.0)*3.14159/180.0))+assistantRect.topLeft().x();
                 int ys=assistantRect.height()-(assistantRect.height()/2+2*cos((360.0)*3.14159/180.0))+assistantRect.topLeft().y();
-                painter.drawEllipse(QPoint(xs, ys),8,8);
-                painter.drawEllipse(QPoint(xs, ys-3),1,1);
+                painter.drawEllipse(QPoint(xs, ys),20,20);
+                painter.drawEllipse(QPoint(xs, ys-12),4,4);
 
             }
         }
