@@ -116,8 +116,6 @@ private:
      int datacounter;
      QTimer *timer;
      void setTheme(std::string theme);
-     bool backupAssistant = false;
-
      QJoysticks *instance;
 
      QPixmap estop_pixmap;

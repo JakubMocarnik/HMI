@@ -4,6 +4,9 @@
 #include "mainwindow.h"
 #include <QtMath>
 
+#define GREEN_DISTANCE 600
+#define YELLOW_DISTANCE 400
+
 MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     // Additional setup if needed
 }
@@ -145,7 +148,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             for(int k=0; k < main_window->copyOfLaserData.numberOfScans/*360*/;k++)
             {
-                int dist=main_window->copyOfLaserData.Data[k].scanDistance/20;
+                double dist=main_window->copyOfLaserData.Data[k].scanDistance;
                 double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
 
                 // // Convert the angle to radians
@@ -182,21 +185,21 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
                     if(rect.contains(x,y))//ak je bod vo vnutri nasho obdlznika tak iba vtedy budem chciet kreslit
                     {
-                        if(dist < 30){
+                        if(dist < YELLOW_DISTANCE){
                             QPainter painter(this);
                             painter.setBrush(Qt::red);
                             //painter.drawRect(topRect);
                             painter.drawPolygon(topPolygon);
                             //painter.drawPixmap(QRect(x,y,240,240),third_warning);
                         }
-                        else if(dist >30 && dist < 60){
+                        else if(dist < GREEN_DISTANCE){
                             QPainter painter(this);
                             painter.setBrush(Qt::yellow);
                             //painter.drawRect(topRect);
                             painter.drawPolygon(topPolygon);
                             //painter.drawPixmap(QRect(x,y,240,240),second_warning);
                         }
-                        else if(dist > 60){
+                        else{
                             //painter.drawImage(QRect(x,y,50,50),first_warning);
                             QPainter painter(this);
                             painter.setBrush(Qt::green);
@@ -210,21 +213,21 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
                 if(uhol < 135 && uhol > 45){
 
-                    if(dist < 30){
+                    if(dist < YELLOW_DISTANCE){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
                         //painter.drawRect(leftRect);
                         painter.drawPolygon(leftPolygon);
 
                     }
-                    else if(dist >30 && dist < 60){
+                    else if(dist < GREEN_DISTANCE){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
                         //painter.drawRect(leftRect);
                         painter.drawPolygon(leftPolygon);
 
                     }
-                    else if(dist > 60){
+                    else{
                         QPainter painter(this);
                         painter.setBrush(Qt::green);
                         //painter.drawRect(leftRect);
@@ -235,20 +238,20 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
                 if(uhol < 225 && uhol > 135){
 
-                    if(dist < 30){
+                    if(dist < YELLOW_DISTANCE){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
                         //painter.drawRect(bottomRect);
                         painter.drawPolygon(bottomPolygon);
 
                     }
-                    else if(dist >30 && dist < 60){
+                    else if(dist < GREEN_DISTANCE){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
                         //painter.drawRect(bottomRect);
                         painter.drawPolygon(bottomPolygon);
                     }
-                    else if(dist > 60){
+                    else{
                         QPainter painter(this);
                         painter.setBrush(Qt::green);
                         //painter.drawRect(bottomRect);
@@ -260,19 +263,19 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
 
                 if(uhol < 315 && uhol > 225){
-                    if(dist < 30){
+                    if(dist < YELLOW_DISTANCE){
                         QPainter painter(this);
                         painter.setBrush(Qt::red);
                         //painter.drawRect(rightRect);
                         painter.drawPolygon(rightPolygon);
                     }
-                    else if(dist >30 && dist < 60){
+                    else if(dist < GREEN_DISTANCE){
                         QPainter painter(this);
                         painter.setBrush(Qt::yellow);
                         //painter.drawRect(rightRect);
                         painter.drawPolygon(rightPolygon);
                     }
-                    else if(dist > 60){
+                    else{
                         QPainter painter(this);
                         painter.setBrush(Qt::green);
                         //painter.drawRect(rightRect);
@@ -300,21 +303,21 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Calculate the position of the backup assistant rectangle at the top in the middle of the frame
             int assistantX = rect.center().x() - assistantWidth / 2;
-            int assistantY = rect.top()+50 - assistantHeight / 2;
+            int assistantY = rect.top();
 
             // Define the backup assistant rectangle
             QRect assistantRect(assistantX, assistantY, assistantWidth, assistantHeight);
-            assistantRect.translate(0, rect.top()+50);
+            // assistantRect.translate(0, rect.top()+50);
             // Draw the backup assistant rectangle
             QPainter painter(this);
             painter.fillRect(assistantRect, Qt::black); // Fill the rectangle with blue color
 
             // Loop through the laser data and draw backup assistant points within the rectangle
             for (int k = 0; k < main_window->copyOfLaserData.numberOfScans; k++) {
-                int dist = main_window->copyOfLaserData.Data[k].scanDistance / 5; // Distance divided by 20 (adjust as needed)
+                int dist = main_window->copyOfLaserData.Data[k].scanDistance; // Distance divided by 20 (adjust as needed)
                 double angle = 360.0 - main_window->copyOfLaserData.Data[k].scanAngle;
-                int xp = rect.width() - (rect.width() / 2 + dist * 2 * sin(angle * M_PI / 180.0)) + rect.topLeft().x();
-                int yp = rect.height() - (rect.height() / 2 + dist * 2 * cos(angle * M_PI / 180.0)) + rect.topLeft().y();
+                int xp = rect.width() - (rect.width() / 2 + dist/5 * 2 * sin(angle * M_PI / 180.0)) + rect.topLeft().x();
+                int yp = rect.height() - (rect.height() / 2 + dist/5 * 2 * cos(angle * M_PI / 180.0)) + rect.topLeft().y();
 
 
                 // // Rescale the coordinates to fit within the backup assistant rectangle
@@ -335,16 +338,12 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
                 // Draw the rescaled backup assistant point
                 if (assistantRect.contains(assistantXp, assistantYp)) {
-                    if(dist > 80){
+                    if(dist > GREEN_DISTANCE){
                         painter.setPen(pero);
                         painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
                     }
-                    else if(dist > 60){
+                    else if(dist > YELLOW_DISTANCE){
                         painter.setPen(yellow_pen);
-                        painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
-                    }
-                    else if(dist > 40){
-                        painter.setPen(red_pen);
                         painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
                     }
                     else{

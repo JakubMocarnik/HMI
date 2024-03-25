@@ -362,6 +362,12 @@ int MainWindow::processThisSkeleton(skeleton skeledata)
                     robot.setRotationSpeed((0.5-right_hand_y) * PI/2);
                 }
                 else {
+                    if ((0.5-right_hand_y)*200*2 < 0){
+                        backup_assistant = true;
+                    }
+                    else {
+                        backup_assistant = false;
+                    }
                     robot.setTranslationSpeed((0.5-right_hand_y)*200*2);
                 }
             }
@@ -377,10 +383,12 @@ int MainWindow::processThisSkeleton(skeleton skeledata)
         else if(left_index_finger && left_middle_finger && !left_ring_finger && !left_pinky_finger && !left_thumb_finger) {
             robot.setTranslationSpeed(-200);
             skeleton_rotation = false;
+            backup_assistant = true;
         }
         else if(left_index_finger && !left_middle_finger && !left_ring_finger && !left_pinky_finger && !left_thumb_finger) {
             robot.setTranslationSpeed(200);
             skeleton_rotation = false;
+            backup_assistant = false;
         }
         else if (!left_index_finger && !left_middle_finger && !left_ring_finger && !left_pinky_finger && !left_thumb_finger) {
             if (skeleton_rotation){
