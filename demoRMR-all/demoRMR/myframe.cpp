@@ -112,12 +112,6 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
 
 
-
-
-
-
-
-
     if (main_window->connected){
         if(main_window->useCamera1==true && main_window->actIndex>-1)/// ak zobrazujem data z kamery a aspon niektory frame vo vectore je naplneny
         {
@@ -136,27 +130,52 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             double minDownDistance = 100000;
             double minLeftDistance = 100000;
             double minRightDistance = 100000;
+            int obstacleLeftX = 0;
+            int obstacleLeftY = 0;
+            int obstacleForwardX = 0;
+            int obstacleForwardY = 0;
+            int obstacleRightX = 0;
+            int obstacleRightY = 0;
 
             for(int k=0; k < main_window->copyOfLaserData.numberOfScans/*360*/;k++){
                     double dist=main_window->copyOfLaserData.Data[k].scanDistance;
                     double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
+
+
+                    double bx = dist*cos(uhol*3.14159/180.0);
+                    double by = dist*sin(uhol*3.14159/180.0);
+
+                    int x = rect.width() / 2 - (681.743 * by) / (bx - 14.5);
+                    int y = rect.height() / 2 + ((681.743 * (-21 + 11.5)) / (bx - 14.5)) / 10;
+
+                    // Calculate the position of the obstacle relative to the frame's top-left corner
+                    x -= image.width() / 2; // Adjust for the image width
+                    y -= image.height() / 2; // Adjust for the image height
+
+
                     if (dist!=0.0){
                         if(uhol < 45 || uhol >315 ){
                             //top
                             if(dist < minUpDistance){
                                 minUpDistance = dist;
+                                obstacleForwardX = x;
+                                obstacleForwardY = y;
                             }
                         }
                         if(uhol <= 135 && uhol >= 45){
                             //left
                             if(dist < minLeftDistance){
                                 minLeftDistance = dist;
+                                // obstacleLeftX = x;
+                                // obstacleLeftY = y;
                             }
                         }
                         if(uhol < 225 && uhol > 135){
                             //bottom
                             if(dist < minDownDistance){
                                 minDownDistance = dist;
+                                // obstacleRightX = x;
+                                // obstacleRightY = y;
                             }
                         }
                         if(uhol <= 315 && uhol >= 225){
@@ -174,16 +193,28 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 QPainter painter(this);
                 painter.setBrush(Qt::red);
                 painter.drawPolygon(topPolygon);
+                if(rect.contains(QPoint(obstacleForwardX,obstacleForwardY))){
+                    painter.drawPixmap(QRect(obstacleForwardX,obstacleForwardY,240,240),third_warning);
+                    update();
+                }
             }
             else if(minUpDistance < GREEN_DISTANCE){
                 QPainter painter(this);
                 painter.setBrush(Qt::yellow);
                 painter.drawPolygon(topPolygon);
+                if(rect.contains(QPoint(obstacleForwardX,obstacleForwardY))){
+                    painter.drawPixmap(QRect(obstacleForwardX,obstacleForwardY,240,240),second_warning);
+                    update();
+                }
             }
             else{
                 QPainter painter(this);
                 painter.setBrush(Qt::green);
                 painter.drawPolygon(topPolygon);
+                if(rect.contains(QPoint(obstacleForwardX,obstacleForwardY))){
+                    painter.drawPixmap(QRect(obstacleForwardX,obstacleForwardY,240,240),first_warning);
+                    update();
+                }
             }
 
             //left
@@ -192,11 +223,19 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 QPainter painter(this);
                 painter.setBrush(Qt::red);
                 painter.drawPolygon(leftPolygon);
+                // if(rect.contains(QPoint(obstacleLeftX,obstacleLeftY))){
+                //     painter.drawPixmap(QRect(obstacleLeftX,obstacleLeftY,240,240),third_warning);
+                //     update();
+                // }
             }
             else if(minLeftDistance < GREEN_DISTANCE){
                 QPainter painter(this);
                 painter.setBrush(Qt::yellow);
                 painter.drawPolygon(leftPolygon);
+                // if(rect.contains(QPoint(obstacleLeftX,obstacleLeftY))){
+                //     painter.drawPixmap(QRect(obstacleLeftX,obstacleLeftY,240,240),second_warning);
+                //     update();
+                // }
             }
             else{
                 QPainter painter(this);
@@ -228,11 +267,19 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 QPainter painter(this);
                 painter.setBrush(Qt::red);
                 painter.drawPolygon(rightPolygon);
+                // if(rect.contains(QPoint(obstacleRightX,obstacleRightY))){
+                //     painter.drawPixmap(QRect(obstacleRightX,obstacleRightY,240,240),third_warning);
+                //     update();
+                // }
             }
             else if(minRightDistance < GREEN_DISTANCE){
                 QPainter painter(this);
                 painter.setBrush(Qt::yellow);
                 painter.drawPolygon(rightPolygon);
+                // if(rect.contains(QPoint(obstacleRightX,obstacleRightY))){
+                //     painter.drawPixmap(QRect(obstacleRightX,obstacleRightY,240,240),second_warning);
+                //     update();
+                // }
             }
             else{
                 QPainter painter(this);
