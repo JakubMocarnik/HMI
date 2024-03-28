@@ -117,7 +117,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
         {
             QImage image = QImage((uchar*)main_window->frame[main_window->actIndex].data, main_window->frame[main_window->actIndex].cols, main_window->frame[main_window->actIndex].rows, main_window->frame[main_window->actIndex].step, QImage::Format_RGB888  );//kopirovanie cvmat do qimage
             painter.drawImage(rect,image.rgbSwapped());
-
+            update();
 
             if(main_window->useCamera1==true && main_window->actIndex>-1)
             {
@@ -142,8 +142,8 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
 
 
-                    double bx = dist*cos(uhol*3.14159/180.0);
-                    double by = dist*sin(uhol*3.14159/180.0);
+                    double bx = dist*cos(-uhol*3.14159/180.0);
+                    double by = dist*sin(-uhol*3.14159/180.0);
 
                     int x = rect.width() / 2 - (681.743 * by) / (bx - 14.5);
                     int y = rect.height() / 2 + ((681.743 * (-21 + 11.5)) / (bx - 14.5)) / 10;
