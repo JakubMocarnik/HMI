@@ -138,7 +138,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             int obstacleRightY = 0;
 
             for(int k=0; k < main_window->copyOfLaserData.numberOfScans/*360*/;k++){
-                    double dist=main_window->copyOfLaserData.Data[k].scanDistance;
+                    double dist = main_window->copyOfLaserData.Data[k].scanDistance;
                     double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
 
 
@@ -154,7 +154,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
 
                     if (dist!=0.0){
-                        if(uhol < 45 || uhol >315 ){
+                        if(uhol < 45 || uhol > 315 ){
                             //top
                             if(dist < minUpDistance){
                                 minUpDistance = dist;
@@ -174,14 +174,14 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                             //bottom
                             if(dist < minDownDistance){
                                 minDownDistance = dist;
-                                // obstacleRightX = x;
-                                // obstacleRightY = y;
                             }
                         }
                         if(uhol <= 315 && uhol >= 225){
                             //right
                             if(dist < minRightDistance){
                                 minRightDistance = dist;
+                                // obstacleRightX = x;
+                                // obstacleRightY = y;
                             }
                         }
                     }
@@ -241,6 +241,10 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 QPainter painter(this);
                 painter.setBrush(Qt::green);
                 painter.drawPolygon(leftPolygon);
+                // if(rect.contains(QPoint(obstacleLeftX,obstacleLeftY))){
+                //     painter.drawPixmap(QRect(obstacleLeftX,obstacleLeftY,240,240),first_warning);
+                //     update();
+                // }
             }
 
             //bottom
@@ -285,6 +289,10 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 QPainter painter(this);
                 painter.setBrush(Qt::green);
                 painter.drawPolygon(rightPolygon);
+                // if(rect.contains(QPoint(obstacleRightX,obstacleRightY))){
+                //     painter.drawPixmap(QRect(obstacleRightX,obstacleRightY,240,240),first_warning);
+                //     update();
+                // }
             }
 
             if(main_window->backup_assistant==true){
@@ -341,6 +349,5 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     }
 
 }
-
 
 }
