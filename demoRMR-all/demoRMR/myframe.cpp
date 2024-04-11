@@ -190,6 +190,17 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                         painter.drawLine(polygon[i], polygon[(i + 1) % polygon.size()]);
                     }
                 }
+
+
+                // Draw a circle with a line pointing to the right
+                QPointF centerPoint(50, 50); // Coordinates on the unaltered map
+                QPointF scaledCenterPoint(centerPoint.x() * scaleX, centerPoint.y() * scaleY);
+                scaledCenterPoint.setY(-scaledCenterPoint.y()); // Mirror around the x-axis
+                scaledCenterPoint += QPointF(translateX, translateY); // Translate
+
+                painter.setPen(QPen(Qt::red, 3));
+                painter.drawEllipse(scaledCenterPoint, 25, 25); // Draw a circle with a diameter of 50
+                painter.drawLine(scaledCenterPoint, scaledCenterPoint + QPointF(25, 0)); // Draw a line to the right
             }
 
         //     if(main_window->useCamera1==true && main_window->actIndex>-1)
