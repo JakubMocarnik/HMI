@@ -29,6 +29,7 @@
 #include "myframe.h"
 #include <QDir>
 #include <QDebug>
+#include <chrono>
 
 
 #include <QJoysticks.h>
@@ -180,6 +181,12 @@ private:
     bool gestures;
 
     bool skeleton_rotation;
+
+    bool found_ball;
+
+    int ball_index;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 
     std::string theme;
 

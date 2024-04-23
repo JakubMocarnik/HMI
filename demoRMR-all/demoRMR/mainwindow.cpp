@@ -180,9 +180,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //TODO: get rid of or set color to MainToolbar
     estop = false;
-    cv::Mat something;
-    qDebug() << "Current working directory:" << QDir::currentPath();
-    detectBall(something);
+
+    found_ball = false;
+    ball_index = 1;
+
 }
 
 MainWindow::~MainWindow()
@@ -328,10 +329,9 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 }
 
 void MainWindow::detectBall(cv::Mat src){
-    // const char* filename = "C:\\Users\\HP Pavilion\\Desktop\\ball.png";
-    // cv::Mat src = cv::imread(cv::samples::findFile(filename), cv::IMREAD_COLOR);
 
-    src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\ball.png"), cv::IMREAD_COLOR);
+    // src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
+
     // Check if image is loaded fine
     if (src.empty()) {
         printf("Error no data\n");
@@ -348,75 +348,46 @@ void MainWindow::detectBall(cv::Mat src){
                      100, 45, 20, 0 // change the last two parameters
                      // (min_radius & max_radius) to detect larger circles
                      );
+    if (!circles.empty()){
+        if (!found_ball){
+            for (size_t i = 0; i < circles.size(); i++) {
+                cv::Vec3i c = circles[i];
+                cv::Point center = cv::Point(c[0], c[1]);
+                // circle center
+                cv::circle(src, center, 1, cv::Scalar(0, 100, 100), 3, cv::LINE_AA);
+                // circle outline
+                int radius = c[2];
+                cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA);
+            }
+            QString currentDir = QDir::currentPath();
+            QDir baseDir(currentDir);
+            baseDir.cdUp(); // Navigate one level up
 
-    for (size_t i = 0; i < circles.size(); i++) {
-        cv::Vec3i c = circles[i];
-        cv::Point center = cv::Point(c[0], c[1]);
-        // circle center
-        cv::circle(src, center, 1, cv::Scalar(0, 100, 100), 3, cv::LINE_AA);
-        // circle outline
-        int radius = c[2];
-        cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA);
+            QString subDir = baseDir.filePath("Pictures");
+
+            // Construct the full path for the image to save
+            QString filePath = subDir + "/ball";
+            // Convert QString to std::string for cv::imwrite
+            cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
+            cv::imshow("detected circles "+std::to_string(ball_index) , src);
+            found_ball = true;
+            ball_index++;
+            start_time = std::chrono::high_resolution_clock::now();
+        }
+        else{
+            auto time_now = std::chrono::high_resolution_clock::now();
+            auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(time_now - start_time);
+            if (elapsed_seconds.count() >= 5){
+                found_ball = false;
+            }
+        }
     }
-
-
-    QString currentDir = QDir::currentPath();
-    QDir baseDir(currentDir);
-    baseDir.cdUp(); // Navigate one level up
-
-    QString subDir = baseDir.filePath("Pictures");
-
-    // Construct the full path for the image to save
-    QString filePath = subDir + "/detected_circles.jpg";
-    // Convert QString to std::string for cv::imwrite
-    cv::imwrite(filePath.toStdString(), src);
-    // cv::imwrite("output/detected_circles.jpg", src);
-    cv::imshow("detected circles", src);
+    else {
+        found_ball = false;
+    }
     return ;
 
 }
-
-// void MainWindow::on_Save_button_clicked()
-// {
-//     if (recorded_melody.empty()) {
-//         std::cout << "No melody to save" << std::endl;
-//         return;
-//     }
-//     print_melody();
-//     is_recording = false;
-//     ui->Record_button->setText("Start recording");
-
-//     QString currentDir = QDir::currentPath();
-
-//     // Get the directory one level under the current directory
-//     QDir baseDir(currentDir);
-//     baseDir.cdUp(); // Navigate one level up
-
-//     QString subDir = baseDir.filePath("MyComposer/Melodies");
-//     QString filePath = QFileDialog::getSaveFileName(nullptr, "Save File", subDir, "Text Files (*.txt)");
-
-//     // Check if a file was selected
-//     if (!filePath.isEmpty()) {
-//         // Open the selected file for writing
-//         QFile file(filePath);
-
-//         // Open the file in read-only mode
-//         if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-//             // Write some text to the file
-//             //TODO: write the melody to the file
-//             QTextStream out(&file);
-//             for (auto tone : recorded_melody) {
-//                 out << tone.toText() << "\n";
-//             }
-//             std::cout << "Saved" << std::endl;
-//             file.close();
-//         } else {
-//             std::cout<< "Failed" <<std::endl;
-//         }
-//     }
-// }
-
-
 
 ///toto je calback na data z kamery, ktory ste podhodili robotu vo funkcii on_pushButton_left_clicked
 /// vola sa ked dojdu nove data z kamery
@@ -426,7 +397,12 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     actIndex=(actIndex+1)%3;//aktualizujem kde je nova fotka
     updateLaserPicture=1;
 
-    // detectBall(frame[actIndex]);
+
+    // cv::Mat something;
+    // qDebug() << "Current working directory:" << QDir::currentPath();
+    // detectBall(something); //for debug purposes
+
+    detectBall(frame[actIndex]);
 
     update();
     return 0;
