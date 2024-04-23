@@ -54,9 +54,8 @@ public:
     int processThisRobot(TKobukiData robotdata);
     friend class MyFrame;
 
-int processThisCamera(cv::Mat cameraData);
-int processThisSkeleton(skeleton skeledata);
-
+    int processThisCamera(cv::Mat cameraData);
+    int processThisSkeleton(skeleton skeledata);
 
 private slots:
     void on_pushButton_left_clicked();
@@ -145,7 +144,6 @@ private:
 
      QPixmap red_square;
      QPixmap green_circle;
-
 
      double forwardspeed;//mm/s
      double rotationspeed;//omega/s

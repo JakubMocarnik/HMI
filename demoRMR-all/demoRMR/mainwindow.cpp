@@ -1,4 +1,4 @@
-                        #include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QPainter>
 #include <math.h>
@@ -251,13 +251,7 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
 
   //  if(datacounter%5)
     {
-
-        
-
-
-
-
-        delta_wheel_right = calculateEncoderDelta(prev_right, robotdata.EncoderRight); //TODO: vyhodit funkciu kvoli speed a dat kod napriamo sem? 
+        delta_wheel_right = calculateEncoderDelta(prev_right, robotdata.EncoderRight); //TODO: vyhodit funkciu kvoli speed a dat kod napriamo sem?
         delta_wheel_left = calculateEncoderDelta(prev_left, robotdata.EncoderLeft);
         robotFi = robotFi + (delta_wheel_right - delta_wheel_left) / WHEELBASE/PI*180.0;
         if (robotFi >= 180){
@@ -274,7 +268,6 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
             robotX = robotX + (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(sin(robotFi*PI/180.0)-sin(prev_fi*PI/180.0));
             robotY = robotY - (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(cos(robotFi*PI/180.0)-cos(prev_fi*PI/180.0));
         }
-
 
 
         // std::cout << "encoder: " << robotdata.EncoderLeft << std::endl;
@@ -727,4 +720,3 @@ void MainWindow::on_lineEdit_ip_textEdited(const QString &arg1)
 {
     ipaddress = arg1.toStdString();
 }
-

@@ -18,6 +18,9 @@ public:
     ~MyFrame();    
     void setMainWindow(MainWindow *main_window);
     void printStuff();
+    void MyFrame::readPointsFromFile(const QString &filename, QList<QPolygonF> &mapPolygons);
+    void drawRobot(QPainter &painter);
+    QPointF scaleAndTranslatePoint(const QPointF &point);
 
 private:
     MainWindow *main_window;
