@@ -27,6 +27,8 @@
 #include "robot.h"
 #include <QPixmap>
 #include "myframe.h"
+#include <QDir>
+#include <QDebug>
 
 
 #include <QJoysticks.h>
@@ -100,7 +102,7 @@ private slots:
     void on_lineEdit_ip_textEdited(const QString &arg1);
 
 private:
-
+    void detectBall(cv::Mat src);
     double calculateEncoderDelta(int prev, int actual);
     bool MainWindow::isFingerUp(float down, float mid_down, float mid_up, float up);
     //--skuste tu nic nevymazat... pridavajte co chcete, ale pri odoberani by sa mohol stat nejaky drobny problem, co bude vyhadzovat chyby

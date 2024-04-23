@@ -1,4 +1,4 @@
-                        #include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QPainter>
 #include <math.h>
@@ -180,6 +180,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //TODO: get rid of or set color to MainToolbar
     estop = false;
+    cv::Mat something;
+    qDebug() << "Current working directory:" << QDir::currentPath();
+    detectBall(something);
 }
 
 MainWindow::~MainWindow()
@@ -324,6 +327,97 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 
 }
 
+void MainWindow::detectBall(cv::Mat src){
+    // const char* filename = "C:\\Users\\HP Pavilion\\Desktop\\ball.png";
+    // cv::Mat src = cv::imread(cv::samples::findFile(filename), cv::IMREAD_COLOR);
+
+    src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\ball.png"), cv::IMREAD_COLOR);
+    // Check if image is loaded fine
+    if (src.empty()) {
+        printf("Error no data\n");
+        return;
+    }
+    //100 //55
+    //ok i guess
+    cv::Mat gray;
+    cv::cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+    cv::medianBlur(gray, gray, 5);
+    std::vector<cv::Vec3f> circles;
+    cv::HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1,
+                     gray.rows / 16, // change this value to detect circles with different distances to each other
+                     100, 45, 20, 0 // change the last two parameters
+                     // (min_radius & max_radius) to detect larger circles
+                     );
+
+    for (size_t i = 0; i < circles.size(); i++) {
+        cv::Vec3i c = circles[i];
+        cv::Point center = cv::Point(c[0], c[1]);
+        // circle center
+        cv::circle(src, center, 1, cv::Scalar(0, 100, 100), 3, cv::LINE_AA);
+        // circle outline
+        int radius = c[2];
+        cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA);
+    }
+
+
+    QString currentDir = QDir::currentPath();
+    QDir baseDir(currentDir);
+    baseDir.cdUp(); // Navigate one level up
+
+    QString subDir = baseDir.filePath("Pictures");
+
+    // Construct the full path for the image to save
+    QString filePath = subDir + "/detected_circles.jpg";
+    // Convert QString to std::string for cv::imwrite
+    cv::imwrite(filePath.toStdString(), src);
+    // cv::imwrite("output/detected_circles.jpg", src);
+    cv::imshow("detected circles", src);
+    return ;
+
+}
+
+// void MainWindow::on_Save_button_clicked()
+// {
+//     if (recorded_melody.empty()) {
+//         std::cout << "No melody to save" << std::endl;
+//         return;
+//     }
+//     print_melody();
+//     is_recording = false;
+//     ui->Record_button->setText("Start recording");
+
+//     QString currentDir = QDir::currentPath();
+
+//     // Get the directory one level under the current directory
+//     QDir baseDir(currentDir);
+//     baseDir.cdUp(); // Navigate one level up
+
+//     QString subDir = baseDir.filePath("MyComposer/Melodies");
+//     QString filePath = QFileDialog::getSaveFileName(nullptr, "Save File", subDir, "Text Files (*.txt)");
+
+//     // Check if a file was selected
+//     if (!filePath.isEmpty()) {
+//         // Open the selected file for writing
+//         QFile file(filePath);
+
+//         // Open the file in read-only mode
+//         if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+//             // Write some text to the file
+//             //TODO: write the melody to the file
+//             QTextStream out(&file);
+//             for (auto tone : recorded_melody) {
+//                 out << tone.toText() << "\n";
+//             }
+//             std::cout << "Saved" << std::endl;
+//             file.close();
+//         } else {
+//             std::cout<< "Failed" <<std::endl;
+//         }
+//     }
+// }
+
+
+
 ///toto je calback na data z kamery, ktory ste podhodili robotu vo funkcii on_pushButton_left_clicked
 /// vola sa ked dojdu nove data z kamery
 int MainWindow::processThisCamera(cv::Mat cameraData)
@@ -331,6 +425,9 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     cameraData.copyTo(frame[(actIndex+1)%3]);//kopirujem do nasej strukury
     actIndex=(actIndex+1)%3;//aktualizujem kde je nova fotka
     updateLaserPicture=1;
+
+    // detectBall(frame[actIndex]);
+
     update();
     return 0;
 }
