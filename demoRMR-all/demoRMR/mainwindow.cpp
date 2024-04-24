@@ -345,7 +345,7 @@ void MainWindow::detectBall(cv::Mat src){
     std::vector<cv::Vec3f> circles;
     cv::HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1,
                      gray.rows / 16, // change this value to detect circles with different distances to each other
-                     100, 45, 20, 0 // change the last two parameters
+                     100, 45, 50, 0 // change the last two parameters
                      // (min_radius & max_radius) to detect larger circles
                      );
     if (!circles.empty()){
@@ -368,8 +368,8 @@ void MainWindow::detectBall(cv::Mat src){
             // Construct the full path for the image to save
             QString filePath = subDir + "/ball";
             // Convert QString to std::string for cv::imwrite
-            cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
-            cv::imshow("detected circles "+std::to_string(ball_index) , src);
+            // cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
+            // cv::imshow("detected circles "+std::to_string(ball_index) , src);
             found_ball = true;
             ball_index++;
             start_time = std::chrono::high_resolution_clock::now();
@@ -398,11 +398,12 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     updateLaserPicture=1;
 
 
-    // cv::Mat something;
+    cv::Mat ball_detection;
+    cameraData.copyTo(ball_detection);
     // qDebug() << "Current working directory:" << QDir::currentPath();
     // detectBall(something); //for debug purposes
 
-    detectBall(frame[actIndex]);
+    detectBall(ball_detection);
 
     update();
     return 0;
