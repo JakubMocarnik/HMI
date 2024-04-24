@@ -27,6 +27,7 @@
 #include "robot.h"
 #include <QPixmap>
 #include "myframe.h"
+#include <mutex>
 
 
 #include <QJoysticks.h>
@@ -163,8 +164,8 @@ private:
     double delta_wheel_left;
     double delta_wheel_right;
 
-    double robotX;
-    double robotY;
+    std::atomic<double> robotX;
+    std::atomic<double> robotY;
     double robotFi;
     double prev_fi;
 

@@ -28,6 +28,8 @@ private:
     QPixmap first_warning;
     QPixmap second_warning;
     QPixmap third_warning;
+    double robotX_draw;
+    double robotY_draw;
 protected:
     void paintEvent(QPaintEvent *event) override;
 };

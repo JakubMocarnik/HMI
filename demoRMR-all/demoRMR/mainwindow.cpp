@@ -8,7 +8,7 @@
 #define WHEELRADIUS 0.035
 #define TICKTOMETER 0.000085292090497737556558
 #define TICKTORAD 0.002436916871363930187454
-#define ENCODEROVERFLOW 65536
+#define ENCODEROVERFLOW 65535
 
 ///TOTO JE DEMO PROGRAM...AK SI HO NASIEL NA PC V LABAKU NEPREPISUJ NIC,ALE SKOPIRUJ SI MA NIEKAM DO INEHO FOLDERA
 /// AK HO MAS Z GITU A ROBIS NA LABAKOVOM PC, TAK SI HO VLOZ DO FOLDERA KTORY JE JASNE ODLISITELNY OD TVOJICH KOLEGOV
@@ -251,6 +251,8 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
 
   //  if(datacounter%5)
     {
+        std::lock_guard<std::mutex> lock(mtx);
+
         delta_wheel_right = calculateEncoderDelta(prev_right, robotdata.EncoderRight); //TODO: vyhodit funkciu kvoli speed a dat kod napriamo sem?
         delta_wheel_left = calculateEncoderDelta(prev_left, robotdata.EncoderLeft);
         robotFi = robotFi + (delta_wheel_right - delta_wheel_left) / WHEELBASE/PI*180.0;

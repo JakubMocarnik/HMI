@@ -18,6 +18,8 @@
 
 MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     // Additional setup if needed
+    robotX_draw = 0;
+    robotY_draw = 0;
 }
 
 MyFrame::~MyFrame() {
@@ -238,11 +240,17 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     painter.drawPolygon(polygon);
                 }
 
+                robotX_draw = main_window->robotX.load(std::memory_order_relaxed);
+                robotY_draw = main_window->robotY.load(std::memory_order_relaxed);
+
                 // Draw the robot
                 QPointF robotCenter(50, 50); // Initial position of the robot
                 QPointF scaledRobotCenter(robotCenter.x() * scaleX, robotCenter.y() * scaleY); // Scale the robot position
                 scaledRobotCenter.setY(-scaledRobotCenter.y()); // Mirror around the x-axis
-                scaledRobotCenter += QPointF(translateX, translateY); // Translate the robot position
+                scaledRobotCenter += QPointF(translateX+robotX_draw*100.0, translateY+robotY_draw*100.0); // Translate the robot position
+
+                std::cout << "robotX: " << main_window->robotX << " robotY: " << main_window->robotY << std::endl;
+                std::cout << "scaledRobotCenter: " << scaledRobotCenter.x() << " " << scaledRobotCenter.y() << std::endl;
 
                 // Draw the robot as a circle with a line pointing to the right
                 painter.setPen(QPen(Qt::red, 3));
