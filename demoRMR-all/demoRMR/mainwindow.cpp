@@ -251,7 +251,6 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
 
   //  if(datacounter%5)
     {
-        std::lock_guard<std::mutex> lock(mtx);
 
         delta_wheel_right = calculateEncoderDelta(prev_right, robotdata.EncoderRight); //TODO: vyhodit funkciu kvoli speed a dat kod napriamo sem?
         delta_wheel_left = calculateEncoderDelta(prev_left, robotdata.EncoderLeft);
@@ -263,12 +262,12 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
             robotFi = robotFi + 360;
         }
         if (delta_wheel_left == delta_wheel_right) {
-            robotX = robotX + (delta_wheel_left + delta_wheel_right)/2*cos(robotFi*PI/180.0);
-            robotY = robotY + (delta_wheel_left + delta_wheel_right)/2*sin(robotFi*PI/180.0);
+            robotX.store(robotX + (delta_wheel_left + delta_wheel_right)/2*cos(robotFi*PI/180.0),std::memory_order_relaxed);
+            robotY.store(robotY + (delta_wheel_left + delta_wheel_right)/2*sin(robotFi*PI/180.0),std::memory_order_relaxed);
         }
         else {
-            robotX = robotX + (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(sin(robotFi*PI/180.0)-sin(prev_fi*PI/180.0));
-            robotY = robotY - (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(cos(robotFi*PI/180.0)-cos(prev_fi*PI/180.0));
+            robotX.store(robotX + (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(sin(robotFi*PI/180.0)-sin(prev_fi*PI/180.0)),std::memory_order_relaxed);
+            robotY.store(robotY - (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(cos(robotFi*PI/180.0)-cos(prev_fi*PI/180.0)),std::memory_order_relaxed);
         }
 
 

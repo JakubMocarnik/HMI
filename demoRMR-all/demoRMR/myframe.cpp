@@ -247,7 +247,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 QPointF robotCenter(50, 50); // Initial position of the robot
                 QPointF scaledRobotCenter(robotCenter.x() * scaleX, robotCenter.y() * scaleY); // Scale the robot position
                 scaledRobotCenter.setY(-scaledRobotCenter.y()); // Mirror around the x-axis
-                scaledRobotCenter += QPointF(translateX+robotX_draw*100.0, translateY+robotY_draw*100.0); // Translate the robot position
+                scaledRobotCenter += QPointF(translateX+robotX_draw*100.0, translateY-robotY_draw*100.0); // Translate the robot position
 
                 std::cout << "robotX: " << main_window->robotX << " robotY: " << main_window->robotY << std::endl;
                 std::cout << "scaledRobotCenter: " << scaledRobotCenter.x() << " " << scaledRobotCenter.y() << std::endl;
