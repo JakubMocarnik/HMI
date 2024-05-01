@@ -18,19 +18,21 @@ public:
     ~MyFrame();    
     void setMainWindow(MainWindow *main_window);
     void printStuff();
-    void MyFrame::readPointsFromFile(const QString &filename, QList<QPolygonF> &mapPolygons);
+    void loadMap(const QString &filename);
+    void MyFrame::readPointsFromFile(const QString &filename);
     void drawRobot(QPainter &painter);
     QPointF scaleAndTranslatePoint(const QPointF &point);
 
 private:
     MainWindow *main_window;
-
+    bool map_loaded;
     QPixmap first_warning;
     QPixmap second_warning;
     QPixmap third_warning;
     double robotX_draw;
     double robotY_draw;
     double robotFi_draw;
+    QList<QPolygonF> mapPolygons;
 protected:
     void paintEvent(QPaintEvent *event) override;
 };

@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
   //  timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(getNewFrame()));
     actIndex=-1;
-    useCamera1= true;
+    useCamera1= false;
     first_run = true;
     robotX = 0;
     robotY = 0;
@@ -165,6 +165,9 @@ MainWindow::MainWindow(QWidget *parent) :
                                        "font-weight: bold;"
                                        "color: white");
     ui->pushButton_connect->setStyleSheet("background-color: #d1007a;"
+                                          "font-weight: bold;"
+                                          "color: white");
+    ui->pushButton_camera->setStyleSheet("background-color: #d1007a;"
                                           "font-weight: bold;"
                                           "color: white");
 
@@ -402,20 +405,9 @@ void MainWindow::on_pushButton_left_clicked()
 
 }
 
-void MainWindow::on_pushButton_mode_clicked() //gestures and normal mode
+void MainWindow::on_pushButton_mode_clicked() //this is load map i just didnt have the tiem to refactor it all....
 {
-    //TODO: zapnut/vypnut thread tu?
 
-    if(!gestures){
-        ui->pushButton_mode->setText("NORMAL");
-        gestures = true;
-        skeleton_rotation = false;
-    }
-    else {
-        ui->pushButton_mode->setText("GESTURES");
-        robot.setTranslationSpeed(0); //TODO ??
-        gestures = false;
-    }
 }
 
 void MainWindow::on_pushButton_connect_clicked()
@@ -676,6 +668,9 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_connect->setStyleSheet("background-color: #d1007a;"
                                               "font-weight: bold;"
                                               "color: white");
+        ui->pushButton_camera->setStyleSheet("background-color: #d1007a;"
+                                           "font-weight: bold;"
+                                           "color: white");
 
         ui->label_ip->setStyleSheet("font-weight: bold;"
                                     "color: #d1007a");
@@ -703,6 +698,9 @@ void MainWindow::setTheme(std::string theme) {
                                            "font-weight: bold;"
                                            "color: white");
         ui->pushButton_connect->setStyleSheet("background-color: #770000;"
+                                              "font-weight: bold;"
+                                              "color: white");
+        ui->pushButton_camera->setStyleSheet("background-color: #770000;"
                                               "font-weight: bold;"
                                               "color: white");
 
