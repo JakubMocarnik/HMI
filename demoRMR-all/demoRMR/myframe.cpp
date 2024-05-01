@@ -2,16 +2,7 @@
 #include "myframe.h"
 #include <QPainter>
 #include "mainwindow.h"
-#include <QtMath>
-#include <QFile>
-#include <QTextStream>
-#include <QDebug>
-#include <QWidget>
-#include <QPainter>
-#include <QPen>
-#include <QVector>
-#include <QPolygonF>
-#include <QRectF>
+
 #define GREEN_DISTANCE 600
 #define YELLOW_DISTANCE 400
 
@@ -27,6 +18,13 @@ MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
 
 MyFrame::~MyFrame() {
     // Cleanup if needed
+}
+
+void MyFrame::mouseReleaseEvent(QMouseEvent *event){
+    if (event->button() == Qt::LeftButton) {
+        emit clicked();  // Emit the clicked signal
+    }
+    //TODO: handlovat aj ine kliky napr klik pravym? asi ne xD
 }
 
 void MyFrame::setMainWindow(MainWindow *main_window){

@@ -30,6 +30,7 @@
 #include <mutex>
 
 
+
 #include <QJoysticks.h>
 namespace Ui {
 class MainWindow;
@@ -101,8 +102,9 @@ private slots:
 
 private:
 
+    void onFrameClicked();
     double calculateEncoderDelta(int prev, int actual);
-    bool MainWindow::isFingerUp(float down, float mid_down, float mid_up, float up);
+    bool isFingerUp(float down, float mid_down, float mid_up, float up);
     //--skuste tu nic nevymazat... pridavajte co chcete, ale pri odoberani by sa mohol stat nejaky drobny problem, co bude vyhadzovat chyby
     Ui::MainWindow *ui;
      void paintEvent(QPaintEvent *event);// Q_DECL_OVERRIDE;

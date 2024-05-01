@@ -39,24 +39,27 @@ public:
     QSpacerItem *verticalSpacer;
     QGridLayout *gridLayout_3;
     QGridLayout *gridLayout_4;
-    QSpacerItem *verticalSpacer_2;
-    QPushButton *pushButton_estop;
     QPushButton *pushButton_up;
     QPushButton *pushButton_down;
-    QPushButton *pushButton_left;
+    QSpacerItem *verticalSpacer_2;
+    QPushButton *pushButton_estop;
     QPushButton *pushButton_circle;
     QPushButton *pushButton_right;
+    QPushButton *pushButton_left;
     QGridLayout *gridLayout_7;
+    QPushButton *pushButton_mode;
+    QPushButton *pushButton;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *label_led;
+    QPushButton *pushButton_connect;
+    QPushButton *pushButton_point_type;
+    QPushButton *pushButton_camera;
+    QSpacerItem *verticalSpacer_6;
     QHBoxLayout *horizontalLayout;
     QLabel *label_ip;
     QLineEdit *lineEdit_ip;
     QSpacerItem *verticalSpacer_4;
     QLabel *label_warning;
-    QPushButton *pushButton_camera;
-    QHBoxLayout *horizontalLayout_2;
-    QLabel *label_led;
-    QPushButton *pushButton_connect;
-    QPushButton *pushButton_mode;
     QSpacerItem *verticalSpacer_3;
     QMenuBar *menuBar;
     QMenu *menuStyle;
@@ -66,7 +69,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1221, 562);
+        MainWindow->resize(1221, 598);
         MainWindow->setStyleSheet(QString::fromUtf8(""));
         actionHello_Kitty = new QAction(MainWindow);
         actionHello_Kitty->setObjectName(QString::fromUtf8("actionHello_Kitty"));
@@ -106,15 +109,6 @@ public:
         gridLayout_4 = new QGridLayout();
         gridLayout_4->setSpacing(6);
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
-        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        gridLayout_4->addItem(verticalSpacer_2, 1, 2, 1, 1);
-
-        pushButton_estop = new QPushButton(centralWidget);
-        pushButton_estop->setObjectName(QString::fromUtf8("pushButton_estop"));
-
-        gridLayout_4->addWidget(pushButton_estop, 0, 2, 1, 1);
-
         pushButton_up = new QPushButton(centralWidget);
         pushButton_up->setObjectName(QString::fromUtf8("pushButton_up"));
 
@@ -125,10 +119,14 @@ public:
 
         gridLayout_4->addWidget(pushButton_down, 4, 2, 1, 1);
 
-        pushButton_left = new QPushButton(centralWidget);
-        pushButton_left->setObjectName(QString::fromUtf8("pushButton_left"));
+        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-        gridLayout_4->addWidget(pushButton_left, 3, 1, 1, 1);
+        gridLayout_4->addItem(verticalSpacer_2, 1, 2, 1, 1);
+
+        pushButton_estop = new QPushButton(centralWidget);
+        pushButton_estop->setObjectName(QString::fromUtf8("pushButton_estop"));
+
+        gridLayout_4->addWidget(pushButton_estop, 0, 2, 1, 1);
 
         pushButton_circle = new QPushButton(centralWidget);
         pushButton_circle->setObjectName(QString::fromUtf8("pushButton_circle"));
@@ -141,12 +139,71 @@ public:
 
         gridLayout_4->addWidget(pushButton_right, 3, 3, 1, 1);
 
+        pushButton_left = new QPushButton(centralWidget);
+        pushButton_left->setObjectName(QString::fromUtf8("pushButton_left"));
+
+        gridLayout_4->addWidget(pushButton_left, 3, 1, 1, 1);
+
 
         gridLayout_3->addLayout(gridLayout_4, 4, 1, 1, 1);
 
         gridLayout_7 = new QGridLayout();
         gridLayout_7->setSpacing(6);
         gridLayout_7->setObjectName(QString::fromUtf8("gridLayout_7"));
+        pushButton_mode = new QPushButton(centralWidget);
+        pushButton_mode->setObjectName(QString::fromUtf8("pushButton_mode"));
+        pushButton_mode->setMaximumSize(QSize(110, 16777215));
+        pushButton_mode->setLayoutDirection(Qt::RightToLeft);
+        pushButton_mode->setStyleSheet(QString::fromUtf8(""));
+
+        gridLayout_7->addWidget(pushButton_mode, 3, 2, 1, 1);
+
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pushButton->setMaximumSize(QSize(110, 16777215));
+        pushButton->setLayoutDirection(Qt::RightToLeft);
+
+        gridLayout_7->addWidget(pushButton, 7, 2, 1, 1);
+
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        label_led = new QLabel(centralWidget);
+        label_led->setObjectName(QString::fromUtf8("label_led"));
+        label_led->setMaximumSize(QSize(100, 16777215));
+        label_led->setLayoutDirection(Qt::RightToLeft);
+        label_led->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        horizontalLayout_2->addWidget(label_led);
+
+        pushButton_connect = new QPushButton(centralWidget);
+        pushButton_connect->setObjectName(QString::fromUtf8("pushButton_connect"));
+        pushButton_connect->setMaximumSize(QSize(110, 16777215));
+        pushButton_connect->setLayoutDirection(Qt::RightToLeft);
+
+        horizontalLayout_2->addWidget(pushButton_connect);
+
+
+        gridLayout_7->addLayout(horizontalLayout_2, 2, 2, 1, 1);
+
+        pushButton_point_type = new QPushButton(centralWidget);
+        pushButton_point_type->setObjectName(QString::fromUtf8("pushButton_point_type"));
+        pushButton_point_type->setMaximumSize(QSize(110, 16777215));
+        pushButton_point_type->setLayoutDirection(Qt::RightToLeft);
+
+        gridLayout_7->addWidget(pushButton_point_type, 6, 2, 1, 1);
+
+        pushButton_camera = new QPushButton(centralWidget);
+        pushButton_camera->setObjectName(QString::fromUtf8("pushButton_camera"));
+        pushButton_camera->setMaximumSize(QSize(110, 16777215));
+        pushButton_camera->setLayoutDirection(Qt::RightToLeft);
+
+        gridLayout_7->addWidget(pushButton_camera, 4, 2, 1, 1);
+
+        verticalSpacer_6 = new QSpacerItem(20, 50, QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+        gridLayout_7->addItem(verticalSpacer_6, 5, 2, 1, 1);
+
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
@@ -172,49 +229,13 @@ public:
 
         verticalSpacer_4 = new QSpacerItem(20, 50, QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-        gridLayout_7->addItem(verticalSpacer_4, 7, 2, 1, 1);
+        gridLayout_7->addItem(verticalSpacer_4, 10, 2, 1, 1);
 
         label_warning = new QLabel(centralWidget);
         label_warning->setObjectName(QString::fromUtf8("label_warning"));
         label_warning->setAlignment(Qt::AlignCenter);
 
-        gridLayout_7->addWidget(label_warning, 8, 2, 1, 1);
-
-        pushButton_camera = new QPushButton(centralWidget);
-        pushButton_camera->setObjectName(QString::fromUtf8("pushButton_camera"));
-        pushButton_camera->setMaximumSize(QSize(110, 16777215));
-        pushButton_camera->setLayoutDirection(Qt::RightToLeft);
-
-        gridLayout_7->addWidget(pushButton_camera, 4, 2, 1, 1);
-
-        horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setSpacing(6);
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        label_led = new QLabel(centralWidget);
-        label_led->setObjectName(QString::fromUtf8("label_led"));
-        label_led->setMaximumSize(QSize(100, 16777215));
-        label_led->setLayoutDirection(Qt::RightToLeft);
-        label_led->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
-
-        horizontalLayout_2->addWidget(label_led);
-
-        pushButton_connect = new QPushButton(centralWidget);
-        pushButton_connect->setObjectName(QString::fromUtf8("pushButton_connect"));
-        pushButton_connect->setMaximumSize(QSize(110, 16777215));
-        pushButton_connect->setLayoutDirection(Qt::RightToLeft);
-
-        horizontalLayout_2->addWidget(pushButton_connect);
-
-
-        gridLayout_7->addLayout(horizontalLayout_2, 2, 2, 1, 1);
-
-        pushButton_mode = new QPushButton(centralWidget);
-        pushButton_mode->setObjectName(QString::fromUtf8("pushButton_mode"));
-        pushButton_mode->setMaximumSize(QSize(110, 16777215));
-        pushButton_mode->setLayoutDirection(Qt::RightToLeft);
-        pushButton_mode->setStyleSheet(QString::fromUtf8(""));
-
-        gridLayout_7->addWidget(pushButton_mode, 3, 2, 1, 1);
+        gridLayout_7->addWidget(label_warning, 11, 2, 1, 1);
 
 
         gridLayout_3->addLayout(gridLayout_7, 2, 1, 1, 1);
@@ -240,8 +261,8 @@ public:
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
 #if QT_CONFIG(shortcut)
-        label_ip->setBuddy(lineEdit_ip);
         label_led->setBuddy(pushButton_connect);
+        label_ip->setBuddy(lineEdit_ip);
 #endif // QT_CONFIG(shortcut)
 
         menuBar->addAction(menuStyle->menuAction());
@@ -258,18 +279,20 @@ public:
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         actionHello_Kitty->setText(QCoreApplication::translate("MainWindow", "Hello Kitty", nullptr));
         actionDark_Souls->setText(QCoreApplication::translate("MainWindow", "Dark Souls", nullptr));
-        pushButton_estop->setText(QString());
         pushButton_up->setText(QString());
         pushButton_down->setText(QString());
-        pushButton_left->setText(QString());
+        pushButton_estop->setText(QString());
         pushButton_circle->setText(QString());
         pushButton_right->setText(QString());
-        label_ip->setText(QCoreApplication::translate("MainWindow", "IP ADDRESS:", nullptr));
-        label_warning->setText(QString());
-        pushButton_camera->setText(QCoreApplication::translate("MainWindow", "CAMERA", nullptr));
+        pushButton_left->setText(QString());
+        pushButton_mode->setText(QCoreApplication::translate("MainWindow", "LOAD MAP", nullptr));
+        pushButton->setText(QCoreApplication::translate("MainWindow", "ADD POINTS", nullptr));
         label_led->setText(QCoreApplication::translate("MainWindow", "LED", nullptr));
         pushButton_connect->setText(QCoreApplication::translate("MainWindow", "CONNECT", nullptr));
-        pushButton_mode->setText(QCoreApplication::translate("MainWindow", "LOAD MAP", nullptr));
+        pushButton_point_type->setText(QCoreApplication::translate("MainWindow", "CROSSING", nullptr));
+        pushButton_camera->setText(QCoreApplication::translate("MainWindow", "CAMERA", nullptr));
+        label_ip->setText(QCoreApplication::translate("MainWindow", "IP ADDRESS:", nullptr));
+        label_warning->setText(QString());
         menuStyle->setTitle(QCoreApplication::translate("MainWindow", "Style", nullptr));
     } // retranslateUi
 

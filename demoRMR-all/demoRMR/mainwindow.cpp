@@ -183,6 +183,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //TODO: get rid of or set color to MainToolbar
     estop = false;
+    connect(ui->frame,&MyFrame::clicked,this, &MainWindow::onFrameClicked);
+
 }
 
 MainWindow::~MainWindow()
@@ -193,7 +195,10 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *event)
 {}
 
-
+void MainWindow::onFrameClicked(){
+    //ak je connectnuty, ak je flag zadavaj body
+    std::cout << "CLICKED" << std::endl;
+}
 /// toto je slot. niekde v kode existuje signal, ktory je prepojeny. pouziva sa napriklad (v tomto pripade) ak chcete dostat data z jedneho vlakna (robot) do ineho (ui)
 /// prepojenie signal slot je vo funkcii  on_pushButton_left_clicked
 void  MainWindow::setUiValues(double robotX,double robotY,double robotFi)
