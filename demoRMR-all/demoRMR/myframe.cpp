@@ -151,25 +151,20 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                  << QPoint(rect.bottomRight().x(), rect.bottomRight().y())
                  << QPoint(rect.right() - rectThickness, rect.bottom() - rectThickness);
 
-    QPolygonF perimeterPolygon;
-    perimeterPolygon << QPointF(0, 0) << QPointF(0, 468) << QPointF(58, 468)
-                     << QPointF(58, 521) << QPointF(547, 521) << QPointF(547, 487)
-                     << QPointF(602, 487) << QPointF(602, -105) << QPointF(238, -105)
-                     << QPointF(238, -160) << QPointF(110, -160) << QPointF(110, 0);
 
-    QList<QList<QPointF>> pointsList;
-    pointsList << QList<QPointF>{QPointF(110, -2.5), QPointF(262.5, -2.5), QPointF(262.5, 0), QPointF(110, 0)} // 1
-               << QList<QPointF>{QPointF(262.5, -2.5), QPointF(262.5, 152.5), QPointF(265, 152.5), QPointF(265, -2.5)} // 2
-               << QList<QPointF>{QPointF(265, 152.5), QPointF(265, 155), QPointF(110, 155), QPointF(110, 152.5)} // 3
-               << QList<QPointF>{QPointF(110, 155), QPointF(110, 310), QPointF(112.5, 310), QPointF(112.5, 155)} // 4
-               << QList<QPointF>{QPointF(602, 338), QPointF(392, 338), QPointF(392, 335.5), QPointF(602, 335.5)} // 5
-               << QList<QPointF>{QPointF(392, 338), QPointF(392, 392), QPointF(394.5, 392), QPointF(394.5, 338)} // 6
-               << QList<QPointF>{QPointF(447, 335.5), QPointF(449.5, 335.5), QPointF(449.5, 180.5), QPointF(447, 180.5)} // 7
-               << QList<QPointF>{QPointF(449.5, 180.5), QPointF(449.5, 183), QPointF(504.5, 183), QPointF(504.5, 180.5)} // 8
-               << QList<QPointF>{QPointF(397, -105), QPointF(397, 50), QPointF(397.5, 50), QPointF(397.5, -105)} // 9
-               << QList<QPointF>{QPointF(268, 280.5), QPointF(268, 335.5), QPointF(265.5, 335.5), QPointF(265.5, 280.5)} // 10
-               << QList<QPointF>{QPointF(268, 338), QPointF(268, 335.5), QPointF(213, 335.5), QPointF(213, 338)} // 11
-               << QList<QPointF>{QPointF(213, 335.5), QPointF(213, 280.5), QPointF(215.5, 280.5), QPointF(215.5, 335.5)}; // 12
+    // QList<QList<QPointF>> pointsList;
+    // pointsList << QList<QPointF>{QPointF(110, -2.5), QPointF(262.5, -2.5), QPointF(262.5, 0), QPointF(110, 0)} // 1
+    //            << QList<QPointF>{QPointF(262.5, -2.5), QPointF(262.5, 152.5), QPointF(265, 152.5), QPointF(265, -2.5)} // 2
+    //            << QList<QPointF>{QPointF(265, 152.5), QPointF(265, 155), QPointF(110, 155), QPointF(110, 152.5)} // 3
+    //            << QList<QPointF>{QPointF(110, 155), QPointF(110, 310), QPointF(112.5, 310), QPointF(112.5, 155)} // 4
+    //            << QList<QPointF>{QPointF(602, 338), QPointF(392, 338), QPointF(392, 335.5), QPointF(602, 335.5)} // 5
+    //            << QList<QPointF>{QPointF(392, 338), QPointF(392, 392), QPointF(394.5, 392), QPointF(394.5, 338)} // 6
+    //            << QList<QPointF>{QPointF(447, 335.5), QPointF(449.5, 335.5), QPointF(449.5, 180.5), QPointF(447, 180.5)} // 7
+    //            << QList<QPointF>{QPointF(449.5, 180.5), QPointF(449.5, 183), QPointF(504.5, 183), QPointF(504.5, 180.5)} // 8
+    //            << QList<QPointF>{QPointF(397, -105), QPointF(397, 50), QPointF(397.5, 50), QPointF(397.5, -105)} // 9
+    //            << QList<QPointF>{QPointF(268, 280.5), QPointF(268, 335.5), QPointF(265.5, 335.5), QPointF(265.5, 280.5)} // 10
+    //            << QList<QPointF>{QPointF(268, 338), QPointF(268, 335.5), QPointF(213, 335.5), QPointF(213, 338)} // 11
+    //            << QList<QPointF>{QPointF(213, 335.5), QPointF(213, 280.5), QPointF(215.5, 280.5), QPointF(215.5, 335.5)}; // 12
 
 
 

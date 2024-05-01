@@ -463,12 +463,14 @@ void MainWindow::on_pushButton_connect_clicked()
         connected = true;
         ui->label_led->setPixmap(green_circle);
         ui->pushButton_connect->setText("DISCONNECT");
+        ui->lineEdit_ip->setReadOnly(true);
     }
     else {
         robot.robotStop();
         connected = false;
         ui->label_led->setPixmap(red_square);
         ui->pushButton_connect->setText("CONNECT");
+        ui->lineEdit_ip->setReadOnly(false);
         update();
     }
 }
