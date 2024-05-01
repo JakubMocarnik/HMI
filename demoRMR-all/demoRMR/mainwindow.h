@@ -166,7 +166,7 @@ private:
 
     std::atomic<double> robotX;
     std::atomic<double> robotY;
-    double robotFi;
+    std::atomic<double> robotFi;
     double prev_fi;
 
     bool estop;

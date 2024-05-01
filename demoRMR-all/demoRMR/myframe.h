@@ -30,6 +30,7 @@ private:
     QPixmap third_warning;
     double robotX_draw;
     double robotY_draw;
+    double robotFi_draw;
 protected:
     void paintEvent(QPaintEvent *event) override;
 };

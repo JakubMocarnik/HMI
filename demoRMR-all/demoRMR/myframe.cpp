@@ -20,6 +20,7 @@ MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     // Additional setup if needed
     robotX_draw = 0;
     robotY_draw = 0;
+    robotFi_draw = 0;
 }
 
 MyFrame::~MyFrame() {
@@ -255,7 +256,11 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 // Draw the robot as a circle with a line pointing to the right
                 painter.setPen(QPen(Qt::red, 3));
                 painter.drawEllipse(scaledRobotCenter, 25, 25); // Draw a circle representing the robot
-                painter.drawLine(scaledRobotCenter, scaledRobotCenter + QPointF(25, 0)); // Draw a line pointing to the right
+                //TODO: line aby sa kreslila podla uhlu
+                double lineEndX = 25*cos(main_window->robotFi.load(std::memory_order_relaxed)*PI/180.0);
+                double lineEndY = -25*sin(main_window->robotFi.load(std::memory_order_relaxed)*PI/180.0);
+                QPointF lineEnd = scaledRobotCenter + QPointF(lineEndX, lineEndY);
+                painter.drawLine(scaledRobotCenter, lineEnd); // Draw a line pointing to the right
 
 
             }
