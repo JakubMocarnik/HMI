@@ -29,6 +29,9 @@
 #include "myframe.h"
 #include <mutex>
 
+#include <QDir>
+#include <QDebug>
+#include <chrono>
 
 
 #include <QJoysticks.h>
@@ -101,8 +104,12 @@ private slots:
     void on_lineEdit_ip_textEdited(const QString &arg1);
 
 private:
+<<<<<<< HEAD
 
     void onFrameClicked();
+=======
+    void detectBall(cv::Mat src);
+>>>>>>> object_detection
     double calculateEncoderDelta(int prev, int actual);
     bool isFingerUp(float down, float mid_down, float mid_up, float up);
     //--skuste tu nic nevymazat... pridavajte co chcete, ale pri odoberani by sa mohol stat nejaky drobny problem, co bude vyhadzovat chyby
@@ -179,6 +186,12 @@ private:
     bool gestures;
 
     bool skeleton_rotation;
+
+    bool found_ball;
+
+    int ball_index;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 
     std::string theme;
 

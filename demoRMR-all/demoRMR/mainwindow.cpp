@@ -185,6 +185,9 @@ MainWindow::MainWindow(QWidget *parent) :
     estop = false;
     connect(ui->frame,&MyFrame::clicked,this, &MainWindow::onFrameClicked);
 
+    found_ball = false;
+    ball_index = 1;
+
 }
 
 MainWindow::~MainWindow()
@@ -326,6 +329,67 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 
 }
 
+void MainWindow::detectBall(cv::Mat src){
+
+    // src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
+
+    // Check if image is loaded fine
+    if (src.empty()) {
+        printf("Error no data\n");
+        return;
+    }
+    //100 //55
+    //ok i guess
+    cv::Mat gray;
+    cv::cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+    cv::medianBlur(gray, gray, 5);
+    std::vector<cv::Vec3f> circles;
+    cv::HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1,
+                     gray.rows / 16, // change this value to detect circles with different distances to each other
+                     100, 45, 50, 0 // change the last two parameters
+                     // (min_radius & max_radius) to detect larger circles
+                     );
+    if (!circles.empty()){
+        if (!found_ball){
+            for (size_t i = 0; i < circles.size(); i++) {
+                cv::Vec3i c = circles[i];
+                cv::Point center = cv::Point(c[0], c[1]);
+                // circle center
+                cv::circle(src, center, 1, cv::Scalar(0, 100, 100), 3, cv::LINE_AA);
+                // circle outline
+                int radius = c[2];
+                cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA);
+            }
+            QString currentDir = QDir::currentPath();
+            QDir baseDir(currentDir);
+            baseDir.cdUp(); // Navigate one level up
+
+            QString subDir = baseDir.filePath("Pictures");
+
+            // Construct the full path for the image to save
+            QString filePath = subDir + "/ball";
+            // Convert QString to std::string for cv::imwrite
+            // cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
+            // cv::imshow("detected circles "+std::to_string(ball_index) , src);
+            found_ball = true;
+            ball_index++;
+            start_time = std::chrono::high_resolution_clock::now();
+        }
+        else{
+            auto time_now = std::chrono::high_resolution_clock::now();
+            auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(time_now - start_time);
+            if (elapsed_seconds.count() >= 5){
+                found_ball = false;
+            }
+        }
+    }
+    else {
+        found_ball = false;
+    }
+    return ;
+
+}
+
 ///toto je calback na data z kamery, ktory ste podhodili robotu vo funkcii on_pushButton_left_clicked
 /// vola sa ked dojdu nove data z kamery
 int MainWindow::processThisCamera(cv::Mat cameraData)
@@ -333,6 +397,15 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     cameraData.copyTo(frame[(actIndex+1)%3]);//kopirujem do nasej strukury
     actIndex=(actIndex+1)%3;//aktualizujem kde je nova fotka
     updateLaserPicture=1;
+
+
+    cv::Mat ball_detection;
+    cameraData.copyTo(ball_detection);
+    // qDebug() << "Current working directory:" << QDir::currentPath();
+    // detectBall(something); //for debug purposes
+
+    detectBall(ball_detection);
+
     update();
     return 0;
 }
