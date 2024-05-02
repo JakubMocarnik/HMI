@@ -27,6 +27,9 @@
 #include "robot.h"
 #include <QPixmap>
 #include "myframe.h"
+#include "point.h"
+#include "ramp.h"
+#include "controller.h"
 #include <mutex>
 
 #include <QDir>
@@ -104,12 +107,8 @@ private slots:
     void on_lineEdit_ip_textEdited(const QString &arg1);
 
 private:
-<<<<<<< HEAD
-
     void onFrameClicked();
-=======
     void detectBall(cv::Mat src);
->>>>>>> object_detection
     double calculateEncoderDelta(int prev, int actual);
     bool isFingerUp(float down, float mid_down, float mid_up, float up);
     //--skuste tu nic nevymazat... pridavajte co chcete, ale pri odoberani by sa mohol stat nejaky drobny problem, co bude vyhadzovat chyby
@@ -169,6 +168,15 @@ private:
 
     int prev_left;
     int prev_right;
+    bool rot_only;
+    bool bruh;
+
+    std::shared_ptr<PIController> controller;
+    std::shared_ptr<Point> actual_point;
+    std::shared_ptr<Point> set_point;
+    std::shared_ptr<Point> desired_point;
+    std::vector<Point> points_vector;
+
 
     double delta_wheel_left;
     double delta_wheel_right;

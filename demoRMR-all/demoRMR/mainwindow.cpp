@@ -10,6 +10,9 @@
 #define TICKTORAD 0.002436916871363930187454
 #define ENCODEROVERFLOW 65535
 
+#define WITHIN_TOLERANCE 30
+#define WITHIN_TOLERANCE_THETA 0.0174533
+
 ///TOTO JE DEMO PROGRAM...AK SI HO NASIEL NA PC V LABAKU NEPREPISUJ NIC,ALE SKOPIRUJ SI MA NIEKAM DO INEHO FOLDERA
 /// AK HO MAS Z GITU A ROBIS NA LABAKOVOM PC, TAK SI HO VLOZ DO FOLDERA KTORY JE JASNE ODLISITELNY OD TVOJICH KOLEGOV
 /// NASLEDNE V POLOZKE Projects SKONTROLUJ CI JE VYPNUTY shadow build...
@@ -31,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     datacounter=0;
   //  timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(getNewFrame()));
+    bruh = true;
     actIndex=-1;
     useCamera1= false;
     first_run = true;
@@ -43,6 +47,12 @@ MainWindow::MainWindow(QWidget *parent) :
     prev_left = 0;
     prev_right = 0;
     datacounter=0;
+    rot_only = false;
+    controller = make_shared<PIController>(3,0.1,2);
+    actual_point = make_shared<Point>(0,0,0);
+    set_point = make_shared<Point>(0,0,0);
+    desired_point = make_shared<Point>(0,0,0);
+    controller->clearIntegral();
 
     connected=false;
     backup_assistant = false;
@@ -187,7 +197,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     found_ball = false;
     ball_index = 1;
-
+    Point p(1000,0,0);
+    points_vector.push_back(p);
+    p.setPoint(0,0,0);
+    points_vector.push_back(p);
 }
 
 MainWindow::~MainWindow()
@@ -230,6 +243,7 @@ double MainWindow::calculateEncoderDelta(int prev, int actual) {
 /// vola sa vzdy ked dojdu nove data z robota. nemusite nic riesit, proste sa to stane
 int MainWindow::processThisRobot(TKobukiData robotdata)
 {
+    //TODO: atomic double robotX, robotY, robotFi
     if(first_run){
         start_left = robotdata.EncoderLeft;
         start_right = robotdata.EncoderRight;
@@ -238,68 +252,93 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
         prev_left = start_left;
         prev_right = start_right;
     }
-    
 
-    ///tu mozete robit s datami z robota
-    /// ale nic vypoctovo narocne - to iste vlakno ktore cita data z robota
-    ///teraz tu posielam rychlosti na zaklade toho co setne joystick a vypisujeme data z robota(kazdy 5ty krat. ale mozete skusit aj castejsie). vyratajte si polohu. a vypiste spravnu
-    /// tuto joystick cast mozete vklude vymazat,alebo znasilnit na vas regulator alebo ake mate pohnutky... kazdopadne, aktualne to blokuje gombiky cize tak
-    // if(instance->count()>0)
-    // {
-    //     if(forwardspeed==0 && rotationspeed!=0)
-    //         robot.setRotationSpeed(rotationspeed);
-    //     else if(forwardspeed!=0 && rotationspeed==0)
-    //         robot.setTranslationSpeed(forwardspeed);
-    //     else if((forwardspeed!=0 && rotationspeed!=0))
-    //         robot.setArcSpeed(forwardspeed,forwardspeed/rotationspeed);
-    //     else
-    //         robot.setTranslationSpeed(0);
-
-    // }
-///TU PISTE KOD... TOTO JE TO MIESTO KED NEVIETE KDE ZACAT,TAK JE TO NAOZAJ TU. AK AJ TAK NEVIETE, SPYTAJTE SA CVICIACEHO MA TU NATO STRING KTORY DA DO HLADANIA XXX
-
-
-
-  //  if(datacounter%5)
     {
-
         delta_wheel_right = calculateEncoderDelta(prev_right, robotdata.EncoderRight); //TODO: vyhodit funkciu kvoli speed a dat kod napriamo sem?
         delta_wheel_left = calculateEncoderDelta(prev_left, robotdata.EncoderLeft);
-        robotFi.store(robotFi.load(std::memory_order_relaxed) + (delta_wheel_right - delta_wheel_left) / WHEELBASE/PI*180.0,std::memory_order_relaxed);
-        if (robotFi.load(std::memory_order_relaxed) >= 180){
-            robotFi.store(robotFi.load(std::memory_order_relaxed) - 360);
+        robotFi = robotFi + (delta_wheel_right - delta_wheel_left) / WHEELBASE/PI*180.0;
+        if (robotFi >= 180){
+            robotFi = robotFi - 360;
         }
-        else if (robotFi.load(std::memory_order_relaxed) < -180) {
-            robotFi.store(robotFi.load(std::memory_order_relaxed) + 360,std::memory_order_relaxed);
+        else if (robotFi < -180) {
+            robotFi = robotFi + 360;
         }
         if (delta_wheel_left == delta_wheel_right) {
-            robotX.store(robotX.load(std::memory_order_relaxed) + (delta_wheel_left + delta_wheel_right)/2*cos(robotFi.load(std::memory_order_relaxed)*PI/180.0),std::memory_order_relaxed);
-            robotY.store(robotY.load(std::memory_order_relaxed) + (delta_wheel_left + delta_wheel_right)/2*sin(robotFi.load(std::memory_order_relaxed)*PI/180.0),std::memory_order_relaxed);
+            robotX = robotX + (delta_wheel_left + delta_wheel_right)/2*cos(robotFi*PI/180.0);
+            robotY = robotY + (delta_wheel_left + delta_wheel_right)/2*sin(robotFi*PI/180.0);
         }
         else {
-            robotX.store(robotX.load(std::memory_order_relaxed) + (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(sin(robotFi.load(std::memory_order_relaxed)*PI/180.0)-sin(prev_fi*PI/180.0)),std::memory_order_relaxed);
-            robotY.store(robotY.load(std::memory_order_relaxed) - (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(cos(robotFi.load(std::memory_order_relaxed)*PI/180.0)-cos(prev_fi*PI/180.0)),std::memory_order_relaxed);
+            robotX = robotX + (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(sin(robotFi*PI/180.0)-sin(prev_fi*PI/180.0));
+            robotY = robotY - (delta_wheel_right+delta_wheel_left)/(delta_wheel_right-delta_wheel_left)*WHEELBASE/2*(cos(robotFi*PI/180.0)-cos(prev_fi*PI/180.0));
         }
 
 
-        // std::cout << "encoder: " << robotdata.EncoderLeft << std::endl;
-
-        ///ak nastavite hodnoty priamo do prvkov okna,ako je to na tychto zakomentovanych riadkoch tak sa moze stat ze vam program padne
-                // ui->lineEdit_2->setText(QString::number(robotdata.EncoderRight));
-                //ui->lineEdit_3->setText(QString::number(robotdata.EncoderLeft));
-                //ui->lineEdit_4->setText(QString::number(robotdata.GyroAngle));
-                /// lepsi pristup je nastavit len nejaku premennu, a poslat signal oknu na prekreslenie
-                /// okno pocuva vo svojom slote a vasu premennu nastavi tak ako chcete. prikaz emit to presne takto spravi
-                /// viac o signal slotoch tu: https://doc.qt.io/qt-5/signalsandslots.html
-        ///posielame sem nezmysli.. pohrajte sa nech sem idu zmysluplne veci
-        // emit uiValuesChanged(robotX,robotY,robotFi);
         prev_right=robotdata.EncoderRight;
         prev_left=robotdata.EncoderLeft;
-        prev_fi = robotFi.load(std::memory_order_relaxed);
+        prev_fi = robotFi;
 
-        // prev_x = robotX;
-        // prev_y = robotY;
-        // prev_gyro = robotFi;
+        actual_point->setPoint(robotX*1000, robotY*1000, robotFi*PI/180.0);
+
+
+        //TODO: bruh a connected atomic bool?
+        if (bruh && connected) {
+
+            double rot_speed;
+            int trans_speed, radius;
+
+            if (!points_vector.empty()){
+                desired_point->setPoint(points_vector[0].getX(),points_vector[0].getY(),0);
+            }
+            else {
+                bruh = false;
+                return 0;
+            }
+            //toto vzdy nastavi ciel, ak je vo vektore bodov aspon jeden bod
+            controller->computeErrors(*actual_point,*desired_point);
+
+            controller->compute(*actual_point,*desired_point,(double)1/40, &trans_speed, &rot_speed);
+
+            if(abs(controller->error_distance) < WITHIN_TOLERANCE){
+                controller->clearIntegral();
+                robot.setTranslationSpeed(0);
+                controller->ramp.clear_time_hard();
+                if (!points_vector.empty()){
+                    //toto asi nemusi byt v ife - just to be sure
+                    points_vector.erase(points_vector.begin());
+                }
+                std::cout << "clear integral" << std::endl;
+                return 0;
+            }
+
+            if (abs(controller->error_angle) >= PI/4 && !rot_only){
+                //ak je uhol moc velky nastavi sa flag na rotaciu na mieste
+                rot_only = true;
+                controller->ramp.clear_time_hard();
+                controller->clearIntegral();
+                std::cout << "ONLY ROT: " << controller->error_angle << std::endl;
+                std::cout << "Actual Theta: " << actual_point->getTheta() << std::endl;
+                std::cout << "Desired Theta: " << atan2(desired_point->getY()-actual_point->getY(),desired_point->getX()-actual_point->getX()) << std::endl;
+            }
+
+            if (rot_only){
+                //ROTATION
+                robot.setRotationSpeed(rot_speed);
+            }
+            else{
+                //ARC
+                radius = trans_speed/rot_speed;
+                if(radius > 32767)
+                    radius = 32767;
+                else if(radius < -32767)
+                    radius = -32767;
+                robot.setArcSpeed(trans_speed,radius);
+            }
+            if (rot_only && abs(controller->error_angle)<=4*PI/180){
+                rot_only = false;
+                controller->ramp.clear_time_hard();
+                controller->clearIntegral();
+            }
+        } //if bruh koniec
 
         ///toto neodporucam na nejake komplikovane struktury.signal slot robi kopiu dat. radsej vtedy posielajte
         /// prazdny signal a slot bude vykreslovat strukturu (vtedy ju musite mat samozrejme ako member premmennu v mainwindow.ak u niekoho najdem globalnu premennu,tak bude cistit bludisko zubnou kefkou.. kefku dodam)
@@ -307,6 +346,7 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
 
     }
     datacounter++;
+
 
     return 0;
 
@@ -397,7 +437,7 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     cameraData.copyTo(frame[(actIndex+1)%3]);//kopirujem do nasej strukury
     actIndex=(actIndex+1)%3;//aktualizujem kde je nova fotka
     updateLaserPicture=1;
-
+    //TODO: nech sa passuju data z detekcie lopty do frameu
 
     cv::Mat ball_detection;
     cameraData.copyTo(ball_detection);
