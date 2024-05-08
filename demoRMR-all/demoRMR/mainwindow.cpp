@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QPainter>
+#include <QFileDialog>
 #include <math.h>
 
 
@@ -526,7 +527,16 @@ void MainWindow::on_pushButton_left_clicked()
 void MainWindow::on_pushButton_mode_clicked() //this is load map i just didnt have the tiem to refactor it all....
 {
     if (connected){
-        ui->frame->loadMap(":/resources/priestor.txt");
+        QString filePath = QFileDialog::getOpenFileName(nullptr, "Open File", QDir::currentPath(), "Text Files (*.txt)");
+
+        // Check if a file was selected
+        if (!filePath.isEmpty()) {
+            //TODO: zatial fixna
+            ui->frame->loadMap(filePath);
+            }
+            else{
+                std::cout << "Failed" << std::endl;
+            }
     }
 }
 

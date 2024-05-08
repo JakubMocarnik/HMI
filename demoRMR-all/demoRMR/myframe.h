@@ -38,6 +38,7 @@ signals:
 private:
     MainWindow *main_window;
     std::atomic_bool map_loaded;
+    std::string map_name;
     QPixmap first_warning;
     QPixmap second_warning;
     QPixmap third_warning;

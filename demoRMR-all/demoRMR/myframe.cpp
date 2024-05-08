@@ -13,6 +13,7 @@ MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     robotX_draw = 0;
     robotY_draw = 0;
     robotFi_draw = 0;
+    map_name = ":/resources/priestor.txt";
 }
 
 MyFrame::~MyFrame() {
@@ -98,7 +99,6 @@ void MyFrame::readPointsFromFile(const QString &filename) {
         }
     }
     file.close();
-    qDebug() << "Loaded polygon with" << mapPolygons.size() << "points";
     map_loaded.store(true,std::memory_order_relaxed);
 }
 
@@ -192,7 +192,6 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             QList<QPolygonF> drawPolygons(mapPolygons);
             // Define the map points
             // Read points from file and add polygons to the map
-            // readPointsFromFile(":/resources/priestor.txt");
 
             if(map_loaded.load(std::memory_order_relaxed)){
             // Define the maximum x and y coordinates of the map
