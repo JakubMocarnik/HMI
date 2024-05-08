@@ -27,6 +27,11 @@
 #include "robot.h"
 #include <QPixmap>
 #include "myframe.h"
+#include "point.h"
+#include "ramp.h"
+#include "controller.h"
+#include <mutex>
+
 #include <QDir>
 #include <QDebug>
 #include <chrono>
@@ -57,9 +62,8 @@ public:
     int processThisRobot(TKobukiData robotdata);
     friend class MyFrame;
 
-int processThisCamera(cv::Mat cameraData);
-int processThisSkeleton(skeleton skeledata);
-
+    int processThisCamera(cv::Mat cameraData);
+    int processThisSkeleton(skeleton skeledata);
 
 private slots:
     void on_pushButton_left_clicked();
@@ -103,9 +107,10 @@ private slots:
     void on_lineEdit_ip_textEdited(const QString &arg1);
 
 private:
+    void onFrameClicked();
     void detectBall(cv::Mat src);
     double calculateEncoderDelta(int prev, int actual);
-    bool MainWindow::isFingerUp(float down, float mid_down, float mid_up, float up);
+    bool isFingerUp(float down, float mid_down, float mid_up, float up);
     //--skuste tu nic nevymazat... pridavajte co chcete, ale pri odoberani by sa mohol stat nejaky drobny problem, co bude vyhadzovat chyby
     Ui::MainWindow *ui;
      void paintEvent(QPaintEvent *event);// Q_DECL_OVERRIDE;
@@ -149,7 +154,6 @@ private:
      QPixmap red_square;
      QPixmap green_circle;
 
-
      double forwardspeed;//mm/s
      double rotationspeed;//omega/s
 
@@ -164,13 +168,22 @@ private:
 
     int prev_left;
     int prev_right;
+    bool rot_only;
+    bool go;
+
+    std::shared_ptr<PIController> controller;
+    std::shared_ptr<Point> actual_point;
+    std::shared_ptr<Point> set_point;
+    std::shared_ptr<Point> desired_point;
+    std::vector<Point> points_vector;
+
 
     double delta_wheel_left;
     double delta_wheel_right;
 
-    double robotX;
-    double robotY;
-    double robotFi;
+    std::atomic<double> robotX;
+    std::atomic<double> robotY;
+    std::atomic<double> robotFi;
     double prev_fi;
 
     bool estop;

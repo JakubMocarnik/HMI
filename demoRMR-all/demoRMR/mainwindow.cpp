@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QPainter>
+#include <QFileDialog>
 #include <math.h>
 
 
@@ -8,7 +9,10 @@
 #define WHEELRADIUS 0.035
 #define TICKTOMETER 0.000085292090497737556558
 #define TICKTORAD 0.002436916871363930187454
-#define ENCODEROVERFLOW 65536
+#define ENCODEROVERFLOW 65535
+
+#define WITHIN_TOLERANCE 30
+#define WITHIN_TOLERANCE_THETA 0.0174533
 
 ///TOTO JE DEMO PROGRAM...AK SI HO NASIEL NA PC V LABAKU NEPREPISUJ NIC,ALE SKOPIRUJ SI MA NIEKAM DO INEHO FOLDERA
 /// AK HO MAS Z GITU A ROBIS NA LABAKOVOM PC, TAK SI HO VLOZ DO FOLDERA KTORY JE JASNE ODLISITELNY OD TVOJICH KOLEGOV
@@ -31,8 +35,9 @@ MainWindow::MainWindow(QWidget *parent) :
     datacounter=0;
   //  timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(getNewFrame()));
+    go = false;
     actIndex=-1;
-    useCamera1= true;
+    useCamera1= false;
     first_run = true;
     robotX = 0;
     robotY = 0;
@@ -43,6 +48,12 @@ MainWindow::MainWindow(QWidget *parent) :
     prev_left = 0;
     prev_right = 0;
     datacounter=0;
+    rot_only = false;
+    controller = make_shared<PIController>(3,0.1,2);
+    actual_point = make_shared<Point>(0,0,0);
+    set_point = make_shared<Point>(0,0,0);
+    desired_point = make_shared<Point>(0,0,0);
+    controller->clearIntegral();
 
     connected=false;
     backup_assistant = false;
@@ -167,6 +178,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_connect->setStyleSheet("background-color: #d1007a;"
                                           "font-weight: bold;"
                                           "color: white");
+    ui->pushButton_camera->setStyleSheet("background-color: #d1007a;"
+                                          "font-weight: bold;"
+                                          "color: white");
 
     ui->label_ip->setStyleSheet("font-weight: bold;"
                                 "color: #d1007a");
@@ -180,10 +194,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //TODO: get rid of or set color to MainToolbar
     estop = false;
+    connect(ui->frame,&MyFrame::clicked,this, &MainWindow::onFrameClicked);
 
     found_ball = false;
     ball_index = 1;
-
+    Point p(1000,0,0);
+    points_vector.push_back(p);
+    p.setPoint(0,0,0);
+    points_vector.push_back(p);
 }
 
 MainWindow::~MainWindow()
@@ -194,7 +212,10 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *event)
 {}
 
-
+void MainWindow::onFrameClicked(){
+    //ak je connectnuty, ak je flag zadavaj body
+    std::cout << "CLICKED" << std::endl;
+}
 /// toto je slot. niekde v kode existuje signal, ktory je prepojeny. pouziva sa napriklad (v tomto pripade) ak chcete dostat data z jedneho vlakna (robot) do ineho (ui)
 /// prepojenie signal slot je vo funkcii  on_pushButton_left_clicked
 void  MainWindow::setUiValues(double robotX,double robotY,double robotFi)
@@ -223,6 +244,7 @@ double MainWindow::calculateEncoderDelta(int prev, int actual) {
 /// vola sa vzdy ked dojdu nove data z robota. nemusite nic riesit, proste sa to stane
 int MainWindow::processThisRobot(TKobukiData robotdata)
 {
+    //TODO: atomic double robotX, robotY, robotFi
     if(first_run){
         start_left = robotdata.EncoderLeft;
         start_right = robotdata.EncoderRight;
@@ -231,37 +253,9 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
         prev_left = start_left;
         prev_right = start_right;
     }
-    
 
-    ///tu mozete robit s datami z robota
-    /// ale nic vypoctovo narocne - to iste vlakno ktore cita data z robota
-    ///teraz tu posielam rychlosti na zaklade toho co setne joystick a vypisujeme data z robota(kazdy 5ty krat. ale mozete skusit aj castejsie). vyratajte si polohu. a vypiste spravnu
-    /// tuto joystick cast mozete vklude vymazat,alebo znasilnit na vas regulator alebo ake mate pohnutky... kazdopadne, aktualne to blokuje gombiky cize tak
-    // if(instance->count()>0)
-    // {
-    //     if(forwardspeed==0 && rotationspeed!=0)
-    //         robot.setRotationSpeed(rotationspeed);
-    //     else if(forwardspeed!=0 && rotationspeed==0)
-    //         robot.setTranslationSpeed(forwardspeed);
-    //     else if((forwardspeed!=0 && rotationspeed!=0))
-    //         robot.setArcSpeed(forwardspeed,forwardspeed/rotationspeed);
-    //     else
-    //         robot.setTranslationSpeed(0);
-
-    // }
-///TU PISTE KOD... TOTO JE TO MIESTO KED NEVIETE KDE ZACAT,TAK JE TO NAOZAJ TU. AK AJ TAK NEVIETE, SPYTAJTE SA CVICIACEHO MA TU NATO STRING KTORY DA DO HLADANIA XXX
-
-
-
-  //  if(datacounter%5)
     {
-
-        
-
-
-
-
-        delta_wheel_right = calculateEncoderDelta(prev_right, robotdata.EncoderRight); //TODO: vyhodit funkciu kvoli speed a dat kod napriamo sem? 
+        delta_wheel_right = calculateEncoderDelta(prev_right, robotdata.EncoderRight); //TODO: vyhodit funkciu kvoli speed a dat kod napriamo sem?
         delta_wheel_left = calculateEncoderDelta(prev_left, robotdata.EncoderLeft);
         robotFi = robotFi + (delta_wheel_right - delta_wheel_left) / WHEELBASE/PI*180.0;
         if (robotFi >= 180){
@@ -280,25 +274,72 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
         }
 
 
-
-        // std::cout << "encoder: " << robotdata.EncoderLeft << std::endl;
-
-        ///ak nastavite hodnoty priamo do prvkov okna,ako je to na tychto zakomentovanych riadkoch tak sa moze stat ze vam program padne
-                // ui->lineEdit_2->setText(QString::number(robotdata.EncoderRight));
-                //ui->lineEdit_3->setText(QString::number(robotdata.EncoderLeft));
-                //ui->lineEdit_4->setText(QString::number(robotdata.GyroAngle));
-                /// lepsi pristup je nastavit len nejaku premennu, a poslat signal oknu na prekreslenie
-                /// okno pocuva vo svojom slote a vasu premennu nastavi tak ako chcete. prikaz emit to presne takto spravi
-                /// viac o signal slotoch tu: https://doc.qt.io/qt-5/signalsandslots.html
-        ///posielame sem nezmysli.. pohrajte sa nech sem idu zmysluplne veci
-        // emit uiValuesChanged(robotX,robotY,robotFi);
         prev_right=robotdata.EncoderRight;
         prev_left=robotdata.EncoderLeft;
         prev_fi = robotFi;
 
-        // prev_x = robotX;
-        // prev_y = robotY;
-        // prev_gyro = robotFi;
+        actual_point->setPoint(robotX*1000, robotY*1000, robotFi*PI/180.0);
+
+
+        //TODO: go a connected atomic bool?
+        if (go && connected) {
+
+            double rot_speed;
+            int trans_speed, radius;
+
+            if (!points_vector.empty()){
+                desired_point->setPoint(points_vector[0].getX(),points_vector[0].getY(),0);
+            }
+            else {
+                go = false;
+                return 0;
+            }
+            //toto vzdy nastavi ciel, ak je vo vektore bodov aspon jeden bod
+            controller->computeErrors(*actual_point,*desired_point);
+
+            controller->compute(*actual_point,*desired_point,(double)1/40, &trans_speed, &rot_speed);
+
+            if(abs(controller->error_distance) < WITHIN_TOLERANCE){
+                controller->clearIntegral();
+                robot.setTranslationSpeed(0);
+                controller->ramp.clear_time_hard();
+                if (!points_vector.empty()){
+                    //toto asi nemusi byt v ife - just to be sure
+                    points_vector.erase(points_vector.begin());
+                }
+                std::cout << "clear integral" << std::endl;
+                return 0;
+            }
+
+            if (abs(controller->error_angle) >= PI/4 && !rot_only){
+                //ak je uhol moc velky nastavi sa flag na rotaciu na mieste
+                rot_only = true;
+                controller->ramp.clear_time_hard();
+                controller->clearIntegral();
+                std::cout << "ONLY ROT: " << controller->error_angle << std::endl;
+                std::cout << "Actual Theta: " << actual_point->getTheta() << std::endl;
+                std::cout << "Desired Theta: " << atan2(desired_point->getY()-actual_point->getY(),desired_point->getX()-actual_point->getX()) << std::endl;
+            }
+
+            if (rot_only){
+                //ROTATION
+                robot.setRotationSpeed(rot_speed);
+            }
+            else{
+                //ARC
+                radius = trans_speed/rot_speed;
+                if(radius > 32767)
+                    radius = 32767;
+                else if(radius < -32767)
+                    radius = -32767;
+                robot.setArcSpeed(trans_speed,radius);
+            }
+            if (rot_only && abs(controller->error_angle)<=4*PI/180){
+                rot_only = false;
+                controller->ramp.clear_time_hard();
+                controller->clearIntegral();
+            }
+        } //if go koniec
 
         ///toto neodporucam na nejake komplikovane struktury.signal slot robi kopiu dat. radsej vtedy posielajte
         /// prazdny signal a slot bude vykreslovat strukturu (vtedy ju musite mat samozrejme ako member premmennu v mainwindow.ak u niekoho najdem globalnu premennu,tak bude cistit bludisko zubnou kefkou.. kefku dodam)
@@ -306,6 +347,7 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
 
     }
     datacounter++;
+
 
     return 0;
 
@@ -403,7 +445,7 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     cameraData.copyTo(frame[(actIndex+1)%3]);//kopirujem do nasej strukury
     actIndex=(actIndex+1)%3;//aktualizujem kde je nova fotka
     updateLaserPicture=1;
-
+    //TODO: nech sa passuju data z detekcie lopty do frameu
 
     cv::Mat ball_detection;
     cameraData.copyTo(ball_detection);
@@ -489,19 +531,19 @@ void MainWindow::on_pushButton_left_clicked()
 
 }
 
-void MainWindow::on_pushButton_mode_clicked() //gestures and normal mode
+void MainWindow::on_pushButton_mode_clicked() //this is load map i just didnt have the tiem to refactor it all....
 {
-    //TODO: zapnut/vypnut thread tu?
+    if (connected){
+        QString filePath = QFileDialog::getOpenFileName(nullptr, "Open File", QDir::currentPath(), "Text Files (*.txt)");
 
-    if(!gestures){
-        ui->pushButton_mode->setText("NORMAL");
-        gestures = true;
-        skeleton_rotation = false;
-    }
-    else {
-        ui->pushButton_mode->setText("GESTURES");
-        robot.setTranslationSpeed(0); //TODO ??
-        gestures = false;
+        // Check if a file was selected
+        if (!filePath.isEmpty()) {
+            //TODO: zatial fixna
+            ui->frame->loadMap(filePath);
+            }
+            else{
+                std::cout << "Failed" << std::endl;
+            }
     }
 }
 
@@ -550,12 +592,14 @@ void MainWindow::on_pushButton_connect_clicked()
         connected = true;
         ui->label_led->setPixmap(green_circle);
         ui->pushButton_connect->setText("DISCONNECT");
+        ui->lineEdit_ip->setReadOnly(true);
     }
     else {
         robot.robotStop();
         connected = false;
         ui->label_led->setPixmap(red_square);
         ui->pushButton_connect->setText("CONNECT");
+        ui->lineEdit_ip->setReadOnly(false);
         update();
     }
 }
@@ -761,6 +805,9 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_connect->setStyleSheet("background-color: #d1007a;"
                                               "font-weight: bold;"
                                               "color: white");
+        ui->pushButton_camera->setStyleSheet("background-color: #d1007a;"
+                                           "font-weight: bold;"
+                                           "color: white");
 
         ui->label_ip->setStyleSheet("font-weight: bold;"
                                     "color: #d1007a");
@@ -790,6 +837,9 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_connect->setStyleSheet("background-color: #770000;"
                                               "font-weight: bold;"
                                               "color: white");
+        ui->pushButton_camera->setStyleSheet("background-color: #770000;"
+                                              "font-weight: bold;"
+                                              "color: white");
 
         ui->label_ip->setStyleSheet("font-weight: bold;"
                                     "color: #770000");
@@ -808,4 +858,3 @@ void MainWindow::on_lineEdit_ip_textEdited(const QString &arg1)
 {
     ipaddress = arg1.toStdString();
 }
-

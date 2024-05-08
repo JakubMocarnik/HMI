@@ -2,17 +2,29 @@
 #include "myframe.h"
 #include <QPainter>
 #include "mainwindow.h"
-#include <QtMath>
 
 #define GREEN_DISTANCE 600
 #define YELLOW_DISTANCE 400
 
+
 MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     // Additional setup if needed
+    map_loaded = false;
+    robotX_draw = 0;
+    robotY_draw = 0;
+    robotFi_draw = 0;
+    map_name = ":/resources/priestor.txt";
 }
 
 MyFrame::~MyFrame() {
     // Cleanup if needed
+}
+
+void MyFrame::mouseReleaseEvent(QMouseEvent *event){
+    if (event->button() == Qt::LeftButton) {
+        emit clicked();  // Emit the clicked signal
+    }
+    //TODO: handlovat aj ine kliky napr klik pravym? asi ne xD
 }
 
 void MyFrame::setMainWindow(MainWindow *main_window){
@@ -30,6 +42,75 @@ std::vector<cv::Vec3i> MyFrame::getCircles() {
 
 void MyFrame::setCircles(std::vector<cv::Vec3i> circles) {
     this->circles = circles;
+std::string trimToDecimal(std::string numStr) {
+    auto pos = numStr.find('.');
+    if (pos != std::string::npos && pos + 3 < numStr.length()) {
+        numStr = numStr.substr(0, pos + 3);  // Keep two decimal places
+    }
+    return numStr;
+}
+
+void MyFrame::readPointsFromFile(const QString &filename) {
+    // Clear the existing map polygons list
+    mapPolygons.clear();
+
+    // Open the file
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open file:" << filename;
+        return;
+    }
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed(); // Trim leading and trailing whitespace
+
+        // Remove comments indicated by double slashes
+        int commentIndex = line.indexOf("//");
+        if (commentIndex != -1) {
+            line = line.left(commentIndex).trimmed(); // Remove comment and trim again
+        }
+
+        // Ignore empty lines
+        if (line.isEmpty()) {
+            continue;
+        }
+
+        // Split the line into parts
+        QStringList parts = line.split(" ");
+
+        // Extract points from the line
+        QPolygonF polygon;
+        for (int i = 1; i < parts.size(); ++i) {
+            QString pointStr = parts[i];
+            // Remove '[' and ']' characters
+            pointStr.remove('[');
+            pointStr.remove(']');
+
+            // Extract x and y coordinates
+            QStringList coordinates = pointStr.split(",");
+            if (coordinates.size() != 2) {
+                qDebug() << "Invalid point format:" << parts[i];
+                polygon.clear(); // Clear the polygon
+                break; // Exit loop to discard this polygon
+            }
+            qreal x = coordinates[0].trimmed().toDouble();
+            qreal y = coordinates[1].trimmed().toDouble();
+            polygon << QPointF(x, y);
+        }
+
+        // Add the polygon to the map polygons list if it's valid
+        if (!polygon.isEmpty()) {
+            mapPolygons.append(polygon);
+        }
+    }
+    file.close();
+    map_loaded.store(true,std::memory_order_relaxed);
+}
+
+void MyFrame::loadMap(const QString &filename){
+    map_loaded.store(false,std::memory_order_relaxed);
+    readPointsFromFile(filename);
 }
 
 void MyFrame::paintEvent(QPaintEvent *event) {
@@ -52,8 +133,8 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
     //rectangle pre frame vykreslovania v MainWindow
     QRect rect;
-    rect= this->geometry();//ziskate porametre stvorca,do ktoreho chcete kreslit
-    rect.translate(0,0);
+    rect = this->geometry();//ziskate porametre stvorca,do ktoreho chcete kreslit
+    rect.translate(10,10);
     painter.drawRect(rect);
 
 
@@ -61,36 +142,8 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     second_warning.load(":/resources/img/yellow_warning");
     third_warning.load(":/resources/img/red_warning");
 
-    //rectangles pre jednotlive varovania
-    // int rectThickness = rect.height()/20;
-    // QRect topRect;
-    // topRect.setX(rect.x());
-    // topRect.setY(rect.y());
-    // topRect.setWidth(rect.width());
-    // topRect.setHeight(rectThickness);
-    // QRect bottomRect;
-    // bottomRect.setX(rect.x());
-    // bottomRect.setY(rect.height() - rectThickness);
-    // bottomRect.setWidth(rect.width());
-    // bottomRect.setHeight(rectThickness);
-    // QRect leftRect;
-    // leftRect.setX(rect.x());
-    // leftRect.setY(rectThickness);
-    // leftRect.setWidth(rectThickness);
-    // leftRect.setHeight(rect.height() - 2*rectThickness);
-    // QRect rightRect;
-    // rightRect.setX(rect.width() - rectThickness);
-    // rightRect.setY(rectThickness);
-    // rightRect.setWidth(rectThickness);
-    // rightRect.setHeight(rect.height() - 2*rectThickness);
-
     // Define rectangles for each side
     int rectThickness = (rect.height())/20;
-
-    // QRect topRect(rect.x(), rect.y(), rect.width(), rectThickness);
-    // QRect bottomRect(rect.x(), rect.height() - rectThickness, rect.width(), rectThickness);
-    // QRect leftRect(rect.x(), rectThickness, rectThickness, rect.height() - 2 * rectThickness);
-    // QRect rightRect(rect.width() - rectThickness, rectThickness, rectThickness, rect.height() - 2 * rectThickness);
 
     //Define polygons for each side
     QPolygon topPolygon;
@@ -119,13 +172,16 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
 
 
+
     if (main_window->connected){
         if(main_window->useCamera1==true && main_window->actIndex>-1)/// ak zobrazujem data z kamery a aspon niektory frame vo vectore je naplneny
         {
             QImage image = QImage((uchar*)main_window->frame[main_window->actIndex].data, main_window->frame[main_window->actIndex].cols, main_window->frame[main_window->actIndex].rows, main_window->frame[main_window->actIndex].step, QImage::Format_RGB888  );//kopirovanie cvmat do qimage
             painter.drawImage(rect,image.rgbSwapped());
             update();
-
+        }
+        else if(main_window->useCamera1==false)
+        {
             if (main_window->found_ball){
                 //for each circle in circles
                 for (size_t i = 0; i < circles.size(); i++) {
@@ -133,236 +189,96 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     std::cout << "Circle center: " << circles[i][0] << ", " << circles[i][1] << std::endl;
                 }
             }
-
-            if(main_window->useCamera1==true && main_window->actIndex>-1)
+            //TODO: pridat loptu
+            if(main_window->updateLaserPicture==1) ///ak mam nove data z lidaru
             {
-                if(main_window->updateLaserPicture==1) ///ak mam nove data z lidaru
-                {
-                    main_window->updateLaserPicture=0;
-                }
-
-            double minUpDistance = 100000;
-            double minDownDistance = 100000;
-            double minLeftDistance = 100000;
-            double minRightDistance = 100000;
-            int obstacleLeftX = 0;
-            int obstacleLeftY = 0;
-            int obstacleForwardX = 0;
-            int obstacleForwardY = 0;
-            int obstacleRightX = 0;
-            int obstacleRightY = 0;
-
-            for(int k=0; k < main_window->copyOfLaserData.numberOfScans/*360*/;k++){
-                    double dist = main_window->copyOfLaserData.Data[k].scanDistance;
-                    double uhol = 360.0-main_window->copyOfLaserData.Data[k].scanAngle;
-
-
-                    double bx = dist*cos(-uhol*3.14159/180.0);
-                    double by = dist*sin(-uhol*3.14159/180.0);
-
-                    int x = rect.width() / 2 - (681.743 * by) / (bx - 14.5);
-                    int y = rect.height() / 2 + ((681.743 * (-21 + 11.5)) / (bx - 14.5)) / 10;
-
-                    // Calculate the position of the obstacle relative to the frame's top-left corner
-                    x -= image.width() / 2; // Adjust for the image width
-                    y -= image.height() / 2; // Adjust for the image height
-
-
-                    if (dist!=0.0){
-                        if(uhol < 45 || uhol > 315 ){
-                            //top
-                            if(dist < minUpDistance){
-                                minUpDistance = dist;
-                                obstacleForwardX = x;
-                                obstacleForwardY = y;
-                            }
-                        }
-                        if(uhol <= 135 && uhol >= 45){
-                            //left
-                            if(dist < minLeftDistance){
-                                minLeftDistance = dist;
-                                // obstacleLeftX = x;
-                                // obstacleLeftY = y;
-                            }
-                        }
-                        if(uhol < 225 && uhol > 135){
-                            //bottom
-                            if(dist < minDownDistance){
-                                minDownDistance = dist;
-                            }
-                        }
-                        if(uhol <= 315 && uhol >= 225){
-                            //right
-                            if(dist < minRightDistance){
-                                minRightDistance = dist;
-                                // obstacleRightX = x;
-                                // obstacleRightY = y;
-                            }
-                        }
-                    }
-                }
-
-                //top
-
-            if(minUpDistance < YELLOW_DISTANCE){
-                QPainter painter(this);
-                painter.setBrush(Qt::red);
-                painter.drawPolygon(topPolygon);
-                if(rect.contains(QPoint(obstacleForwardX,obstacleForwardY))){
-                    painter.drawPixmap(QRect(obstacleForwardX,obstacleForwardY,240,240),third_warning);
-                    update();
-                }
+                main_window->updateLaserPicture=0;
             }
-            else if(minUpDistance < GREEN_DISTANCE){
-                QPainter painter(this);
-                painter.setBrush(Qt::yellow);
-                painter.drawPolygon(topPolygon);
-                if(rect.contains(QPoint(obstacleForwardX,obstacleForwardY))){
-                    painter.drawPixmap(QRect(obstacleForwardX,obstacleForwardY,240,240),second_warning);
-                    update();
-                }
+            QPainter painter(this);
+
+            // Set the background color to black for the entire widget
+            painter.fillRect(this->rect(), Qt::black);
+            qDebug() <<  "The polygon has" << mapPolygons.size() << "points";
+            QList<QPolygonF> drawPolygons(mapPolygons);
+            // Define the map points
+            // Read points from file and add polygons to the map
+
+            if(map_loaded.load(std::memory_order_relaxed)){
+            // Define the maximum x and y coordinates of the map
+            const qreal maxX = 602.0; // Maximum x-coordinate in the map
+            const qreal maxY = 681.0; // Maximum y-coordinate in the map
+
+            // Calculate the bounding box of the map
+            QRectF boundingRect;
+            for (const QPolygonF &polygon : drawPolygons) {
+                boundingRect = boundingRect.united(polygon.boundingRect());
             }
-            else{
-                QPainter painter(this);
-                painter.setBrush(Qt::green);
-                painter.drawPolygon(topPolygon);
-                if(rect.contains(QPoint(obstacleForwardX,obstacleForwardY))){
-                    painter.drawPixmap(QRect(obstacleForwardX,obstacleForwardY,240,240),first_warning);
-                    update();
+
+            // Calculate the scaling factors to fit the map into the geometry of the widget
+            qreal scaleX = static_cast<qreal>(rect.width()) / maxX;
+            qreal scaleY = static_cast<qreal>(rect.height()) / maxY;
+            qreal scale = qMin(scaleX, scaleY);
+
+            // Adjust scaling factors to maintain aspect ratio
+            if (scaleX < scaleY) {
+                scaleY = scaleX;
+            } else {
+                scaleX = scaleY;
+            }
+
+            // Calculate the translation values to center the map within the rectangle
+            qreal translateX = (rect.width() - boundingRect.width() * scale) / 2 - boundingRect.left() * scale;
+            qreal translateY = (rect.height() - boundingRect.height() * scale) / 2 - (boundingRect.top() - 360) * scale; // Adjust for the y-axis offset
+
+            // Apply scaling and translation to polygons
+            for (QPolygonF &polygon : drawPolygons) {
+                for (QPointF &point : polygon) {
+                    // Invert the y-coordinate
+                    point.setY(-point.y());
+
+                    // Apply scaling
+                    point.setX(point.x() * scaleX + translateX);
+                    point.setY(point.y() * scaleY + translateY);
                 }
             }
 
-            //left
-
-            if(minLeftDistance < YELLOW_DISTANCE){
-                QPainter painter(this);
-                painter.setBrush(Qt::red);
-                painter.drawPolygon(leftPolygon);
-                // if(rect.contains(QPoint(obstacleLeftX,obstacleLeftY))){
-                //     painter.drawPixmap(QRect(obstacleLeftX,obstacleLeftY,240,240),third_warning);
-                //     update();
-                // }
-            }
-            else if(minLeftDistance < GREEN_DISTANCE){
-                QPainter painter(this);
-                painter.setBrush(Qt::yellow);
-                painter.drawPolygon(leftPolygon);
-                // if(rect.contains(QPoint(obstacleLeftX,obstacleLeftY))){
-                //     painter.drawPixmap(QRect(obstacleLeftX,obstacleLeftY,240,240),second_warning);
-                //     update();
-                // }
-            }
-            else{
-                QPainter painter(this);
-                painter.setBrush(Qt::green);
-                painter.drawPolygon(leftPolygon);
-                // if(rect.contains(QPoint(obstacleLeftX,obstacleLeftY))){
-                //     painter.drawPixmap(QRect(obstacleLeftX,obstacleLeftY,240,240),first_warning);
-                //     update();
-                // }
+            // Draw the map polygons
+            painter.setPen(QPen(Qt::green, 3)); // Set the pen for drawing polygons
+            foreach (const QPolygonF &polygon, drawPolygons) {
+                painter.drawPolygon(polygon);
             }
 
-            //bottom
+            robotX_draw = main_window->robotX.load(std::memory_order_relaxed);
+            robotY_draw = main_window->robotY.load(std::memory_order_relaxed);
+            robotFi_draw = main_window->robotFi.load(std::memory_order_relaxed);
+            // Draw the robot
+            QPointF robotCenter(50, 50); // Initial position of the robot
+            QPointF scaledRobotCenter(robotCenter.x() * scaleX, robotCenter.y() * scaleY); // Scale the robot position
+            scaledRobotCenter.setY(-scaledRobotCenter.y()); // Mirror around the x-axis
+            scaledRobotCenter += QPointF(translateX+robotX_draw*100.0, translateY-robotY_draw*100.0); // Translate the robot position
 
-            if(minDownDistance < YELLOW_DISTANCE){
-                QPainter painter(this);
-                painter.setBrush(Qt::red);
-                painter.drawPolygon(bottomPolygon);
-            }
-            else if(minDownDistance < GREEN_DISTANCE){
-                QPainter painter(this);
-                painter.setBrush(Qt::yellow);
-                painter.drawPolygon(bottomPolygon);
-            }
-            else{
-                QPainter painter(this);
-                painter.setBrush(Qt::green);
-                painter.drawPolygon(bottomPolygon);
-            }
-
-            //right
-
-            if(minRightDistance < YELLOW_DISTANCE){
-                QPainter painter(this);
-                painter.setBrush(Qt::red);
-                painter.drawPolygon(rightPolygon);
-                // if(rect.contains(QPoint(obstacleRightX,obstacleRightY))){
-                //     painter.drawPixmap(QRect(obstacleRightX,obstacleRightY,240,240),third_warning);
-                //     update();
-                // }
-            }
-            else if(minRightDistance < GREEN_DISTANCE){
-                QPainter painter(this);
-                painter.setBrush(Qt::yellow);
-                painter.drawPolygon(rightPolygon);
-                // if(rect.contains(QPoint(obstacleRightX,obstacleRightY))){
-                //     painter.drawPixmap(QRect(obstacleRightX,obstacleRightY,240,240),second_warning);
-                //     update();
-                // }
-            }
-            else{
-                QPainter painter(this);
-                painter.setBrush(Qt::green);
-                painter.drawPolygon(rightPolygon);
-                // if(rect.contains(QPoint(obstacleRightX,obstacleRightY))){
-                //     painter.drawPixmap(QRect(obstacleRightX,obstacleRightY,240,240),first_warning);
-                //     update();
-                // }
-            }
-
-            if(main_window->backup_assistant==true){
-
-                // Calculate the size of the backup assistant rectangle (one-third of the width and height of the frame)
-                int assistantWidth = rect.width() / 3;
-                int assistantHeight = rect.height() / 3;
-
-                // Calculate the position of the backup assistant rectangle at the top in the middle of the frame
-                int assistantX = rect.center().x() - assistantWidth / 2;
-                int assistantY = rect.top();
-
-                // Define the backup assistant rectangle
-                QRect assistantRect(assistantX, assistantY, assistantWidth, assistantHeight);
-                // assistantRect.translate(0, rect.top()+50);
-                // Draw the backup assistant rectangle
-                QPainter painter(this);
-                painter.fillRect(assistantRect, Qt::black); // Fill the rectangle with blue color
-
-                // Loop through the laser data and draw backup assistant points within the rectangle
-                for (int k = 0; k < main_window->copyOfLaserData.numberOfScans; k++) {
-                    int dist = main_window->copyOfLaserData.Data[k].scanDistance; // Distance divided by 20 (adjust as needed)
-                    double angle = 360.0 - main_window->copyOfLaserData.Data[k].scanAngle;
-                    int xp = rect.width() - (rect.width() / 2 + dist/5 * 2 * sin(angle * M_PI / 180.0)) + rect.topLeft().x();
-                    int yp = rect.height() - (rect.height() / 2 + dist/5 * 2 * cos(angle * M_PI / 180.0)) + rect.topLeft().y();
-
-                    int assistantXp = assistantRect.x() + (xp - rect.x()) * assistantRect.width() / rect.width();
-                    int assistantYp = assistantRect.y() + (yp - rect.y()) * assistantRect.height() / rect.height();
-
-                    // Draw the rescaled backup assistant point
-                    if (assistantRect.contains(assistantXp, assistantYp)) {
-                        if(dist > GREEN_DISTANCE){
-                            painter.setPen(pero);
-                            painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
-                        }
-                        else if(dist > YELLOW_DISTANCE){
-                            painter.setPen(yellow_pen);
-                            painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
-                        }
-                        else{
-                            painter.setPen(red_pen);
-                            painter.drawEllipse(QPoint(assistantXp, assistantYp),2,2);
-                        }
-                    }
-                    int xs=assistantRect.width()-(assistantRect.width()/2+2*sin((360.0)*3.14159/180.0))+assistantRect.topLeft().x();
-                    int ys=assistantRect.height()-(assistantRect.height()/2+2*cos((360.0)*3.14159/180.0))+assistantRect.topLeft().y();
-                    painter.drawEllipse(QPoint(xs, ys),20,20);
-                    painter.drawEllipse(QPoint(xs, ys-12),4,4);
-
-                }
+            // Draw the robot as a circle with a line pointing to the right
+            painter.setPen(QPen(Qt::red, 3));
+            painter.drawEllipse(scaledRobotCenter, 25, 25); // Draw a circle representing the robot
+            //TODO: line aby sa kreslila podla uhlu
+            double lineEndX = 25*cos(robotFi_draw*PI/180.0);
+            double lineEndY = -25*sin(robotFi_draw*PI/180.0);
+            QPointF lineEnd = scaledRobotCenter + QPointF(lineEndX, lineEndY);
+            painter.drawLine(scaledRobotCenter, lineEnd); // Draw a line pointing to the right
+            painter.setPen(QPen(Qt::white,3));
+            QFont font = painter.font();
+            font.setPointSize(12);
+            font.setBold(false);
+            painter.setFont(font);
+            std::string coords = "X: " + trimToDecimal(std::to_string(robotX_draw)) +
+                                 " Y: " + trimToDecimal(std::to_string(robotY_draw)) +
+                                 " Fi: " + trimToDecimal(std::to_string(robotFi_draw));
+            painter.drawText(this->rect(), Qt::AlignBottom | Qt::AlignRight, coords.c_str());
 
             }
+            update();
         }
+
     }
-
 }
 
-}

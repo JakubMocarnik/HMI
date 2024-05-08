@@ -81,11 +81,16 @@ INCLUDEPATH += /usr/local/include/opencv4/
 
 
 SOURCES += main.cpp\
+        controller.cpp \
         mainwindow.cpp \
-        myframe.cpp
+        myframe.cpp \
+        ramp.cpp
 
 HEADERS  += mainwindow.h \
-    myframe.h
+    controller.h \
+    myframe.h \
+    point.h \
+    ramp.h
 
 FORMS    += mainwindow.ui
 

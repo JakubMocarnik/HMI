@@ -29,5 +29,6 @@
         <file>img/red_warning.png</file>
         <file>img/transparent_warning.png</file>
         <file>img/yellow_warning.png</file>
+        <file>priestor.txt</file>
     </qresource>
 </RCC>
