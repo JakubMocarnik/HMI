@@ -203,6 +203,9 @@ private:
 
     std::string theme;
 
+    double imageWidth;
+    double imageHeight;
+
 public slots:
      void setUiValues(double robotX,double robotY,double robotFi);
 signals:

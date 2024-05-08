@@ -372,7 +372,12 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 
 void MainWindow::detectBall(cv::Mat src){
 
-    src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\OSMY SEMESTER\\HMI\\CVICENIA\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
+    src = cv::imread(cv::samples::findFile("C:\\Users\\mocar\\Desktop\\HMI\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
+    imageWidth = src.size().width;
+    imageHeight = src.size().height;
+
+    std::cout << "Image width: " <<imageWidth<<std::endl;
+    std::cout << "Image height: " <<imageHeight<<std::endl;
     // Check if image is loaded fine
     if (src.empty()) {
         std::cout << "not cool" <<std::endl;
@@ -416,8 +421,8 @@ void MainWindow::detectBall(cv::Mat src){
             // Construct the full path for the image to save
             QString filePath = subDir + "/ball";
             // Convert QString to std::string for cv::imwrite
-            // cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
-            // cv::imshow("detected circles " , src);
+            //cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
+            //cv::imshow("detected circles " , src);
             found_ball = true;
             ball_index++;
             start_time = std::chrono::high_resolution_clock::now();

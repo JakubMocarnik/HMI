@@ -184,13 +184,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
         }
         else if(main_window->useCamera1==false)
         {
-            if (main_window->found_ball){
-                //for each circle in circles
-                for (size_t i = 0; i < circles.size(); i++) {
-                    //draw circle center
-                    std::cout << "Circle center: " << circles[i][0] << ", " << circles[i][1] << std::endl;
-                }
-            }
+
             //TODO: pridat loptu
             if(main_window->updateLaserPicture==1) ///ak mam nove data z lidaru
             {
@@ -257,7 +251,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             QPointF robotCenter(50, 50); // Initial position of the robot
             QPointF scaledRobotCenter(robotCenter.x() * scaleX, robotCenter.y() * scaleY); // Scale the robot position
             scaledRobotCenter.setY(-scaledRobotCenter.y()); // Mirror around the x-axis
-            scaledRobotCenter += QPointF(translateX+robotX_draw*100.0, translateY-robotY_draw*100.0); // Translate the robot position
+            scaledRobotCenter += QPointF(translateX+robotX_draw*100.0*scaleX, translateY-robotY_draw*100.0*scaleY); // Translate the robot position
 
             // Draw the robot as a circle with a line pointing to the right
             painter.setPen(QPen(Qt::red, 3));
@@ -277,7 +271,46 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                                  " Fi: " + trimToDecimal(std::to_string(robotFi_draw));
             painter.drawText(this->rect(), Qt::AlignBottom | Qt::AlignRight, coords.c_str());
 
+
+            if (main_window->found_ball){
+                //for each circle in circles
+                for (size_t i = 0; i < circles.size(); i++) {
+                    //draw circle center
+                    //std::cout << "Circle center: " << circles[i][0] << ", " << circles[i][1] << std::endl;
+
+                    double angleBall = (circles[i][0]*64)/main_window->imageWidth;
+                    //std::cout << "Ball angle: " << angleBall << std::endl;
+
+                    angleBall = -angleBall-32;
+                    double lidarAngle = 0;
+
+                    for(int k=0; k < main_window->copyOfLaserData.numberOfScans/*360*/;k++){
+                        lidarAngle = main_window->copyOfLaserData.Data[k].scanAngle;
+                        if(lidarAngle > 180){
+                            lidarAngle = 360 - lidarAngle;
+                        }
+                        else{
+                            lidarAngle = -lidarAngle;
+                        }
+
+                        if(fabs(lidarAngle - angleBall) <= 1){
+                            if(main_window->copyOfLaserData.Data[k].scanDistance != 0){
+                                double ballPosX = scaledRobotCenter.x() + cos(angleBall*PI/180 + robotFi_draw) * scaleX * main_window->copyOfLaserData.Data[k].scanDistance/100;
+                                double ballPosY = scaledRobotCenter.x() + sin(angleBall*PI/180 + robotFi_draw) * scaleY * main_window->copyOfLaserData.Data[k].scanDistance/100;
+                                std::cout << "Ball X: " << ballPosX << std::endl;
+                                std::cout << "Ball Y: " << ballPosY << std::endl;
+
+                                painter.drawEllipse(ballPosX, ballPosY, 5, 5);
+                            }
+                        }
+                    }
+
+                }
             }
+
+            }
+
+
             update();
         }
 
