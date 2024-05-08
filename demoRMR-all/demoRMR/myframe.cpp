@@ -13,7 +13,6 @@ MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     robotX_draw = 0;
     robotY_draw = 0;
     robotFi_draw = 0;
-    readPointsFromFile(":/resources/priestor.txt");
 }
 
 MyFrame::~MyFrame() {
@@ -98,11 +97,13 @@ void MyFrame::readPointsFromFile(const QString &filename) {
             mapPolygons.append(polygon);
         }
     }
-
     file.close();
+    qDebug() << "Loaded polygon with" << mapPolygons.size() << "points";
+    map_loaded.store(true,std::memory_order_relaxed);
 }
 
 void MyFrame::loadMap(const QString &filename){
+    map_loaded.store(false,std::memory_order_relaxed);
     readPointsFromFile(filename);
 }
 
@@ -187,18 +188,20 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Set the background color to black for the entire widget
             painter.fillRect(this->rect(), Qt::black);
-
+            qDebug() <<  "The polygon has" << mapPolygons.size() << "points";
+            QList<QPolygonF> drawPolygons(mapPolygons);
             // Define the map points
             // Read points from file and add polygons to the map
-            readPointsFromFile(":/resources/priestor.txt");
+            // readPointsFromFile(":/resources/priestor.txt");
 
+            if(map_loaded.load(std::memory_order_relaxed)){
             // Define the maximum x and y coordinates of the map
             const qreal maxX = 602.0; // Maximum x-coordinate in the map
             const qreal maxY = 681.0; // Maximum y-coordinate in the map
 
             // Calculate the bounding box of the map
             QRectF boundingRect;
-            for (const QPolygonF &polygon : mapPolygons) {
+            for (const QPolygonF &polygon : drawPolygons) {
                 boundingRect = boundingRect.united(polygon.boundingRect());
             }
 
@@ -219,7 +222,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             qreal translateY = (rect.height() - boundingRect.height() * scale) / 2 - (boundingRect.top() - 360) * scale; // Adjust for the y-axis offset
 
             // Apply scaling and translation to polygons
-            for (QPolygonF &polygon : mapPolygons) {
+            for (QPolygonF &polygon : drawPolygons) {
                 for (QPointF &point : polygon) {
                     // Invert the y-coordinate
                     point.setY(-point.y());
@@ -232,7 +235,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Draw the map polygons
             painter.setPen(QPen(Qt::green, 3)); // Set the pen for drawing polygons
-            foreach (const QPolygonF &polygon, mapPolygons) {
+            foreach (const QPolygonF &polygon, drawPolygons) {
                 painter.drawPolygon(polygon);
             }
 
@@ -263,6 +266,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                                  " Fi: " + trimToDecimal(std::to_string(robotFi_draw));
             painter.drawText(this->rect(), Qt::AlignBottom | Qt::AlignRight, coords.c_str());
 
+            }
             update();
         }
 

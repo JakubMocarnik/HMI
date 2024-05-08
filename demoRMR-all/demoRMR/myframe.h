@@ -37,7 +37,7 @@ signals:
     void clicked();
 private:
     MainWindow *main_window;
-    bool map_loaded;
+    std::atomic_bool map_loaded;
     QPixmap first_warning;
     QPixmap second_warning;
     QPixmap third_warning;

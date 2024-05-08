@@ -525,7 +525,9 @@ void MainWindow::on_pushButton_left_clicked()
 
 void MainWindow::on_pushButton_mode_clicked() //this is load map i just didnt have the tiem to refactor it all....
 {
-
+    if (connected){
+        ui->frame->loadMap(":/resources/priestor.txt");
+    }
 }
 
 void MainWindow::on_pushButton_connect_clicked()
