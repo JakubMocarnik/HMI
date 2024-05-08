@@ -22,6 +22,16 @@
 
 class MainWindow;
 
+class DrawPoint {
+public :
+    DrawPoint(QPointF point, bool operational){
+        this->point = point;
+        this->operational = operational;
+    };
+    bool operational;
+    QPointF point;
+};
+
 class MyFrame : public QFrame {
     Q_OBJECT
 public:
@@ -30,12 +40,17 @@ public:
     void setMainWindow(MainWindow *main_window);
     void printStuff();
     void loadMap(const QString &filename);
-    void MyFrame::readPointsFromFile(const QString &filename);
+    void readPointsFromFile(const QString &filename);
     void drawRobot(QPainter &painter);
     QPointF scaleAndTranslatePoint(const QPointF &point);
 signals:
-    void clicked();
+    void clicked(int x,int y);
 private:
+    qreal scaleX;
+    qreal scaleY;
+    qreal scale;
+    qreal translateX;
+    qreal translateY;
     MainWindow *main_window;
     std::atomic_bool map_loaded;
     std::string map_name;

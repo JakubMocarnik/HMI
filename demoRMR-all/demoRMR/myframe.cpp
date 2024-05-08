@@ -1,6 +1,7 @@
 // MyFrame.cpp
 #include "myframe.h"
 #include <QPainter>
+#include <QPainterPath>
 #include "mainwindow.h"
 
 #define GREEN_DISTANCE 600
@@ -14,6 +15,7 @@ MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     robotY_draw = 0;
     robotFi_draw = 0;
     map_name = ":/resources/priestor.txt";
+
 }
 
 MyFrame::~MyFrame() {
@@ -22,9 +24,20 @@ MyFrame::~MyFrame() {
 
 void MyFrame::mouseReleaseEvent(QMouseEvent *event){
     if (event->button() == Qt::LeftButton) {
-        emit clicked();  // Emit the clicked signal
+        if (main_window->connected && map_loaded){
+        QPoint pos = event->pos();  // Get the click position
+
+        // You can now use clickPosition where needed
+        int x = pos.x();
+        int y = pos.y();
+
+        // Reverse the transformations
+        qreal robotX = (x - translateX) / scaleX;
+        qreal robotY = -(y - translateY) / scaleY;
+        // Optionally, emit the clicked signal with the coordinates
+        emit clicked(robotX-50, robotY-50);
+        }
     }
-    //TODO: handlovat aj ine kliky napr klik pravym? asi ne xD
 }
 
 void MyFrame::setMainWindow(MainWindow *main_window){
@@ -188,15 +201,12 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Set the background color to black for the entire widget
             painter.fillRect(this->rect(), Qt::black);
-            qDebug() <<  "The polygon has" << mapPolygons.size() << "points";
             QList<QPolygonF> drawPolygons(mapPolygons);
             // Define the map points
             // Read points from file and add polygons to the map
 
             if(map_loaded.load(std::memory_order_relaxed)){
             // Define the maximum x and y coordinates of the map
-            const qreal maxX = 602.0; // Maximum x-coordinate in the map
-            const qreal maxY = 681.0; // Maximum y-coordinate in the map
 
             // Calculate the bounding box of the map
             QRectF boundingRect;
@@ -204,10 +214,13 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                 boundingRect = boundingRect.united(polygon.boundingRect());
             }
 
+            const qreal maxX = 602.0; // Maximum x-coordinate in the map
+            const qreal maxY = 681.0; // Maximum y-coordinate in the map
+
             // Calculate the scaling factors to fit the map into the geometry of the widget
-            qreal scaleX = static_cast<qreal>(rect.width()) / maxX;
-            qreal scaleY = static_cast<qreal>(rect.height()) / maxY;
-            qreal scale = qMin(scaleX, scaleY);
+            scaleX = static_cast<qreal>(rect.width()) / maxX;
+            scaleY = static_cast<qreal>(rect.height()) / maxY;
+            scale = qMin(scaleX, scaleY);
 
             // Adjust scaling factors to maintain aspect ratio
             if (scaleX < scaleY) {
@@ -217,8 +230,8 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             }
 
             // Calculate the translation values to center the map within the rectangle
-            qreal translateX = (rect.width() - boundingRect.width() * scale) / 2 - boundingRect.left() * scale;
-            qreal translateY = (rect.height() - boundingRect.height() * scale) / 2 - (boundingRect.top() - 360) * scale; // Adjust for the y-axis offset
+            translateX = (rect.width() - boundingRect.width() * scale) / 2 - boundingRect.left() * scale;
+            translateY = (rect.height() - boundingRect.height() * scale) / 2 - (boundingRect.top() - 360) * scale; // Adjust for the y-axis offset
 
             // Apply scaling and translation to polygons
             for (QPolygonF &polygon : drawPolygons) {
@@ -255,6 +268,39 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             double lineEndY = -25*sin(robotFi_draw*PI/180.0);
             QPointF lineEnd = scaledRobotCenter + QPointF(lineEndX, lineEndY);
             painter.drawLine(scaledRobotCenter, lineEnd); // Draw a line pointing to the right
+
+            //draw points
+            std::vector<DrawPoint> draw_points;
+            QPainterPath draw_path;
+            draw_path.moveTo(scaledRobotCenter);
+
+            if (!main_window->points_vector.empty()){
+                for (int i = 0; i < main_window->points_vector.size(); i++){
+                    bool op = false;
+                    if(main_window->points_vector[i].getOperation()){
+                        op = true;
+                    }
+                    QPointF travel_point(robotCenter.x()*scaleX+translateX, -robotCenter.y() * scaleY+translateY);
+                    travel_point.setX(travel_point.x() + main_window->points_vector[i].getX()/10.0*scaleX);
+                    travel_point.setY(travel_point.y() - main_window->points_vector[i].getY()/10.0*scaleY);
+
+                    DrawPoint p(travel_point,op);
+                    draw_points.push_back(p);
+                    draw_path.lineTo(travel_point);
+                }
+                painter.setPen(QPen(Qt::lightGray, 5));
+                painter.drawPath(draw_path);
+                for (int i = 0; i < draw_points.size();i++){
+                    if(draw_points[i].operational){
+                        painter.setPen(QPen(Qt::magenta, 10));
+                    }
+                    else{
+                        painter.setPen(QPen(Qt::blue,10));
+                    }
+                    painter.drawPoint(draw_points[i].point);
+                }
+            }
+
             painter.setPen(QPen(Qt::white,3));
             QFont font = painter.font();
             font.setPointSize(12);
@@ -264,7 +310,6 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                                  " Y: " + trimToDecimal(std::to_string(robotY_draw)) +
                                  " Fi: " + trimToDecimal(std::to_string(robotFi_draw));
             painter.drawText(this->rect(), Qt::AlignBottom | Qt::AlignRight, coords.c_str());
-
             }
             update();
         }

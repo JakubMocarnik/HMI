@@ -197,9 +197,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_startmission->setStyleSheet("background-color: #d1007a;"
                                                "font-weight: bold;"
                                                "color: white");
-    ui->pushButton_stopMission->setStyleSheet("background-color: #d1007a;"
-                                              "font-weight: bold;"
-                                              "color: white");
 
     ui->label_ip->setStyleSheet("font-weight: bold;"
                                 "color: #d1007a");
@@ -223,11 +220,8 @@ MainWindow::MainWindow(QWidget *parent) :
     operational = false;
     found_ball = false;
     add_points = false;
+    start_mission = false;
     ball_index = 1;
-    Point p(1000,0,0);
-    points_vector.push_back(p);
-    p.setPoint(0,0,0);
-    points_vector.push_back(p);
 }
 
 MainWindow::~MainWindow()
@@ -238,9 +232,23 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *event)
 {}
 
-void MainWindow::onFrameClicked(){
+void MainWindow::onFrameClicked(int x, int y){
     //ak je connectnuty, ak je flag zadavaj body
-    std::cout << "CLICKED" << std::endl;
+    if (connected && add_points && !start_mission){
+        Point p(x*10.0,y*10.0,0);
+        if (operational){
+            p.setOperation(true);
+        }
+        else {
+            p.setOperation(false);
+        }
+        points_vector.push_back(p);
+    }
+    //print points_vectore
+    std::cout << "POINTS VECTOR: ";
+    for (int i = 0; i < points_vector.size(); i++){
+        std::cout << points_vector[i].getX() << " " << points_vector[i].getY() << " " << points_vector[i].getOperation() << std::endl;
+    }
 }
 /// toto je slot. niekde v kode existuje signal, ktory je prepojeny. pouziva sa napriklad (v tomto pripade) ak chcete dostat data z jedneho vlakna (robot) do ineho (ui)
 /// prepojenie signal slot je vo funkcii  on_pushButton_left_clicked
@@ -318,6 +326,8 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
             }
             else {
                 go = false;
+                start_mission = false;
+                ui->pushButton_startmission->setText("START MISSION");
                 return 0;
             }
             //toto vzdy nastavi ciel, ak je vo vektore bodov aspon jeden bod
@@ -402,7 +412,7 @@ void MainWindow::detectBall(cv::Mat src){
 
     // Check if image is loaded fine
     if (src.empty()) {
-        printf("Error no data\n");
+        // printf("Error no data\n");
         return;
     }
     //100 //55
@@ -468,10 +478,8 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
 
     cv::Mat ball_detection;
     cameraData.copyTo(ball_detection);
-    // qDebug() << "Current working directory:" << QDir::currentPath();
-    // detectBall(something); //for debug purposes
 
-    detectBall(ball_detection);
+    // detectBall(ball_detection);
 
     update();
     return 0;
@@ -842,9 +850,6 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_startmission->setStyleSheet("background-color: #d1007a;"
                                              "font-weight: bold;"
                                              "color: white");
-        ui->pushButton_stopMission->setStyleSheet("background-color: #d1007a;"
-                                             "font-weight: bold;"
-                                             "color: white");
 
         ui->label_ip->setStyleSheet("font-weight: bold;"
                                     "color: #d1007a");
@@ -894,9 +899,7 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_startmission->setStyleSheet("background-color: #770000;"
                                              "font-weight: bold;"
                                              "color: white");
-        ui->pushButton_stopMission->setStyleSheet("background-color: #770000;"
-                                             "font-weight: bold;"
-                                             "color: white");
+
         ui->pushButton_addpoint->setStyleSheet("background-color: #770000;"
                                              "font-weight: bold;"
                                              "color: white");
@@ -960,6 +963,37 @@ void MainWindow::on_pushButton_addpoint_clicked()
     else{
         ui->pushButton_addpoint->setText("ADD POINTS");
         add_points = false;
+    }
+}
+
+
+void MainWindow::on_pushButton_startmission_clicked()
+{
+    if (!start_mission){
+        ui->pushButton_startmission->setText("STOP MISSION");
+        start_mission = true;
+        go = true;
+    }
+    else {
+        ui->pushButton_startmission->setText("START MISSION");
+        start_mission = false;
+        go = false;
+    }
+}
+
+
+void MainWindow::on_pushButton_reset_clicked()
+{
+    if (!start_mission){
+        points_vector.clear();
+    }
+}
+
+
+void MainWindow::on_pushButton_removepoint_clicked()
+{
+    if (!start_mission && !points_vector.empty()){
+        points_vector.pop_back();
     }
 }
 

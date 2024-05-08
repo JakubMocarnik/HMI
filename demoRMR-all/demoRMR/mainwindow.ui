@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1221</width>
-    <height>928</height>
+    <height>932</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -149,22 +149,6 @@
         </item>
         <item row="2" column="1">
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="11" column="2">
-           <spacer name="verticalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>50</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="2" column="2">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
@@ -207,8 +191,8 @@
             </item>
            </layout>
           </item>
-          <item row="13" column="2">
-           <widget class="QPushButton" name="pushButton_startmission">
+          <item row="12" column="2">
+           <widget class="QPushButton" name="pushButton_reset">
             <property name="maximumSize">
              <size>
               <width>110</width>
@@ -219,7 +203,7 @@
              <enum>Qt::RightToLeft</enum>
             </property>
             <property name="text">
-             <string>START MISSION</string>
+             <string>RESET MISSION</string>
             </property>
            </widget>
           </item>
@@ -239,58 +223,6 @@
             </property>
             <property name="text">
              <string>LOAD MAP</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
-            <item>
-             <widget class="QLabel" name="label_camera">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
-              </property>
-              <property name="text">
-               <string>VIEW:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy">
-               <cstring>pushButton_camera</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="pushButton_camera">
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
-              </property>
-              <property name="text">
-               <string>LIDAR</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="19" column="2">
-           <widget class="QLabel" name="label_warning">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -342,8 +274,24 @@
             </item>
            </layout>
           </item>
-          <item row="8" column="2">
-           <widget class="QPushButton" name="pushButton_addpoint">
+          <item row="11" column="2">
+           <spacer name="verticalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>50</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="13" column="2">
+           <widget class="QPushButton" name="pushButton_startmission">
             <property name="maximumSize">
              <size>
               <width>110</width>
@@ -354,44 +302,80 @@
              <enum>Qt::RightToLeft</enum>
             </property>
             <property name="text">
-             <string>ADD POINTS</string>
+             <string>START MISSION</string>
             </property>
            </widget>
           </item>
-          <item row="14" column="2">
-           <widget class="QPushButton" name="pushButton_stopMission">
-            <property name="maximumSize">
-             <size>
-              <width>110</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string>STOP MISSION</string>
-            </property>
-           </widget>
+          <item row="3" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QLabel" name="label_camera">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string>VIEW:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>pushButton_camera</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_camera">
+              <property name="maximumSize">
+               <size>
+                <width>110</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string>LIDAR</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
-          <item row="12" column="2">
-           <widget class="QPushButton" name="pushButton_reset">
-            <property name="maximumSize">
-             <size>
-              <width>110</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
+          <item row="18" column="2">
+           <widget class="QLabel" name="label_warning">
             <property name="text">
-             <string>RESET MISSION</string>
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
           <item row="6" column="2">
            <spacer name="verticalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>50</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="17" column="2">
+           <spacer name="verticalSpacer_4">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -422,21 +406,21 @@
             </property>
            </widget>
           </item>
-          <item row="18" column="2">
-           <spacer name="verticalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+          <item row="8" column="2">
+           <widget class="QPushButton" name="pushButton_addpoint">
+            <property name="maximumSize">
              <size>
-              <width>20</width>
-              <height>50</height>
+              <width>110</width>
+              <height>16777215</height>
              </size>
             </property>
-           </spacer>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string>ADD POINTS</string>
+            </property>
+           </widget>
           </item>
           <item row="7" column="2">
            <layout class="QHBoxLayout" name="horizontalLayout_15">
