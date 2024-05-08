@@ -365,19 +365,16 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
     updateLaserPicture=1;
     update();//tento prikaz prinuti prekreslit obrazovku.. zavola sa paintEvent funkcia
 
-
     return 0;
 
 }
 
 void MainWindow::detectBall(cv::Mat src){
 
-    src = cv::imread(cv::samples::findFile("C:\\Users\\mocar\\Desktop\\HMI\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
+    src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\OSMY SEMESTER\\HMI\\CVICENIA\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
     imageWidth = src.size().width;
     imageHeight = src.size().height;
 
-    std::cout << "Image width: " <<imageWidth<<std::endl;
-    std::cout << "Image height: " <<imageHeight<<std::endl;
     // Check if image is loaded fine
     if (src.empty()) {
         std::cout << "not cool" <<std::endl;
@@ -404,12 +401,9 @@ void MainWindow::detectBall(cv::Mat src){
                 cv::Vec3i c = circles[i];
                 circs.push_back(c);
                 cv::Point center = cv::Point(c[0], c[1]);
-                // circle center
                 cv::circle(src, center, 1, cv::Scalar(0, 100, 100), 3, cv::LINE_AA);
-                // circle outline
                 int radius = c[2];
                 cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA);
-                std::cout << "finished balling" <<std::endl;
             }
             ui->frame->setCircles(circs);
             QString currentDir = QDir::currentPath();

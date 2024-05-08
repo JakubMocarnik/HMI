@@ -194,7 +194,6 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Set the background color to black for the entire widget
             painter.fillRect(this->rect(), Qt::black);
-            qDebug() <<  "The polygon has" << mapPolygons.size() << "points";
             QList<QPolygonF> drawPolygons(mapPolygons);
             // Define the map points
             // Read points from file and add polygons to the map
@@ -275,13 +274,10 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             if (main_window->found_ball){
                 //for each circle in circles
                 for (size_t i = 0; i < circles.size(); i++) {
-                    //draw circle center
-                    //std::cout << "Circle center: " << circles[i][0] << ", " << circles[i][1] << std::endl;
 
-                    double angleBall = (circles[i][0]*64)/main_window->imageWidth;
-                    //std::cout << "Ball angle: " << angleBall << std::endl;
-
-                    angleBall = -angleBall-32;
+                    double angleBall = (circles[i][0]*64)/(main_window->imageWidth);
+                    angleBall -=32;
+                    angleBall = -angleBall;
                     double lidarAngle = 0;
 
                     for(int k=0; k < main_window->copyOfLaserData.numberOfScans/*360*/;k++){
@@ -295,12 +291,11 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
                         if(fabs(lidarAngle - angleBall) <= 1){
                             if(main_window->copyOfLaserData.Data[k].scanDistance != 0){
-                                double ballPosX = scaledRobotCenter.x() + cos(angleBall*PI/180 + robotFi_draw) * scaleX * main_window->copyOfLaserData.Data[k].scanDistance/100;
-                                double ballPosY = scaledRobotCenter.x() + sin(angleBall*PI/180 + robotFi_draw) * scaleY * main_window->copyOfLaserData.Data[k].scanDistance/100;
-                                std::cout << "Ball X: " << ballPosX << std::endl;
-                                std::cout << "Ball Y: " << ballPosY << std::endl;
-
-                                painter.drawEllipse(ballPosX, ballPosY, 5, 5);
+                                std::cout << "ball angle: " << angleBall <<std::endl;
+                                double ballPosX = scaledRobotCenter.x() + cos(lidarAngle*PI/180 + robotFi_draw*PI/180) * scaleX * main_window->copyOfLaserData.Data[k].scanDistance/10;
+                                double ballPosY = scaledRobotCenter.y() - sin(lidarAngle*PI/180 + robotFi_draw*PI/180) * scaleY * main_window->copyOfLaserData.Data[k].scanDistance/10;
+                                painter.drawEllipse(ballPosX, ballPosY, 10, 10);
+                                break;
                             }
                         }
                     }
