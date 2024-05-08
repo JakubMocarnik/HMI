@@ -169,7 +169,7 @@ private:
     int prev_left;
     int prev_right;
     bool rot_only;
-    bool bruh;
+    bool go;
 
     std::shared_ptr<PIController> controller;
     std::shared_ptr<Point> actual_point;

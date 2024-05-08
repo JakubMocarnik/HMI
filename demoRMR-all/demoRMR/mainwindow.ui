@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1221</width>
-    <height>598</height>
+    <height>892</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,27 +68,8 @@
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="2" column="1">
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="3" column="2">
-           <widget class="QPushButton" name="pushButton_mode">
-            <property name="maximumSize">
-             <size>
-              <width>110</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>LOAD MAP</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="2">
-           <widget class="QPushButton" name="pushButton_addpoint">
+          <item row="11" column="2">
+           <widget class="QPushButton" name="pushButton_startmission">
             <property name="maximumSize">
              <size>
               <width>110</width>
@@ -99,23 +80,7 @@
              <enum>Qt::RightToLeft</enum>
             </property>
             <property name="text">
-             <string>ADD POINTS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="2">
-           <widget class="QPushButton" name="pushButton_removepoint">
-            <property name="maximumSize">
-             <size>
-              <width>110</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string>REMOVE POINT</string>
+             <string>START MISSION</string>
             </property>
            </widget>
           </item>
@@ -160,54 +125,6 @@
              </widget>
             </item>
            </layout>
-          </item>
-          <item row="6" column="2">
-           <widget class="QPushButton" name="pushButton_point_type">
-            <property name="maximumSize">
-             <size>
-              <width>110</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string>CROSSING</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QPushButton" name="pushButton_camera">
-            <property name="maximumSize">
-             <size>
-              <width>110</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string>CAMERA</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <spacer name="verticalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>50</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item row="0" column="2">
            <layout class="QHBoxLayout" name="horizontalLayout">
@@ -257,8 +174,8 @@
             </item>
            </layout>
           </item>
-          <item row="10" column="2">
-           <widget class="QPushButton" name="pushButton_reset">
+          <item row="8" column="2">
+           <widget class="QPushButton" name="pushButton_removepoint">
             <property name="maximumSize">
              <size>
               <width>110</width>
@@ -269,33 +186,42 @@
              <enum>Qt::RightToLeft</enum>
             </property>
             <property name="text">
-             <string>RESET MISSION</string>
+             <string>REMOVE POINT</string>
             </property>
            </widget>
           </item>
-          <item row="14" column="2">
-           <spacer name="verticalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+          <item row="6" column="2">
+           <widget class="QPushButton" name="pushButton_point_type">
+            <property name="maximumSize">
              <size>
-              <width>20</width>
-              <height>50</height>
+              <width>110</width>
+              <height>16777215</height>
              </size>
             </property>
-           </spacer>
-          </item>
-          <item row="15" column="2">
-           <widget class="QLabel" name="label_warning">
-            <property name="text">
-             <string/>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
+            <property name="text">
+             <string>CROSSING</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QPushButton" name="pushButton_mode">
+            <property name="maximumSize">
+             <size>
+              <width>110</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>LOAD MAP</string>
             </property>
            </widget>
           </item>
@@ -315,8 +241,40 @@
             </property>
            </spacer>
           </item>
-          <item row="11" column="2">
-           <widget class="QPushButton" name="pushButton_startmission">
+          <item row="16" column="2">
+           <spacer name="verticalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>50</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="5" column="2">
+           <spacer name="verticalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>50</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="7" column="2">
+           <widget class="QPushButton" name="pushButton_addpoint">
             <property name="maximumSize">
              <size>
               <width>110</width>
@@ -327,7 +285,65 @@
              <enum>Qt::RightToLeft</enum>
             </property>
             <property name="text">
-             <string>START MISSION</string>
+             <string>ADD POINTS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QPushButton" name="pushButton_camera">
+            <property name="maximumSize">
+             <size>
+              <width>110</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string>CAMERA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="17" column="2">
+           <widget class="QLabel" name="label_warning">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="2">
+           <widget class="QPushButton" name="pushButton_reset">
+            <property name="maximumSize">
+             <size>
+              <width>110</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string>RESET MISSION</string>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="2">
+           <widget class="QPushButton" name="pushButton_stopMission">
+            <property name="maximumSize">
+             <size>
+              <width>110</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string>STOP MISSION</string>
             </property>
            </widget>
           </item>

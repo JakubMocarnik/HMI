@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     datacounter=0;
   //  timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(getNewFrame()));
-    bruh = true;
+    go = false;
     actIndex=-1;
     useCamera1= false;
     first_run = true;
@@ -280,8 +280,8 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
         actual_point->setPoint(robotX*1000, robotY*1000, robotFi*PI/180.0);
 
 
-        //TODO: bruh a connected atomic bool?
-        if (bruh && connected) {
+        //TODO: go a connected atomic bool?
+        if (go && connected) {
 
             double rot_speed;
             int trans_speed, radius;
@@ -290,7 +290,7 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
                 desired_point->setPoint(points_vector[0].getX(),points_vector[0].getY(),0);
             }
             else {
-                bruh = false;
+                go = false;
                 return 0;
             }
             //toto vzdy nastavi ciel, ak je vo vektore bodov aspon jeden bod
@@ -338,7 +338,7 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
                 controller->ramp.clear_time_hard();
                 controller->clearIntegral();
             }
-        } //if bruh koniec
+        } //if go koniec
 
         ///toto neodporucam na nejake komplikovane struktury.signal slot robi kopiu dat. radsej vtedy posielajte
         /// prazdny signal a slot bude vykreslovat strukturu (vtedy ju musite mat samozrejme ako member premmennu v mainwindow.ak u niekoho najdem globalnu premennu,tak bude cistit bludisko zubnou kefkou.. kefku dodam)
