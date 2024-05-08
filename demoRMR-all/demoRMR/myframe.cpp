@@ -188,7 +188,6 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Set the background color to black for the entire widget
             painter.fillRect(this->rect(), Qt::black);
-            qDebug() <<  "The polygon has" << mapPolygons.size() << "points";
             QList<QPolygonF> drawPolygons(mapPolygons);
             // Define the map points
             // Read points from file and add polygons to the map

@@ -106,6 +106,8 @@ private slots:
 
     void on_lineEdit_ip_textEdited(const QString &arg1);
 
+    void on_pushButton_camera_clicked();
+
 private:
     void onFrameClicked();
     void detectBall(cv::Mat src);

@@ -182,7 +182,29 @@ MainWindow::MainWindow(QWidget *parent) :
                                           "font-weight: bold;"
                                           "color: white");
 
+    ui->pushButton_point_type->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+    ui->pushButton_removepoint->setStyleSheet("background-color: #d1007a;"
+                                              "font-weight: bold;"
+                                              "color: white");
+    ui->pushButton_addpoint->setStyleSheet("background-color: #d1007a;"
+                                           "font-weight: bold;"
+                                           "color: white");
+    ui->pushButton_reset->setStyleSheet("background-color: #d1007a;"
+                                        "font-weight: bold;"
+                                        "color: white");
+    ui->pushButton_startmission->setStyleSheet("background-color: #d1007a;"
+                                               "font-weight: bold;"
+                                               "color: white");
+    ui->pushButton_stopMission->setStyleSheet("background-color: #d1007a;"
+                                              "font-weight: bold;"
+                                              "color: white");
+
     ui->label_ip->setStyleSheet("font-weight: bold;"
+                                "color: #d1007a");
+
+    ui->label_camera->setStyleSheet("font-weight: bold;"
                                 "color: #d1007a");
 
 
@@ -801,8 +823,29 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_camera->setStyleSheet("background-color: #d1007a;"
                                            "font-weight: bold;"
                                            "color: white");
+        ui->pushButton_point_type->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_removepoint->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_addpoint->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_reset->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_startmission->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_stopMission->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
 
         ui->label_ip->setStyleSheet("font-weight: bold;"
+                                    "color: #d1007a");
+
+        ui->label_camera->setStyleSheet("font-weight: bold;"
                                     "color: #d1007a");
 
         ui->pushButton_up->setIcon(purple_up);
@@ -833,8 +876,29 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_camera->setStyleSheet("background-color: #770000;"
                                               "font-weight: bold;"
                                               "color: white");
+        ui->pushButton_point_type->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_removepoint->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_reset->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_startmission->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_stopMission->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_addpoint->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
 
         ui->label_ip->setStyleSheet("font-weight: bold;"
+                                    "color: #770000");
+
+        ui->label_camera->setStyleSheet("font-weight: bold;"
                                     "color: #770000");
 
         ui->pushButton_up->setIcon(red_up);
@@ -851,3 +915,16 @@ void MainWindow::on_lineEdit_ip_textEdited(const QString &arg1)
 {
     ipaddress = arg1.toStdString();
 }
+
+void MainWindow::on_pushButton_camera_clicked()
+{
+    if (useCamera1){
+        useCamera1 = false;
+        ui->pushButton_camera->setText("LIDAR");
+    }
+    else {
+        useCamera1 = true;
+        ui->pushButton_camera->setText("CAMERA");
+    }
+}
+
