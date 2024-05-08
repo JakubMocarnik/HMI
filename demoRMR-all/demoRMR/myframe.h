@@ -18,10 +18,14 @@ public:
     ~MyFrame();    
     void setMainWindow(MainWindow *main_window);
     void printStuff();
+    //get circles
+    std::vector<cv::Vec3i> getCircles();
+    //set circles
+    void setCircles(std::vector<cv::Vec3i> circles);
 
 private:
     MainWindow *main_window;
-
+    std::vector<cv::Vec3i> circles;
     QPixmap first_warning;
     QPixmap second_warning;
     QPixmap third_warning;

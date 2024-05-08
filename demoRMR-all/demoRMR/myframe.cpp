@@ -24,6 +24,13 @@ void MyFrame::printStuff() {
     std::cout << "robot FI: " << main_window->robotFi << std::endl;
 }
 
+std::vector<cv::Vec3i> MyFrame::getCircles() {
+    return circles;
+}
+
+void MyFrame::setCircles(std::vector<cv::Vec3i> circles) {
+    this->circles = circles;
+}
 
 void MyFrame::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
@@ -118,6 +125,14 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             QImage image = QImage((uchar*)main_window->frame[main_window->actIndex].data, main_window->frame[main_window->actIndex].cols, main_window->frame[main_window->actIndex].rows, main_window->frame[main_window->actIndex].step, QImage::Format_RGB888  );//kopirovanie cvmat do qimage
             painter.drawImage(rect,image.rgbSwapped());
             update();
+
+            if (main_window->found_ball){
+                //for each circle in circles
+                for (size_t i = 0; i < circles.size(); i++) {
+                    //draw circle center
+                    std::cout << "Circle center: " << circles[i][0] << ", " << circles[i][1] << std::endl;
+                }
+            }
 
             if(main_window->useCamera1==true && main_window->actIndex>-1)
             {

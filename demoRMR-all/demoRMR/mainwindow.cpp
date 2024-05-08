@@ -330,12 +330,15 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 
 void MainWindow::detectBall(cv::Mat src){
 
-    // src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
+    src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\OSMY SEMESTER\\HMI\\CVICENIA\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
 
     // Check if image is loaded fine
     if (src.empty()) {
-        printf("Error no data\n");
+        std::cout << "not cool" <<std::endl;
         return;
+    }
+    else {
+        // std::cout << "cool" <<std::endl;
     }
     //100 //55
     //ok i guess
@@ -350,15 +353,19 @@ void MainWindow::detectBall(cv::Mat src){
                      );
     if (!circles.empty()){
         if (!found_ball){
+            std::vector<cv::Vec3i> circs;
             for (size_t i = 0; i < circles.size(); i++) {
                 cv::Vec3i c = circles[i];
+                circs.push_back(c);
                 cv::Point center = cv::Point(c[0], c[1]);
                 // circle center
                 cv::circle(src, center, 1, cv::Scalar(0, 100, 100), 3, cv::LINE_AA);
                 // circle outline
                 int radius = c[2];
                 cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA);
+                std::cout << "finished balling" <<std::endl;
             }
+            ui->frame->setCircles(circs);
             QString currentDir = QDir::currentPath();
             QDir baseDir(currentDir);
             baseDir.cdUp(); // Navigate one level up
@@ -369,7 +376,7 @@ void MainWindow::detectBall(cv::Mat src){
             QString filePath = subDir + "/ball";
             // Convert QString to std::string for cv::imwrite
             // cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
-            // cv::imshow("detected circles "+std::to_string(ball_index) , src);
+            // cv::imshow("detected circles " , src);
             found_ball = true;
             ball_index++;
             start_time = std::chrono::high_resolution_clock::now();
