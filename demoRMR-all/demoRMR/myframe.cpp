@@ -188,6 +188,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Set the background color to black for the entire widget
             painter.fillRect(this->rect(), Qt::black);
+            qDebug() <<  "The polygon has" << mapPolygons.size() << "points";
             QList<QPolygonF> drawPolygons(mapPolygons);
             // Define the map points
             // Read points from file and add polygons to the map
@@ -244,7 +245,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
             QPointF robotCenter(50, 50); // Initial position of the robot
             QPointF scaledRobotCenter(robotCenter.x() * scaleX, robotCenter.y() * scaleY); // Scale the robot position
             scaledRobotCenter.setY(-scaledRobotCenter.y()); // Mirror around the x-axis
-            scaledRobotCenter += QPointF(translateX+robotX_draw*100.0, translateY-robotY_draw*100.0); // Translate the robot position
+            scaledRobotCenter += QPointF(translateX+robotX_draw*100.0*scaleX, translateY-robotY_draw*100.0*scaleY); // Translate the robot position
 
             // Draw the robot as a circle with a line pointing to the right
             painter.setPen(QPen(Qt::red, 3));

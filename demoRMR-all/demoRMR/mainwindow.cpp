@@ -208,6 +208,9 @@ MainWindow::MainWindow(QWidget *parent) :
                                 "color: #d1007a");
 
 
+    ui->label_point_type->setStyleSheet("font-weight: bold;"
+                                    "color: #d1007a");
+
     ui->label_warning->setStyleSheet("font-weight: bold;"
                                      "font-size:20px;"
                                 "color: red");
@@ -217,8 +220,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //TODO: get rid of or set color to MainToolbar
     estop = false;
     connect(ui->frame,&MyFrame::clicked,this, &MainWindow::onFrameClicked);
-
+    operational = false;
     found_ball = false;
+    add_points = false;
     ball_index = 1;
     Point p(1000,0,0);
     points_vector.push_back(p);
@@ -847,6 +851,8 @@ void MainWindow::setTheme(std::string theme) {
 
         ui->label_camera->setStyleSheet("font-weight: bold;"
                                     "color: #d1007a");
+        ui->label_point_type->setStyleSheet("font-weight: bold;"
+                                        "color: #d1007a");
 
         ui->pushButton_up->setIcon(purple_up);
         ui->pushButton_right->setIcon(purple_right);
@@ -900,6 +906,9 @@ void MainWindow::setTheme(std::string theme) {
 
         ui->label_camera->setStyleSheet("font-weight: bold;"
                                     "color: #770000");
+        ui->label_point_type->setStyleSheet("font-weight: bold;"
+                                        "color: #770000");
+
 
         ui->pushButton_up->setIcon(red_up);
         ui->pushButton_right->setIcon(red_right);
@@ -925,6 +934,32 @@ void MainWindow::on_pushButton_camera_clicked()
     else {
         useCamera1 = true;
         ui->pushButton_camera->setText("CAMERA");
+    }
+}
+
+
+void MainWindow::on_pushButton_point_type_clicked()
+{
+    if(!operational){
+        ui->pushButton_point_type->setText("OPERATIONAL");
+        operational = true;
+    }
+    else{
+        ui->pushButton_point_type->setText("CROSSING");
+        operational = false;
+    }
+}
+
+
+void MainWindow::on_pushButton_addpoint_clicked()
+{
+    if(!add_points){
+        ui->pushButton_addpoint->setText("STOP ADDING");
+        add_points = true;
+    }
+    else{
+        ui->pushButton_addpoint->setText("ADD POINTS");
+        add_points = false;
     }
 }
 

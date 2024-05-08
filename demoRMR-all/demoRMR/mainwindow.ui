@@ -149,7 +149,7 @@
         </item>
         <item row="2" column="1">
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="10" column="2">
+          <item row="11" column="2">
            <spacer name="verticalSpacer_7">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -207,7 +207,7 @@
             </item>
            </layout>
           </item>
-          <item row="12" column="2">
+          <item row="13" column="2">
            <widget class="QPushButton" name="pushButton_startmission">
             <property name="maximumSize">
              <size>
@@ -242,23 +242,49 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="2">
-           <widget class="QPushButton" name="pushButton_point_type">
-            <property name="maximumSize">
-             <size>
-              <width>110</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string>CROSSING</string>
-            </property>
-           </widget>
+          <item row="3" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QLabel" name="label_camera">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string>VIEW:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>pushButton_camera</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_camera">
+              <property name="maximumSize">
+               <size>
+                <width>110</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string>LIDAR</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
-          <item row="18" column="2">
+          <item row="19" column="2">
            <widget class="QLabel" name="label_warning">
             <property name="text">
              <string/>
@@ -332,7 +358,7 @@
             </property>
            </widget>
           </item>
-          <item row="13" column="2">
+          <item row="14" column="2">
            <widget class="QPushButton" name="pushButton_stopMission">
             <property name="maximumSize">
              <size>
@@ -348,7 +374,7 @@
             </property>
            </widget>
           </item>
-          <item row="11" column="2">
+          <item row="12" column="2">
            <widget class="QPushButton" name="pushButton_reset">
             <property name="maximumSize">
              <size>
@@ -396,7 +422,7 @@
             </property>
            </widget>
           </item>
-          <item row="17" column="2">
+          <item row="18" column="2">
            <spacer name="verticalSpacer_4">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -412,10 +438,10 @@
             </property>
            </spacer>
           </item>
-          <item row="3" column="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item row="7" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
             <item>
-             <widget class="QLabel" name="label_camera">
+             <widget class="QLabel" name="label_point_type">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -426,18 +452,18 @@
                <enum>Qt::RightToLeft</enum>
               </property>
               <property name="text">
-               <string>VIEW:</string>
+               <string>POINT TYPE:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
               <property name="buddy">
-               <cstring>pushButton_camera</cstring>
+               <cstring>pushButton_point_type</cstring>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_camera">
+             <widget class="QPushButton" name="pushButton_point_type">
               <property name="maximumSize">
                <size>
                 <width>110</width>
@@ -448,7 +474,7 @@
                <enum>Qt::RightToLeft</enum>
               </property>
               <property name="text">
-               <string>LIDAR</string>
+               <string>CROSSING</string>
               </property>
              </widget>
             </item>

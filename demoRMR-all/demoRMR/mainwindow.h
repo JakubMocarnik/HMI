@@ -108,6 +108,10 @@ private slots:
 
     void on_pushButton_camera_clicked();
 
+    void on_pushButton_point_type_clicked();
+
+    void on_pushButton_addpoint_clicked();
+
 private:
     void onFrameClicked();
     void detectBall(cv::Mat src);
@@ -200,6 +204,10 @@ private:
     bool found_ball;
 
     int ball_index;
+
+    bool operational;
+
+    bool add_points;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 
