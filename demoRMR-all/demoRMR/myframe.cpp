@@ -42,6 +42,8 @@ std::vector<cv::Vec3i> MyFrame::getCircles() {
 
 void MyFrame::setCircles(std::vector<cv::Vec3i> circles) {
     this->circles = circles;
+}
+
 std::string trimToDecimal(std::string numStr) {
     auto pos = numStr.find('.');
     if (pos != std::string::npos && pos + 3 < numStr.length()) {

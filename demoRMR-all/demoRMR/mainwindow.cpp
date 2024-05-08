@@ -373,7 +373,6 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 void MainWindow::detectBall(cv::Mat src){
 
     src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\OSMY SEMESTER\\HMI\\CVICENIA\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
-
     // Check if image is loaded fine
     if (src.empty()) {
         std::cout << "not cool" <<std::endl;

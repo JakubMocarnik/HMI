@@ -33,17 +33,15 @@ public:
     std::vector<cv::Vec3i> getCircles();
     //set circles
     void setCircles(std::vector<cv::Vec3i> circles);
-
-private:
-    MainWindow *main_window;
-    std::vector<cv::Vec3i> circles;
     void loadMap(const QString &filename);
-    void MyFrame::readPointsFromFile(const QString &filename);
-    void drawRobot(QPainter &painter);
-    QPointF scaleAndTranslatePoint(const QPointF &point);
+
 signals:
     void clicked();
 private:
+    std::vector<cv::Vec3i> circles;
+    void readPointsFromFile(const QString &filename);
+    void drawRobot(QPainter &painter);
+    QPointF scaleAndTranslatePoint(const QPointF &point);
     MainWindow *main_window;
     std::atomic_bool map_loaded;
     std::string map_name;
