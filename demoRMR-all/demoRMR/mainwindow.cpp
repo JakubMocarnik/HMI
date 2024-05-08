@@ -375,9 +375,6 @@ void MainWindow::detectBall(cv::Mat src){
     src = cv::imread(cv::samples::findFile("C:\\Users\\mocar\\Desktop\\HMI\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
     imageWidth = src.size().width;
     imageHeight = src.size().height;
-
-    std::cout << "Image width: " <<imageWidth<<std::endl;
-    std::cout << "Image height: " <<imageHeight<<std::endl;
     // Check if image is loaded fine
     if (src.empty()) {
         std::cout << "not cool" <<std::endl;
@@ -409,7 +406,7 @@ void MainWindow::detectBall(cv::Mat src){
                 // circle outline
                 int radius = c[2];
                 cv::circle(src, center, radius, cv::Scalar(255, 0, 255), 3, cv::LINE_AA);
-                std::cout << "finished balling" <<std::endl;
+                //std::cout << "finished balling" <<std::endl;
             }
             ui->frame->setCircles(circs);
             QString currentDir = QDir::currentPath();
