@@ -100,6 +100,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->label_led->setPixmap(red_square);
 
+    operation=1;
+
     ui->centralWidget->setStyleSheet("background-color:rgba(245, 168, 213,255)"); //pink colour
 
     ui->menuBar->setStyleSheet("QMenuBar{background-color:rgba(245, 168, 213,255); font-weight: bold; color:#d1007a ;};"
@@ -340,6 +342,15 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
                 robot.setTranslationSpeed(0);
                 controller->ramp.clear_time_hard();
                 if (!points_vector.empty()){
+                    if(points_vector.begin()->getOperation()){
+                        QString currentDir = QDir::currentPath();
+                        QDir baseDir(currentDir);
+                        baseDir.cdUp();
+                        QString subDir = baseDir.filePath("Pictures");
+                        QString filePath = subDir + "/operation";
+                        cv::imwrite(filePath.toStdString()+std::to_string(operation)+".jpg",frame[actIndex]);
+                        operation++;
+                    }
                     //toto asi nemusi byt v ife - just to be sure
                     points_vector.erase(points_vector.begin());
                 }
@@ -484,7 +495,7 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     cv::Mat ball_detection;
     cameraData.copyTo(ball_detection);
 
-    detectBall(ball_detection);
+    // detectBall(ball_detection);
 
     update();
     return 0;

@@ -198,6 +198,8 @@ private:
     std::atomic<double> robotFi;
     double prev_fi;
 
+    int operation;
+
     bool estop;
     bool connected;
 

@@ -15,7 +15,7 @@ MyFrame::MyFrame(QWidget *parent) : QFrame(parent) {
     robotY_draw = 0;
     robotFi_draw = 0;
     map_name = ":/resources/priestor.txt";
-
+    intersected = false;
 }
 
 MyFrame::~MyFrame() {
@@ -253,7 +253,15 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             // Draw the map polygons
             painter.setPen(QPen(Qt::green, 3)); // Set the pen for drawing polygons
+            QList<QPainterPath> polygonPaths;
             foreach (const QPolygonF &polygon, drawPolygons) {
+                QPainterPath p_path;
+                p_path.moveTo(polygon.first());
+
+                for (int i = 1; i < polygon.size(); i++) {
+                    p_path.lineTo(polygon[i]); // Draw line to the next point
+                }
+                polygonPaths.append(p_path);
                 painter.drawPolygon(polygon);
             }
 
@@ -294,7 +302,41 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                     draw_points.push_back(p);
                     draw_path.lineTo(travel_point);
                 }
-                painter.setPen(QPen(Qt::lightGray, 5));
+                intersected=false;
+                for (const QPainterPath &polygonPath : polygonPaths){
+                    for (int i = 0; i < polygonPath.elementCount() - 1; ++i) {
+                        const QPainterPath::Element &startElement = polygonPath.elementAt(i);
+                        const QPainterPath::Element &endElement = polygonPath.elementAt(i + 1);
+
+                        QLineF polygonLine(startElement.x, startElement.y, endElement.x, endElement.y);
+
+                        for (int j = 0; j < draw_path.elementCount() - 1; ++j) {
+                            const QPainterPath::Element &drawStartElement = draw_path.elementAt(j);
+                            const QPainterPath::Element &drawEndElement = draw_path.elementAt(j + 1);
+
+                            QLineF drawLine(drawStartElement.x, drawStartElement.y, drawEndElement.x, drawEndElement.y);
+                            QPointF point;
+                            QLineF::IntersectionType intersection = drawLine.intersects(polygonLine,&point);
+                            if (intersection==QLineF::BoundedIntersection || intersection==QLineF::UnboundedIntersection) {
+                                // std::cout << "no intersection: " << std::endl;
+                                intersected = true;
+                                break;
+                            }
+                        }
+                        if (intersected) {
+                            break;
+                        }
+                    }
+                    if (intersected) {
+                        break;
+                    }
+                }
+                if (intersected){
+                    painter.setPen(QPen(Qt::red, 5));
+                    }
+                else {
+                    painter.setPen(QPen(Qt::lightGray, 5));
+                }
                 painter.drawPath(draw_path);
                 for (int i = 0; i < draw_points.size();i++){
                     if(draw_points[i].operational){
@@ -338,7 +380,6 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
                         if(fabs(lidarAngle - angleBall) <= 1){
                             if(main_window->copyOfLaserData.Data[k].scanDistance != 0){
-                                std::cout << "ball angle: " << angleBall <<std::endl;
                                 double ballPosX = scaledRobotCenter.x() + cos(lidarAngle*PI/180 + robotFi_draw*PI/180) * scaleX * main_window->copyOfLaserData.Data[k].scanDistance/10;
                                 double ballPosY = scaledRobotCenter.y() - sin(lidarAngle*PI/180 + robotFi_draw*PI/180) * scaleY * main_window->copyOfLaserData.Data[k].scanDistance/10;
                                 painter.drawEllipse(ballPosX, ballPosY, 10, 10);
@@ -359,3 +400,15 @@ void MyFrame::paintEvent(QPaintEvent *event) {
     }
 }
 
+//BATTERY
+
+// unsigned char rawValueChar = robotdata.Battery;
+// byte rawValue = (byte)rawValueChar;
+// if(rawValue >= 155 && rawValue <= 167){
+//     int percentage = static_cast<int>((rawValue - 155) * 100.0 / (167 - 155));
+//     if(percentage <= BATTERY_LOW_THRESHOLD && (lastBatteryLowWarningTime + BATTERY_LOW_WARNING_DELAY < QDateTime::currentMSecsSinceEpoch())){
+//         emit showWarningDialogSignal("Battery is runnign low, charge!");
+//         lastBatteryLowWarningTime = QDateTime::currentMSecsSinceEpoch();
+//     }
+//     // std::cout << percentage << std::endl+;
+// }

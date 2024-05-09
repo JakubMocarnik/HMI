@@ -66,6 +66,7 @@ private:
     double robotY_draw;
     double robotFi_draw;
     QList<QPolygonF> mapPolygons;
+    bool intersected;
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
