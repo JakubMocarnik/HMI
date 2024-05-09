@@ -182,9 +182,31 @@ MainWindow::MainWindow(QWidget *parent) :
                                           "font-weight: bold;"
                                           "color: white");
 
+    ui->pushButton_point_type->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+    ui->pushButton_removepoint->setStyleSheet("background-color: #d1007a;"
+                                              "font-weight: bold;"
+                                              "color: white");
+    ui->pushButton_addpoint->setStyleSheet("background-color: #d1007a;"
+                                           "font-weight: bold;"
+                                           "color: white");
+    ui->pushButton_reset->setStyleSheet("background-color: #d1007a;"
+                                        "font-weight: bold;"
+                                        "color: white");
+    ui->pushButton_startmission->setStyleSheet("background-color: #d1007a;"
+                                               "font-weight: bold;"
+                                               "color: white");
+
     ui->label_ip->setStyleSheet("font-weight: bold;"
                                 "color: #d1007a");
 
+    ui->label_camera->setStyleSheet("font-weight: bold;"
+                                "color: #d1007a");
+
+
+    ui->label_point_type->setStyleSheet("font-weight: bold;"
+                                    "color: #d1007a");
 
     ui->label_warning->setStyleSheet("font-weight: bold;"
                                      "font-size:20px;"
@@ -195,13 +217,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //TODO: get rid of or set color to MainToolbar
     estop = false;
     connect(ui->frame,&MyFrame::clicked,this, &MainWindow::onFrameClicked);
-
+    operational = false;
     found_ball = false;
+    add_points = false;
+    start_mission = false;
     ball_index = 1;
-    Point p(1000,0,0);
-    points_vector.push_back(p);
-    p.setPoint(0,0,0);
-    points_vector.push_back(p);
 }
 
 MainWindow::~MainWindow()
@@ -212,9 +232,23 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *event)
 {}
 
-void MainWindow::onFrameClicked(){
+void MainWindow::onFrameClicked(int x, int y){
     //ak je connectnuty, ak je flag zadavaj body
-    std::cout << "CLICKED" << std::endl;
+    if (connected && add_points && !start_mission){
+        Point p(x*10.0,y*10.0,0);
+        if (operational){
+            p.setOperation(true);
+        }
+        else {
+            p.setOperation(false);
+        }
+        points_vector.push_back(p);
+    }
+    //print points_vectore
+    std::cout << "POINTS VECTOR: ";
+    for (int i = 0; i < points_vector.size(); i++){
+        std::cout << points_vector[i].getX() << " " << points_vector[i].getY() << " " << points_vector[i].getOperation() << std::endl;
+    }
 }
 /// toto je slot. niekde v kode existuje signal, ktory je prepojeny. pouziva sa napriklad (v tomto pripade) ak chcete dostat data z jedneho vlakna (robot) do ineho (ui)
 /// prepojenie signal slot je vo funkcii  on_pushButton_left_clicked
@@ -292,6 +326,8 @@ int MainWindow::processThisRobot(TKobukiData robotdata)
             }
             else {
                 go = false;
+                start_mission = false;
+                ui->pushButton_startmission->setText("START MISSION");
                 return 0;
             }
             //toto vzdy nastavi ciel, ak je vo vektore bodov aspon jeden bod
@@ -447,8 +483,6 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
 
     cv::Mat ball_detection;
     cameraData.copyTo(ball_detection);
-    // qDebug() << "Current working directory:" << QDir::currentPath();
-    // detectBall(something); //for debug purposes
 
     detectBall(ball_detection);
 
@@ -806,9 +840,29 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_camera->setStyleSheet("background-color: #d1007a;"
                                            "font-weight: bold;"
                                            "color: white");
+        ui->pushButton_point_type->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_removepoint->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_addpoint->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_reset->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_startmission->setStyleSheet("background-color: #d1007a;"
+                                             "font-weight: bold;"
+                                             "color: white");
 
         ui->label_ip->setStyleSheet("font-weight: bold;"
                                     "color: #d1007a");
+
+        ui->label_camera->setStyleSheet("font-weight: bold;"
+                                    "color: #d1007a");
+        ui->label_point_type->setStyleSheet("font-weight: bold;"
+                                        "color: #d1007a");
 
         ui->pushButton_up->setIcon(purple_up);
         ui->pushButton_right->setIcon(purple_right);
@@ -838,9 +892,31 @@ void MainWindow::setTheme(std::string theme) {
         ui->pushButton_camera->setStyleSheet("background-color: #770000;"
                                               "font-weight: bold;"
                                               "color: white");
+        ui->pushButton_point_type->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_removepoint->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_reset->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+        ui->pushButton_startmission->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
+
+        ui->pushButton_addpoint->setStyleSheet("background-color: #770000;"
+                                             "font-weight: bold;"
+                                             "color: white");
 
         ui->label_ip->setStyleSheet("font-weight: bold;"
                                     "color: #770000");
+
+        ui->label_camera->setStyleSheet("font-weight: bold;"
+                                    "color: #770000");
+        ui->label_point_type->setStyleSheet("font-weight: bold;"
+                                        "color: #770000");
+
 
         ui->pushButton_up->setIcon(red_up);
         ui->pushButton_right->setIcon(red_right);
@@ -856,3 +932,73 @@ void MainWindow::on_lineEdit_ip_textEdited(const QString &arg1)
 {
     ipaddress = arg1.toStdString();
 }
+
+void MainWindow::on_pushButton_camera_clicked()
+{
+    if (useCamera1){
+        useCamera1 = false;
+        ui->pushButton_camera->setText("LIDAR");
+    }
+    else {
+        useCamera1 = true;
+        ui->pushButton_camera->setText("CAMERA");
+    }
+}
+
+
+void MainWindow::on_pushButton_point_type_clicked()
+{
+    if(!operational){
+        ui->pushButton_point_type->setText("OPERATIONAL");
+        operational = true;
+    }
+    else{
+        ui->pushButton_point_type->setText("CROSSING");
+        operational = false;
+    }
+}
+
+
+void MainWindow::on_pushButton_addpoint_clicked()
+{
+    if(!add_points){
+        ui->pushButton_addpoint->setText("STOP ADDING");
+        add_points = true;
+    }
+    else{
+        ui->pushButton_addpoint->setText("ADD POINTS");
+        add_points = false;
+    }
+}
+
+
+void MainWindow::on_pushButton_startmission_clicked()
+{
+    if (!start_mission){
+        ui->pushButton_startmission->setText("STOP MISSION");
+        start_mission = true;
+        go = true;
+    }
+    else {
+        ui->pushButton_startmission->setText("START MISSION");
+        start_mission = false;
+        go = false;
+    }
+}
+
+
+void MainWindow::on_pushButton_reset_clicked()
+{
+    if (!start_mission){
+        points_vector.clear();
+    }
+}
+
+
+void MainWindow::on_pushButton_removepoint_clicked()
+{
+    if (!start_mission && !points_vector.empty()){
+        points_vector.pop_back();
+    }
+}
+

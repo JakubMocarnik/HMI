@@ -12,10 +12,13 @@ public:
     double getX(){return x;}; // Getter for the difference in x coordinates
     double getY(){return y;}; // Getter for the difference in y coordinates
     double getTheta(){return  theta;}; // Getter for the difference in angle
+    void setOperation(bool operational){this->operational = operational;}; // Setter for operational
+    bool getOperation(){return operational;}; // Getter for operational
 
 private:
     double x; // x coordinate
     double y; // y coordinate
     double theta; // angle
+    bool operational;
 };
 #endif

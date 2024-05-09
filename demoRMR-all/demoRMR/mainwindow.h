@@ -106,8 +106,20 @@ private slots:
 
     void on_lineEdit_ip_textEdited(const QString &arg1);
 
+    void on_pushButton_camera_clicked();
+
+    void on_pushButton_point_type_clicked();
+
+    void on_pushButton_addpoint_clicked();
+
+    void on_pushButton_startmission_clicked();
+
+    void on_pushButton_reset_clicked();
+
+    void on_pushButton_removepoint_clicked();
+
 private:
-    void onFrameClicked();
+    void onFrameClicked(int x, int y);
     void detectBall(cv::Mat src);
     double calculateEncoderDelta(int prev, int actual);
     bool isFingerUp(float down, float mid_down, float mid_up, float up);
@@ -198,6 +210,12 @@ private:
     bool found_ball;
 
     int ball_index;
+
+    bool operational;
+
+    bool add_points;
+
+    bool start_mission;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 

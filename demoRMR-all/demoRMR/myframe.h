@@ -22,6 +22,16 @@
 
 class MainWindow;
 
+class DrawPoint {
+public :
+    DrawPoint(QPointF point, bool operational){
+        this->point = point;
+        this->operational = operational;
+    };
+    bool operational;
+    QPointF point;
+};
+
 class MyFrame : public QFrame {
     Q_OBJECT
 public:
@@ -34,14 +44,18 @@ public:
     //set circles
     void setCircles(std::vector<cv::Vec3i> circles);
     void loadMap(const QString &filename);
-
 signals:
-    void clicked();
+    void clicked(int x,int y);
 private:
     std::vector<cv::Vec3i> circles;
     void readPointsFromFile(const QString &filename);
     void drawRobot(QPainter &painter);
     QPointF scaleAndTranslatePoint(const QPointF &point);
+    qreal scaleX;
+    qreal scaleY;
+    qreal scale;
+    qreal translateX;
+    qreal translateY;
     MainWindow *main_window;
     std::atomic_bool map_loaded;
     std::string map_name;
