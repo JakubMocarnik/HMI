@@ -351,7 +351,7 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 
             painter.setPen(QPen(Qt::white,3));
             QFont font = painter.font();
-            font.setPointSize(12);
+            font.setPointSize(8);
             font.setBold(false);
             painter.setFont(font);
             std::string coords = "X: " + trimToDecimal(std::to_string(robotX_draw)) +
@@ -359,6 +359,28 @@ void MyFrame::paintEvent(QPaintEvent *event) {
                                  " Fi: " + trimToDecimal(std::to_string(robotFi_draw));
             painter.drawText(this->rect(), Qt::AlignBottom | Qt::AlignRight, coords.c_str());
 
+            unsigned char raw_battery = main_window->robotdata.Battery;
+            double battery;
+            if (main_window->ipaddress=="127.0.0.1"){
+                battery = 100.0;
+            }
+            else{
+                battery = (static_cast<double>(raw_battery)-155.0)/(167.0-155.0)*100.0;
+            }
+
+            if (battery < 30){
+                painter.setPen(QPen(Qt::red,3));
+            }
+            else if(battery < 60){
+                painter.setPen(QPen(Qt::yellow,3));
+            }
+            else{
+                painter.setPen(QPen(Qt::green,3));
+            }
+
+            std::string battery_str = "Battery: " + trimToDecimal(std::to_string(battery)) + "%";
+
+            painter.drawText(this->rect(), Qt::AlignBottom | Qt::AlignLeft, battery_str.c_str());
 
             if (main_window->found_ball){
                 //for each circle in circles
@@ -401,14 +423,3 @@ void MyFrame::paintEvent(QPaintEvent *event) {
 }
 
 //BATTERY
-
-// unsigned char rawValueChar = robotdata.Battery;
-// byte rawValue = (byte)rawValueChar;
-// if(rawValue >= 155 && rawValue <= 167){
-//     int percentage = static_cast<int>((rawValue - 155) * 100.0 / (167 - 155));
-//     if(percentage <= BATTERY_LOW_THRESHOLD && (lastBatteryLowWarningTime + BATTERY_LOW_WARNING_DELAY < QDateTime::currentMSecsSinceEpoch())){
-//         emit showWarningDialogSignal("Battery is runnign low, charge!");
-//         lastBatteryLowWarningTime = QDateTime::currentMSecsSinceEpoch();
-//     }
-//     // std::cout << percentage << std::endl+;
-// }

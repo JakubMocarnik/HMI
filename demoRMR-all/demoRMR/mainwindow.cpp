@@ -92,12 +92,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     ui->pushButton_estop->setIcon(estop_pixmap);
-    ui->pushButton_up->setIcon(purple_up);
-    ui->pushButton_right->setIcon(purple_right);
-    ui->pushButton_down->setIcon(purple_down);
-    ui->pushButton_left->setIcon(purple_left);
-    ui->pushButton_circle->setIcon(purple_circle);
-
     ui->label_led->setPixmap(red_square);
 
     operation=1;
@@ -146,27 +140,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_estop->setIconSize(estop_size);
     ui->pushButton_estop->setFixedSize(estop_size);
     ui->pushButton_estop->setStyleSheet("background-color:transparent");
-
-    ui->pushButton_up->setIconSize(arrow_size);
-    ui->pushButton_up->setFixedSize(arrow_size);
-    ui->pushButton_up->setStyleSheet("background-color:transparent");
-
-    ui->pushButton_right->setIconSize(arrow_size);
-    ui->pushButton_right->setFixedSize(arrow_size);
-    ui->pushButton_right->setStyleSheet("background-color:transparent");
-
-    ui->pushButton_down->setIconSize(arrow_size);
-    ui->pushButton_down->setFixedSize(arrow_size);
-    ui->pushButton_down->setStyleSheet("background-color:transparent");
-
-    ui->pushButton_left->setIconSize(arrow_size);
-    ui->pushButton_left->setFixedSize(arrow_size);
-    ui->pushButton_left->setStyleSheet("background-color:transparent");
-
-    ui->pushButton_circle->setIconSize(circle_size);
-    ui->pushButton_circle->setFixedSize(circle_size);
-    ui->pushButton_circle->setStyleSheet("background-color:transparent");
-    ui->gridLayout_4->setAlignment(ui->pushButton_circle,Qt::AlignCenter);
 
     ui->lineEdit_ip->setText(QString::fromStdString(ipaddress));
     ui->lineEdit_ip->setStyleSheet("QLineEdit {"
@@ -224,6 +197,7 @@ MainWindow::MainWindow(QWidget *parent) :
     add_points = false;
     start_mission = false;
     ball_index = 1;
+    start_time = std::chrono::high_resolution_clock::now();
 }
 
 MainWindow::~MainWindow()
@@ -418,7 +392,7 @@ int MainWindow::processThisLidar(LaserMeasurement laserData)
 
 void MainWindow::detectBall(cv::Mat src){
 
-    src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\OSMY SEMESTER\\HMI\\CVICENIA\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
+    // src = cv::imread(cv::samples::findFile("C:\\Users\\HP Pavilion\\Desktop\\OSMY SEMESTER\\HMI\\CVICENIA\\HMI\\demoRMR-all\\Pictures\\ball.png"), cv::IMREAD_COLOR); //for debug purposes
     imageWidth = src.size().width;
     imageHeight = src.size().height;
 
@@ -438,9 +412,10 @@ void MainWindow::detectBall(cv::Mat src){
     std::vector<cv::Vec3f> circles;
     cv::HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1,
                      gray.rows / 16, // change this value to detect circles with different distances to each other
-                     100, 45, 50, 0 // change the last two parameters
+                     100, 60, 5, 300 // change the last two parameters
                      // (min_radius & max_radius) to detect larger circles
                      );
+
     if (!circles.empty()){
         if (!found_ball){
             std::vector<cv::Vec3i> circs;
@@ -462,8 +437,8 @@ void MainWindow::detectBall(cv::Mat src){
             // Construct the full path for the image to save
             QString filePath = subDir + "/ball";
             // Convert QString to std::string for cv::imwrite
-            //cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
-            //cv::imshow("detected circles " , src);
+            cv::imwrite(filePath.toStdString()+std::to_string(ball_index)+".jpg", src);
+            cv::imshow("detected circles " , src);
             found_ball = true;
             ball_index++;
             start_time = std::chrono::high_resolution_clock::now();
@@ -477,7 +452,11 @@ void MainWindow::detectBall(cv::Mat src){
         }
     }
     else {
-        found_ball = false;
+        auto time_now = std::chrono::high_resolution_clock::now();
+        auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(time_now - start_time);
+        if (elapsed_seconds.count() >= 5){
+            found_ball = false;
+        }
     }
     return ;
 
@@ -495,7 +474,7 @@ int MainWindow::processThisCamera(cv::Mat cameraData)
     cv::Mat ball_detection;
     cameraData.copyTo(ball_detection);
 
-    // detectBall(ball_detection);
+    detectBall(ball_detection);
 
     update();
     return 0;
@@ -569,10 +548,6 @@ int MainWindow::processThisSkeleton(skeleton skeledata)
     return 0;
 }
 
-void MainWindow::on_pushButton_left_clicked()
-{
-
-}
 
 void MainWindow::on_pushButton_mode_clicked() //this is load map i just didnt have the tiem to refactor it all....
 {
@@ -682,133 +657,19 @@ void MainWindow::on_pushButton_estop_released() {
     }
 }
 
-void MainWindow::on_pushButton_up_pressed()
-{
-    backup_assistant = false;
-    if (theme == "Hello Kitty"){
-        ui->pushButton_up->setIcon(purple_up_pressed);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_up->setIcon(red_up_pressed);
-    }
-    if(!estop && !gestures && connected){
-        robot.setTranslationSpeed(250);
-    }
-}
 
 
 
 
-void MainWindow::on_pushButton_up_released()
-{
-    if (theme == "Hello Kitty"){
-        ui->pushButton_up->setIcon(purple_up);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_up->setIcon(red_up);
-    }
-}
 
 
-void MainWindow::on_pushButton_right_pressed()
-{
-    if (theme == "Hello Kitty"){
-        ui->pushButton_right->setIcon(purple_right_pressed);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_right->setIcon(red_right_pressed);
-    }
-    if(!estop && !gestures && connected){
-        robot.setRotationSpeed(-3.14159/2);
-    }
-}
 
 
-void MainWindow::on_pushButton_right_released()
-{
-    if (theme == "Hello Kitty"){
-        ui->pushButton_right->setIcon(purple_right);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_right->setIcon(red_right);
-    }
-}
 
 
-void MainWindow::on_pushButton_left_pressed()
-{
-    if (theme == "Hello Kitty"){
-        ui->pushButton_left->setIcon(purple_left_pressed);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_left->setIcon(red_left_pressed);
-    }
-    if(!estop && !gestures && connected){
-        robot.setRotationSpeed(3.14159/2);
-    }
-}
 
 
-void MainWindow::on_pushButton_left_released()
-{
-    if (theme == "Hello Kitty"){
-        ui->pushButton_left->setIcon(purple_left);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_left->setIcon(red_left);
-    }
-}
 
-
-void MainWindow::on_pushButton_down_pressed()
-{
-    backup_assistant = true;
-    if (theme == "Hello Kitty"){
-        ui->pushButton_down->setIcon(purple_down_pressed);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_down->setIcon(red_down_pressed);
-    }
-    if(!estop && !gestures && connected){
-        robot.setTranslationSpeed(-250);
-    }
-}
-
-
-void MainWindow::on_pushButton_down_released()
-{
-    if (theme == "Hello Kitty"){
-        ui->pushButton_down->setIcon(purple_down);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_down->setIcon(red_down);
-    }
-}
-
-
-void MainWindow::on_pushButton_circle_pressed()
-{
-    if (theme == "Hello Kitty"){
-        ui->pushButton_circle->setIcon(purple_circle_pressed);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_circle->setIcon(red_circle_pressed);
-    }
-    if (!estop && !gestures && connected){
-        robot.setTranslationSpeed(0);     //TODO: when clicked?
-    }
-}
-
-
-void MainWindow::on_pushButton_circle_released()
-{
-    if (theme == "Hello Kitty"){
-        ui->pushButton_circle->setIcon(purple_circle);
-    }
-    else if (theme == "Dark Souls") {
-        ui->pushButton_circle->setIcon(red_circle);
-    }
-}
 
 
 void MainWindow::on_actionHello_Kitty_triggered()
@@ -875,11 +736,6 @@ void MainWindow::setTheme(std::string theme) {
         ui->label_point_type->setStyleSheet("font-weight: bold;"
                                         "color: #d1007a");
 
-        ui->pushButton_up->setIcon(purple_up);
-        ui->pushButton_right->setIcon(purple_right);
-        ui->pushButton_down->setIcon(purple_down);
-        ui->pushButton_left->setIcon(purple_left);
-        ui->pushButton_circle->setIcon(purple_circle);
     }
     else if (theme == "Dark Souls") {
         ui->centralWidget->setStyleSheet("background-color:rgba(20, 0, 3,255)"); //dark souls
@@ -928,12 +784,6 @@ void MainWindow::setTheme(std::string theme) {
         ui->label_point_type->setStyleSheet("font-weight: bold;"
                                         "color: #770000");
 
-
-        ui->pushButton_up->setIcon(red_up);
-        ui->pushButton_right->setIcon(red_right);
-        ui->pushButton_down->setIcon(red_down);
-        ui->pushButton_left->setIcon(red_left);
-        ui->pushButton_circle->setIcon(red_circle);
     }
 }
 
@@ -988,6 +838,8 @@ void MainWindow::on_pushButton_startmission_clicked()
     if (!start_mission){
         ui->pushButton_startmission->setText("STOP MISSION");
         start_mission = true;
+        add_points = false;
+        ui->pushButton_addpoint->setText("ADD POINTS");
         go = true;
     }
     else {

@@ -66,7 +66,6 @@ public:
     int processThisSkeleton(skeleton skeledata);
 
 private slots:
-    void on_pushButton_left_clicked();
 
     void on_pushButton_mode_clicked();
 
@@ -79,26 +78,6 @@ private slots:
 
 
     void on_pushButton_estop_released();
-
-    void on_pushButton_up_pressed();
-
-    void on_pushButton_up_released();
-
-    void on_pushButton_right_pressed();
-
-    void on_pushButton_right_released();
-
-    void on_pushButton_left_pressed();
-
-    void on_pushButton_left_released();
-
-    void on_pushButton_down_pressed();
-
-    void on_pushButton_down_released();
-
-    void on_pushButton_circle_pressed();
-
-    void on_pushButton_circle_released();
 
     void on_actionHello_Kitty_triggered();
 

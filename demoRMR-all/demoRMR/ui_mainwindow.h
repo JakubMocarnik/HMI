@@ -36,17 +36,9 @@ public:
     QHBoxLayout *horizontalLayout_4;
     MyFrame *frame;
     QGridLayout *gridLayout_2;
-    QSpacerItem *verticalSpacer;
     QGridLayout *gridLayout_3;
-    QSpacerItem *verticalSpacer_3;
     QGridLayout *gridLayout_4;
-    QPushButton *pushButton_up;
-    QPushButton *pushButton_down;
-    QSpacerItem *verticalSpacer_2;
-    QPushButton *pushButton_circle;
-    QPushButton *pushButton_right;
     QPushButton *pushButton_estop;
-    QPushButton *pushButton_left;
     QGridLayout *gridLayout_7;
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_led;
@@ -77,7 +69,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1221, 932);
+        MainWindow->resize(871, 637);
         MainWindow->setStyleSheet(QString::fromUtf8(""));
         actionHello_Kitty = new QAction(MainWindow);
         actionHello_Kitty->setObjectName(QString::fromUtf8("actionHello_Kitty"));
@@ -107,57 +99,19 @@ public:
         gridLayout_2 = new QGridLayout();
         gridLayout_2->setSpacing(6);
         gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        gridLayout_2->addItem(verticalSpacer, 1, 1, 1, 1);
-
         gridLayout_3 = new QGridLayout();
         gridLayout_3->setSpacing(6);
         gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
-        verticalSpacer_3 = new QSpacerItem(20, 50, QSizePolicy::Minimum, QSizePolicy::Minimum);
-
-        gridLayout_3->addItem(verticalSpacer_3, 3, 1, 1, 1);
-
         gridLayout_4 = new QGridLayout();
         gridLayout_4->setSpacing(6);
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
-        pushButton_up = new QPushButton(centralWidget);
-        pushButton_up->setObjectName(QString::fromUtf8("pushButton_up"));
-
-        gridLayout_4->addWidget(pushButton_up, 2, 2, 1, 1);
-
-        pushButton_down = new QPushButton(centralWidget);
-        pushButton_down->setObjectName(QString::fromUtf8("pushButton_down"));
-
-        gridLayout_4->addWidget(pushButton_down, 4, 2, 1, 1);
-
-        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        gridLayout_4->addItem(verticalSpacer_2, 1, 2, 1, 1);
-
-        pushButton_circle = new QPushButton(centralWidget);
-        pushButton_circle->setObjectName(QString::fromUtf8("pushButton_circle"));
-        pushButton_circle->setLayoutDirection(Qt::LeftToRight);
-
-        gridLayout_4->addWidget(pushButton_circle, 3, 2, 1, 1);
-
-        pushButton_right = new QPushButton(centralWidget);
-        pushButton_right->setObjectName(QString::fromUtf8("pushButton_right"));
-
-        gridLayout_4->addWidget(pushButton_right, 3, 3, 1, 1);
-
         pushButton_estop = new QPushButton(centralWidget);
         pushButton_estop->setObjectName(QString::fromUtf8("pushButton_estop"));
 
-        gridLayout_4->addWidget(pushButton_estop, 0, 2, 1, 1);
-
-        pushButton_left = new QPushButton(centralWidget);
-        pushButton_left->setObjectName(QString::fromUtf8("pushButton_left"));
-
-        gridLayout_4->addWidget(pushButton_left, 3, 1, 1, 1);
+        gridLayout_4->addWidget(pushButton_estop, 0, 1, 1, 1);
 
 
-        gridLayout_3->addLayout(gridLayout_4, 4, 1, 1, 1);
+        gridLayout_3->addLayout(gridLayout_4, 3, 1, 1, 1);
 
         gridLayout_7 = new QGridLayout();
         gridLayout_7->setSpacing(6);
@@ -314,7 +268,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1221, 26));
+        menuBar->setGeometry(QRect(0, 0, 871, 26));
         menuStyle = new QMenu(menuBar);
         menuStyle->setObjectName(QString::fromUtf8("menuStyle"));
         MainWindow->setMenuBar(menuBar);
@@ -342,12 +296,7 @@ public:
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         actionHello_Kitty->setText(QCoreApplication::translate("MainWindow", "Hello Kitty", nullptr));
         actionDark_Souls->setText(QCoreApplication::translate("MainWindow", "Dark Souls", nullptr));
-        pushButton_up->setText(QString());
-        pushButton_down->setText(QString());
-        pushButton_circle->setText(QString());
-        pushButton_right->setText(QString());
         pushButton_estop->setText(QString());
-        pushButton_left->setText(QString());
         label_led->setText(QCoreApplication::translate("MainWindow", "LED", nullptr));
         pushButton_connect->setText(QCoreApplication::translate("MainWindow", "CONNECT", nullptr));
         pushButton_reset->setText(QCoreApplication::translate("MainWindow", "RESET MISSION", nullptr));
